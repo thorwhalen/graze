@@ -38,8 +38,8 @@ def handle_missing_dir(dirpath, prefix_msg='', ask_first=True, verbose=True):
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=lambda _id: _id.replace('https/', 'https://'),
-    id_of_key=lambda k: k.replace('https://', 'https/')
+    key_of_id=lambda _id: _id.replace('https/', 'https://').replace('http/', 'http://'),
+    id_of_key=lambda k: k.replace('https://', 'https/').replace('http://', 'http/')
 )
 class LocalGrazed(AutoMkDirsOnSetitemMixin, LocalBinaryStore):
     def __init__(self, rootdir=DFLT_GRAZE_DIR):

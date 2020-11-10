@@ -2,6 +2,10 @@
 
 Cache (a tiny part of) the internet.
 
+## install
+
+```pip install graze```
+
 # Example
 
 ```python
