@@ -8,7 +8,6 @@ import requests
 
 from py2store import LocalBinaryStore
 from py2store.persisters.local_files import ensure_slash_suffix
-from py2store.caching import mk_sourced_store
 from py2store.stores.local_store import AutoMkDirsOnSetitemMixin, LocalJsonStore
 from py2store.trans import add_ipython_key_completions, wrap_kvs
 from py2store.dig import inner_most_key
@@ -64,23 +63,14 @@ class Internet:
             raise KeyError(f"Response code was {resp.status_code}")
 
 
-_Graze = mk_sourced_store(
-    store=LocalGrazed,
-    source=Internet(),
-    return_source_data=True,
-    __name__='_Graze',
-    __module__=__name__
-)
-
-
 class Graze(LocalGrazed):
     def __init__(self, rootdir=DFLT_GRAZE_DIR, source=Internet()):
         super().__init__(rootdir)
-        self._src = source
+        self.source = source
 
     def __missing__(self, k):
         # if you didn't have it "locally", ask src for it
-        v = self._src[k]  # ... get it from _src,
+        v = self.source[k]  # ... get it from _src,
         self[k] = v  # ... store it in self
         return v  # ... and return it.
 
@@ -139,3 +129,13 @@ def graze(url: str,
         return Graze(rootdir=rootdir, source=source)[url]
     else:
         return GrazeWithDataRefresh(time_to_live=max_age)[url]
+
+# Old Graze, used mk_sourced_store
+# from py2store.caching import mk_sourced_store
+# _Graze = mk_sourced_store(
+#     store=LocalGrazed,
+#     source=Internet(),
+#     return_source_data=True,
+#     __name__='_Graze',
+#     __module__=__name__
+# )
