@@ -1,8 +1,10 @@
 import time
 import os
 from warnings import warn
+from operator import attrgetter
+from typing import Union, Optional, Callable
+
 import requests
-from typing import Union, Optional
 
 from py2store import LocalBinaryStore
 from py2store.persisters.local_files import ensure_slash_suffix
@@ -44,23 +46,44 @@ class LocalGrazed(AutoMkDirsOnSetitemMixin, LocalBinaryStore):
 
 
 class Internet:
+    def __init__(self, method: str = 'get',
+                 response_func: Callable = attrgetter('content'),
+                 **request_kwargs):
+        self.method = method
+        self.request_kwargs = request_kwargs
+        self.response_func = response_func
+
     def __getitem__(self, k):
         if k.endswith('/'):
             k = k[:-1]  # because it shouldn't matter as url (?) and having it leads to dirs (not files) being created
-        resp = requests.get(k)
+        resp = requests.request(method=self.method, url=k, **self.request_kwargs)
         if resp.status_code == 200:
-            return resp.content
+            return self.response_func(resp)
+            # return resp.content
         else:
             raise KeyError(f"Response code was {resp.status_code}")
 
 
-Graze = mk_sourced_store(
+_Graze = mk_sourced_store(
     store=LocalGrazed,
-    source=Internet,
+    source=Internet(),
     return_source_data=True,
-    __name__='Graze',
+    __name__='_Graze',
     __module__=__name__
 )
+
+
+class Graze(LocalGrazed):
+    def __init__(self, rootdir=DFLT_GRAZE_DIR, source=Internet()):
+        super().__init__(rootdir)
+        self._src = source
+
+    def __missing__(self, k):
+        # if you didn't have it "locally", ask src for it
+        v = self._src[k]  # ... get it from _src,
+        self[k] = v  # ... store it in self
+        return v  # ... and return it.
+
 
 A_WEEK_IN_SECONDS = 7 * 24 * 60 * 60  # one week
 
@@ -107,9 +130,12 @@ class GrazeWithDataRefresh(Graze):
 
 
 def graze(url: str,
-          max_age: Optional[Union[int, float]] = None):
+          rootdir: str = DFLT_GRAZE_DIR,
+          source=Internet(),
+          max_age: Optional[Union[int, float]] = None
+          ):
     """Get the contents of the url (persisting the results in a local file, for next time you'll ask for it)"""
     if max_age is None:
-        return Graze()[url]
+        return Graze(rootdir=rootdir, source=source)[url]
     else:
         return GrazeWithDataRefresh(time_to_live=max_age)[url]
