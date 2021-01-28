@@ -1,9 +1,9 @@
-from typing import Union, Optional
+from typing import Optional, Callable, Union
 import os
 import time
 from warnings import warn
 from operator import attrgetter
-from typing import Callable, Union
+from functools import partialmethod
 
 import requests
 
@@ -38,20 +38,24 @@ class Internet:
         self.request_kwargs = request_kwargs
         self.response_func = response_func
 
+    # TODO: implement the key-specific getitem mapping externally to make it open-closed
     def __getitem__(self, k):
         if k.endswith('/'):
             k = k[:-1]  # because it shouldn't matter as url (?) and having it leads to dirs (not files) being created
         if is_dropbox_url(k):
             return bytes_from_dropbox(k)
         else:
-            resp = requests.request(method=self.method, url=k, **self.request_kwargs)
-            if resp.status_code == 200:
-                return self.response_func(resp)
-                # return resp.content
-            else:
-                raise KeyError(f"Response code was {resp.status_code}")
+            return self._get_contents_of_url(k)
+
+    def _get_contents_of_url(self, url):
+        resp = requests.request(method=self.method, url=url, **self.request_kwargs)
+        if resp.status_code == 200:
+            return self.response_func(resp)
+        else:
+            raise KeyError(f"Response code was {resp.status_code}")
 
 
+# TODO: Use reususable caching decorator?
 class Graze(LocalGrazed):
     def __init__(self, rootdir=DFLT_GRAZE_DIR, source=Internet()):
         super().__init__(rootdir)
@@ -63,10 +67,14 @@ class Graze(LocalGrazed):
         self[k] = v  # ... store it in self
         return v  # ... and return it.
 
+    filepath_of = partialmethod(inner_most_key)
+    filepath_of.__doc__ = "Get the filepath of where graze stored (or would store) the contents for a url locally"
+
 
 A_WEEK_IN_SECONDS = 7 * 24 * 60 * 60  # one week
 
 
+# TODO: Would be nicer to solve this with a reusable ttl caching decorator!
 class GrazeWithDataRefresh(Graze):
     def __init__(self,
                  time_to_live: Union[int, float] = A_WEEK_IN_SECONDS,
