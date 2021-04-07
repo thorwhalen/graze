@@ -61,7 +61,7 @@ What does that mean?
 
 I means you have a local copy of these contents. 
 
-The file path isn't really ``https://...``, it's `roodir/https/...`, but you 
+The file path isn't really ``https://...``, it's `rootdir/https/...`, but you 
 only have to care about that if you actually have to go get the file with
 something else than graze. Because graze will give it to you.
 
