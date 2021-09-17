@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>graze.base &#8212; graze 0.1.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for graze.base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Base functionality&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partialmethod</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">py2store.dig</span> <span class="kn">import</span> <span class="n">inner_most_key</span>
+<span class="kn">from</span> <span class="nn">py2store.persisters.local_files</span> <span class="kn">import</span> <span class="n">ensure_slash_suffix</span>
+<span class="kn">from</span> <span class="nn">py2store</span> <span class="kn">import</span> <span class="n">add_ipython_key_completions</span><span class="p">,</span> <span class="n">wrap_kvs</span><span class="p">,</span> <span class="n">LocalBinaryStore</span>
+<span class="kn">from</span> <span class="nn">py2store.stores.local_store</span> <span class="kn">import</span> <span class="n">AutoMkDirsOnSetitemMixin</span>
+
+<span class="kn">from</span> <span class="nn">graze.util</span> <span class="kn">import</span> <span class="n">handle_missing_dir</span><span class="p">,</span> <span class="n">is_dropbox_url</span><span class="p">,</span> <span class="n">bytes_from_dropbox</span>
+
+<span class="c1"># TODO: handle configuration and existence of root</span>
+
+<span class="n">DFLT_GRAZE_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~/graze&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="LocalGrazed"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.LocalGrazed">[docs]</a><span class="nd">@add_ipython_key_completions</span>
+<span class="nd">@wrap_kvs</span><span class="p">(</span>
+    <span class="n">key_of_id</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_id</span><span class="p">:</span> <span class="n">_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;https/&#39;</span><span class="p">,</span> <span class="s1">&#39;https://&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;http/&#39;</span><span class="p">,</span> <span class="s1">&#39;http://&#39;</span><span class="p">),</span>
+    <span class="n">id_of_key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;https://&#39;</span><span class="p">,</span> <span class="s1">&#39;https/&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span><span class="p">,</span> <span class="s1">&#39;http/&#39;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">class</span> <span class="nc">LocalGrazed</span><span class="p">(</span><span class="n">AutoMkDirsOnSetitemMixin</span><span class="p">,</span> <span class="n">LocalBinaryStore</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rootdir</span><span class="o">=</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">):</span>
+        <span class="n">handle_missing_dir</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path_format</span><span class="o">=</span><span class="n">ensure_slash_suffix</span><span class="p">(</span><span class="n">rootdir</span><span class="p">))</span></div>
+
+
+<span class="k">class</span> <span class="nc">Internet</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;get&#39;</span><span class="p">,</span>
+        <span class="n">response_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">),</span>
+        <span class="o">**</span><span class="n">request_kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request_kwargs</span> <span class="o">=</span> <span class="n">request_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response_func</span> <span class="o">=</span> <span class="n">response_func</span>
+
+    <span class="c1"># TODO: implement the key-specific getitem mapping externally to make it open-closed</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">[</span>
+                <span class="p">:</span><span class="o">-</span><span class="mi">1</span>
+            <span class="p">]</span>  <span class="c1"># because it shouldn&#39;t matter as url (?) and having it leads to dirs (not files) being created</span>
+        <span class="k">if</span> <span class="n">is_dropbox_url</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">bytes_from_dropbox</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_contents_of_url</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_contents_of_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">request_kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_func</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Response code was </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># TODO: Use reususable caching decorator?</span>
+<div class="viewcode-block" id="Graze"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.Graze">[docs]</a><span class="k">class</span> <span class="nc">Graze</span><span class="p">(</span><span class="n">LocalGrazed</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rootdir</span><span class="o">=</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">()):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rootdir</span> <span class="o">=</span> <span class="n">rootdir</span>
+
+    <span class="k">def</span> <span class="fm">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="c1"># if you didn&#39;t have it &quot;locally&quot;, ask src for it</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>  <span class="c1"># ... get it from _src,</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>  <span class="c1"># ... store it in self</span>
+        <span class="k">return</span> <span class="n">v</span>  <span class="c1"># ... and return it.</span>
+
+    <span class="n">filepath_of</span> <span class="o">=</span> <span class="n">partialmethod</span><span class="p">(</span><span class="n">inner_most_key</span><span class="p">)</span>
+    <span class="n">filepath_of</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s1">&#39;Get the filepath of where graze stored (or would store) the contents for a url locally&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">Graze</span><span class="p">,</span> <span class="p">(),</span> <span class="p">{</span><span class="s1">&#39;rootdir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootdir</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">})</span></div>
+
+
+<span class="n">A_WEEK_IN_SECONDS</span> <span class="o">=</span> <span class="mi">7</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>  <span class="c1"># one week</span>
+
+
+<span class="c1"># TODO: Would be nicer to solve this with a reusable ttl caching decorator!</span>
+<div class="viewcode-block" id="GrazeWithDataRefresh"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.GrazeWithDataRefresh">[docs]</a><span class="k">class</span> <span class="nc">GrazeWithDataRefresh</span><span class="p">(</span><span class="n">Graze</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time_to_live</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_WEEK_IN_SECONDS</span><span class="p">,</span>
+        <span class="n">on_error</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Like Graze, but where you can specify a time_to_live &quot;freshness threshold&quot; to trigger the re-download of data</span>
+
+<span class="sd">        :param time_to_live: In seconds.</span>
+<span class="sd">        :param on_error: What to do if there&#39;s an error when fetching the new data.</span>
+<span class="sd">            &#39;raise&#39; raise an error (but keep the cached data)</span>
+<span class="sd">            &#39;warn&#39; warn the user of the stale data (but return anyway)</span>
+<span class="sd">            &#39;ignore&#39; ignore the error, and return the stale data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_to_live</span> <span class="o">=</span> <span class="n">time_to_live</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span> <span class="o">=</span> <span class="n">on_error</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="c1"># TODO: Use info store that is not necessarily a local files sys?</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">inner_most_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+            <span class="n">age</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span>
+            <span class="p">)</span>  <span class="c1"># Note: local file sys cache is assumed here!</span>
+            <span class="k">if</span> <span class="n">age</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_to_live</span><span class="p">:</span>
+                <span class="c1"># Need to refresh the data...</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># TODO: perhaps do this with super()</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="n">Internet</span><span class="p">()[</span><span class="n">k</span><span class="p">]</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># replace existing</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span> <span class="o">==</span> <span class="s1">&#39;raise&#39;</span><span class="p">:</span>
+                        <span class="k">raise</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span> <span class="o">==</span> <span class="s1">&#39;warn&#39;</span><span class="p">:</span>
+                        <span class="n">warn</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s1">&#39;There was an error getting a fresh copy of </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">, &#39;</span>
+                            <span class="sa">f</span><span class="s2">&quot;so I&#39;ll give you a copy that&#39;s </span><span class="si">{</span><span class="n">age</span><span class="si">}</span><span class="s2"> seconds old. &quot;</span>
+                            <span class="sa">f</span><span class="s1">&#39;The error was </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span>
+                        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>  <span class="c1"># retrieve the data normally</span>
+        <span class="k">return</span> <span class="n">v</span></div>
+
+
+<div class="viewcode-block" id="graze"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.graze">[docs]</a><span class="k">def</span> <span class="nf">graze</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">rootdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">(),</span>
+    <span class="n">max_age</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the contents of the url (persisting the results in a local file, for next time you&#39;ll ask for it)&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">max_age</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Graze</span><span class="p">(</span><span class="n">rootdir</span><span class="o">=</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">)[</span><span class="n">url</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">GrazeWithDataRefresh</span><span class="p">(</span><span class="n">time_to_live</span><span class="o">=</span><span class="n">max_age</span><span class="p">)[</span><span class="n">url</span><span class="p">]</span></div>
+
+
+<span class="c1"># Old Graze, used mk_sourced_store</span>
+<span class="c1"># from py2store.caching import mk_sourced_store</span>
+<span class="c1"># _Graze = mk_sourced_store(</span>
+<span class="c1">#     store=LocalGrazed,</span>
+<span class="c1">#     source=Internet(),</span>
+<span class="c1">#     return_source_data=True,</span>
+<span class="c1">#     __name__=&#39;_Graze&#39;,</span>
+<span class="c1">#     __module__=__name__</span>
+<span class="c1"># )</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">graze</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze.html">graze</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/base.html">graze.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/util.html">graze.util</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;NO COPYRIGHT.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
