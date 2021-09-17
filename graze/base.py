@@ -1,3 +1,5 @@
+"""Base functionality"""
+
 from typing import Optional, Callable, Union
 import os
 import time
@@ -16,13 +18,13 @@ from graze.util import handle_missing_dir, is_dropbox_url, bytes_from_dropbox
 
 # TODO: handle configuration and existence of root
 
-DFLT_GRAZE_DIR = os.path.expanduser("~/graze")
+DFLT_GRAZE_DIR = os.path.expanduser('~/graze')
 
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=lambda _id: _id.replace("https/", "https://").replace("http/", "http://"),
-    id_of_key=lambda k: k.replace("https://", "https/").replace("http://", "http/"),
+    key_of_id=lambda _id: _id.replace('https/', 'https://').replace('http/', 'http://'),
+    id_of_key=lambda k: k.replace('https://', 'https/').replace('http://', 'http/'),
 )
 class LocalGrazed(AutoMkDirsOnSetitemMixin, LocalBinaryStore):
     def __init__(self, rootdir=DFLT_GRAZE_DIR):
@@ -33,8 +35,8 @@ class LocalGrazed(AutoMkDirsOnSetitemMixin, LocalBinaryStore):
 class Internet:
     def __init__(
         self,
-        method: str = "get",
-        response_func: Callable = attrgetter("content"),
+        method: str = 'get',
+        response_func: Callable = attrgetter('content'),
         **request_kwargs,
     ):
         self.method = method
@@ -43,7 +45,7 @@ class Internet:
 
     # TODO: implement the key-specific getitem mapping externally to make it open-closed
     def __getitem__(self, k):
-        if k.endswith("/"):
+        if k.endswith('/'):
             k = k[
                 :-1
             ]  # because it shouldn't matter as url (?) and having it leads to dirs (not files) being created
@@ -57,7 +59,7 @@ class Internet:
         if resp.status_code == 200:
             return self.response_func(resp)
         else:
-            raise KeyError(f"Response code was {resp.status_code}")
+            raise KeyError(f'Response code was {resp.status_code}')
 
 
 # TODO: Use reususable caching decorator?
@@ -74,10 +76,10 @@ class Graze(LocalGrazed):
         return v  # ... and return it.
 
     filepath_of = partialmethod(inner_most_key)
-    filepath_of.__doc__ = "Get the filepath of where graze stored (or would store) the contents for a url locally"
+    filepath_of.__doc__ = 'Get the filepath of where graze stored (or would store) the contents for a url locally'
 
     def __reduce__(self):
-        return (Graze, (), {"rootdir": self.rootdir, "source": self.source})
+        return (Graze, (), {'rootdir': self.rootdir, 'source': self.source})
 
 
 A_WEEK_IN_SECONDS = 7 * 24 * 60 * 60  # one week
@@ -86,7 +88,9 @@ A_WEEK_IN_SECONDS = 7 * 24 * 60 * 60  # one week
 # TODO: Would be nicer to solve this with a reusable ttl caching decorator!
 class GrazeWithDataRefresh(Graze):
     def __init__(
-        self, time_to_live: Union[int, float] = A_WEEK_IN_SECONDS, on_error: str = "warn"
+        self,
+        time_to_live: Union[int, float] = A_WEEK_IN_SECONDS,
+        on_error: str = 'warn',
     ):
         """Like Graze, but where you can specify a time_to_live "freshness threshold" to trigger the re-download of data
 
@@ -113,16 +117,16 @@ class GrazeWithDataRefresh(Graze):
                 try:
                     # TODO: perhaps do this with super()
                     v = Internet()[k]
-                    with open(filepath, "wb") as f:
+                    with open(filepath, 'wb') as f:
                         f.write(v)  # replace existing
                 except Exception as e:
-                    if self.on_error == "raise":
+                    if self.on_error == 'raise':
                         raise
-                    elif self.on_error == "warn":
+                    elif self.on_error == 'warn':
                         warn(
-                            f"There was an error getting a fresh copy of {k}, "
+                            f'There was an error getting a fresh copy of {k}, '
                             f"so I'll give you a copy that's {age} seconds old. "
-                            f"The error was {e}"
+                            f'The error was {e}'
                         )
         if v is None:
             v = super().__getitem__(k)  # retrieve the data normally
