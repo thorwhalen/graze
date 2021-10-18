@@ -86,6 +86,35 @@ del g[url]
 
 # Q&A
 
+## What if I want a fresh copy of the data
+
+Classic caching problem. 
+You like the convenience of having a local copy, but then how do you keep in sync with the data source if it changes?
+
+If you KNOW the source data changed and want to sync, it's easy. You delete the local copy 
+(like deleting a key from a dict: `del Graze()[url]`)
+and you try to access it again. 
+Since you don't have a local copy, it will get one from the `url` source. 
+
+What if you want this to happen automatically? 
+
+Well, there's several ways to do that. 
+
+If you have a way to know if the source and local are different (through modified dates, or hashes, etc.), 
+then you can write a little function to keep things in sync. 
+But that's context dependent; `graze` doesn't offer you any default way to do it. 
+
+Another way to do this is sometimes known as a `TTL Cache` (time-to-live cache). 
+You get such functionality with the `graze.GrazeWithDataRefresh` store, or for most cases, 
+simply getting your data through the `graze` function
+specifying a `max_age` value (in seconds):
+
+```
+from graze import graze
+
+content_bytes = graze(url, max_age=in_seconds)
+```
+
 ## Does it work for dropbox links?
 
 Yes it does, but you need to be aware that dropbox systematically send the data as a zip, **even if there's only one file in it**.
