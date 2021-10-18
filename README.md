@@ -86,7 +86,7 @@ del g[url]
 
 # Q&A
 
-## What if I want a fresh copy of the data
+## What if I want a fresh copy of the data?
 
 Classic caching problem. 
 You like the convenience of having a local copy, but then how do you keep in sync with the data source if it changes?
