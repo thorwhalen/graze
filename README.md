@@ -83,3 +83,32 @@ The same way you would delete a key from a dict:
 del g[url]
 ```
 
+
+# Q&A
+
+## Does it work for dropbox links?
+
+Yes it does, but you need to be aware that dropbox systematically send the data as a zip, **even if there's only one file in it**.
+
+Here's some code that can help.
+
+```python
+def zip_store_of_gropbox_url(dropbox_url: str):
+    """Get a key-value perspective of the (folder) contents 
+    of the zip a dropbox url gets you"""
+    from graze import graze
+    from py2store import FilesOfZip
+    return FilesOfZip(graze(dropbox_url))
+    
+def filebytes_of_dropbox_url(dropbox_url: str, assert_only_one_file=True):
+    """Get the bytes of the first file in a zip that a dropbox url gives you"""
+    zip_store = zip_store_of_gropbox_url(dropbox_url)
+    zip_filepaths = iter(zip_store)
+    first_filepath = next(zip_filepaths)
+    if assert_only_one_file:
+        assert next(zip_filepaths, None) is None, f"More than one file in {dropbox_url}"
+    return zip_store[first_filepath]
+```
+
+
+
