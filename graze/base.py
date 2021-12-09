@@ -162,7 +162,7 @@ def graze(
         return GrazeWithDataRefresh(time_to_live=max_age)[url]
 
 
-def url_to_filepath(url: str, rootdir: str=DFLT_GRAZE_DIR):
+def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR):
     """Get the file path for the url, downloading contents before hand if necessary.
 
     Use case:
@@ -179,6 +179,7 @@ def url_to_filepath(url: str, rootdir: str=DFLT_GRAZE_DIR):
 
     """
     return Graze(rootdir).filepath_of_url_downloading_if_necessary(url)
+
 
 # Old Graze, used mk_sourced_store
 # from py2store.caching import mk_sourced_store
