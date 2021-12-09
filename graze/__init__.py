@@ -6,6 +6,6 @@ from graze.base import (
     Graze,
     GrazeWithDataRefresh,
     graze,
-    url_to_downloaded_filepath,
+    url_to_filepath,
 )
 from graze.util import handle_missing_dir

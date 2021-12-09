@@ -78,6 +78,22 @@ class Graze(LocalGrazed):
     filepath_of = partialmethod(inner_most_key)
     filepath_of.__doc__ = 'Get the filepath of where graze stored (or would store) the contents for a url locally'
 
+    def filepath_of_url_downloading_if_necessary(self, url):
+        """Get the file path for the url, downloading contents before hand if necessary.
+
+        Use case:
+
+        Sometimes you need to specify a filepath as a resource for some python object.
+        For example, some font definition file, or configuration file, or such.
+        You can provide the file for the user, or can tell them where they can find
+        such a file if needed...
+        Use `filepath_of_url_downloading_if_necessary` to get that local filepath,
+        ensuring that the data is there before hand.
+        """
+        if url not in self:
+            _ = self[url]  # load to make sure we have it (getting it if not)
+        return self.filepath_of(url)
+
     def __reduce__(self):
         return (Graze, (), {'rootdir': self.rootdir, 'source': self.source})
 
@@ -146,7 +162,7 @@ def graze(
         return GrazeWithDataRefresh(time_to_live=max_age)[url]
 
 
-def url_to_downloaded_filepath(url: str, rootdir: str=DFLT_GRAZE_DIR):
+def url_to_filepath(url: str, rootdir: str=DFLT_GRAZE_DIR):
     """Get the file path for the url, downloading contents before hand if necessary.
 
     Use case:
@@ -154,18 +170,15 @@ def url_to_downloaded_filepath(url: str, rootdir: str=DFLT_GRAZE_DIR):
     Sometimes you need to specify a filepath as a resource for some python object.
     For example, some font definition file, or configuration file, or such.
     You can provide the file for the user, or can tell them where they can find
-    such a file if needed... or you can use url_to_downloaded_filepath for the
+    such a file if needed... or you can use `url_to_filepath` for the
     best of both worlds.
 
     It works as such:
 
-    >>> filepath = url_to_downloaded_filepath(url_of_resource) # doctest: +SKIP
+    >>> filepath = url_to_filepath(url_of_resource) # doctest: +SKIP
 
     """
-    g = Graze(rootdir)
-    if url not in g:
-        _ = g[powerful_font_url]  # load to make sure we have it (getting it if not)
-    return g.filepath_of(url)
+    return Graze(rootdir).filepath_of_url_downloading_if_necessary(url)
 
 # Old Graze, used mk_sourced_store
 # from py2store.caching import mk_sourced_store
