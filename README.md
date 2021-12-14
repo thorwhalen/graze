@@ -140,4 +140,26 @@ def filebytes_of_dropbox_url(dropbox_url: str, assert_only_one_file=True):
 ```
 
 
+# Notes
+
+## New url-to-path mapping 
+
+`graze` used to have a more straightforward url-to-local_filepath mapping, 
+but it ended up being problematic: In a nutshell, 
+if you slurp `abc.com` and it goes to a file of that name, 
+where is `abc.com/data.zip` supposed to go (`abc.com` needs to be a folder 
+in that case).  
+See [issue](https://github.com/thorwhalen/graze/issues/1).
+
+It's with a heavy heart that I changed the mapping to one that was still 
+straightforward, but has the disadvantage of mapping all files to the 
+same file name, without extension. 
+
+Hopefully a better solution will show up soon.
+
+If you already have graze files from the old way, you can 
+use the `change_files_to_new_url_to_filepath_format` function to change these 
+to the new format. 
+
+
 

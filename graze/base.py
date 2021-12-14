@@ -2,6 +2,7 @@
 
 from typing import Optional, Callable, Union
 import os
+import re
 import time
 from warnings import warn
 from operator import attrgetter
@@ -17,14 +18,29 @@ from py2store.stores.local_store import AutoMkDirsOnSetitemMixin
 from graze.util import handle_missing_dir, is_dropbox_url, bytes_from_dropbox
 
 # TODO: handle configuration and existence of root
+pjoin = os.path.join
+psep = os.path.sep
 
+CONTENT_FILENAME = 'grazed'
+CONTENT_PATH_SUFFIX = psep + CONTENT_FILENAME
+CONTENT_FILENAME_INDEX = -len(CONTENT_PATH_SUFFIX)
 DFLT_GRAZE_DIR = os.path.expanduser('~/graze')
+
+
+def _url_to_localpath(url: str) -> str:
+    path = url.replace('https://', 'https/').replace('http://', 'http/')
+    return pjoin(path, CONTENT_FILENAME)
+
+
+def _localpath_to_url(path: str) -> str:
+    assert path.endswith(psep + CONTENT_FILENAME), f'Not a valid key: {path}'
+    path = path[:CONTENT_FILENAME_INDEX]  # remove the /CONTENT_FILENAME part
+    return path.replace('https/', 'https://').replace('http/', 'http://')
 
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=lambda _id: _id.replace('https/', 'https://').replace('http/', 'http://'),
-    id_of_key=lambda k: k.replace('https://', 'https/').replace('http://', 'http/'),
+    key_of_id=_localpath_to_url, id_of_key=_url_to_localpath,
 )
 class LocalGrazed(AutoMkDirsOnSetitemMixin, LocalBinaryStore):
     def __init__(self, rootdir=DFLT_GRAZE_DIR):
@@ -33,6 +49,8 @@ class LocalGrazed(AutoMkDirsOnSetitemMixin, LocalBinaryStore):
 
 
 class Internet:
+    """Get content from the internet by doing a ``internet[url]``"""
+
     def __init__(
         self,
         method: str = 'get',
@@ -76,7 +94,10 @@ class Graze(LocalGrazed):
         return v  # ... and return it.
 
     filepath_of = partialmethod(inner_most_key)
-    filepath_of.__doc__ = 'Get the filepath of where graze stored (or would store) the contents for a url locally'
+    filepath_of.__doc__ = (
+        'Get the filepath of where graze stored (or would store) '
+        'the contents for a url locally'
+    )
 
     def filepath_of_url_downloading_if_necessary(self, url):
         """Get the file path for the url, downloading contents before hand if necessary.
@@ -162,7 +183,7 @@ def graze(
         return GrazeWithDataRefresh(time_to_live=max_age)[url]
 
 
-def url_to_filepath(url: str, rootdir: str=DFLT_GRAZE_DIR):
+def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR):
     """Get the file path for the url, downloading contents before hand if necessary.
 
     Use case:
@@ -179,6 +200,49 @@ def url_to_filepath(url: str, rootdir: str=DFLT_GRAZE_DIR):
 
     """
     return Graze(rootdir).filepath_of_url_downloading_if_necessary(url)
+
+
+def change_files_to_new_url_to_filepath_format(src_root=DFLT_GRAZE_DIR):
+    """Util function to convert existing local files to new version of
+    the url_to_localpath mapping.
+
+    Relevant issue: https://github.com/thorwhalen/graze/issues/1
+
+    """
+    from py2store.filesys import RelPathFileBytesPersister
+    from py2store.stores.local_store import MakeMissingDirsStoreMixin
+
+    class Src(MakeMissingDirsStoreMixin, RelPathFileBytesPersister):
+        pass
+
+    class Targ(MakeMissingDirsStoreMixin, RelPathFileBytesPersister):
+        pass
+
+    src = Src(src_root)
+
+    bak_root = src_root + '_bak'
+    bak = Targ(bak_root)
+
+    print(f'copying files over to bak: {bak_root}')
+    for k, v in src.items():
+        try:
+            bak[k] = v
+        except Exception as e:
+            print(f'{k}: {e}')
+
+    print(f'deleting and recreating original source: {src_root}')
+    import shutil
+
+    shutil.rmtree(src_root)
+    os.mkdir(src_root)
+
+    print(
+        f'copying files (with transformation) from bak ({bak_root}) to original '
+        f'source: {src_root}'
+    )
+    for k, v in bak.items():
+        src[os.path.join(k, CONTENT_FILENAME)] = v
+
 
 # Old Graze, used mk_sourced_store
 # from py2store.caching import mk_sourced_store
