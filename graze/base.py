@@ -20,6 +20,7 @@ from graze.util import handle_missing_dir, is_dropbox_url, bytes_from_dropbox
 pjoin = os.path.join
 psep = os.path.sep
 
+URL = str
 CONTENT_FILENAME = 'grazed'
 CONTENT_PATH_SUFFIX = psep + CONTENT_FILENAME
 CONTENT_FILENAME_INDEX = -len(CONTENT_PATH_SUFFIX)
@@ -47,39 +48,124 @@ class LocalGrazed(AutoMkDirsOnSetitemMixin, LocalBinaryStore):
         super().__init__(path_format=ensure_slash_suffix(rootdir))
 
 
-class Internet:
-    """Get content from the internet by doing a ``internet[url]``"""
+class RequestFailure(RuntimeError):
+    """To be used when the request to get the contents of a url failed"""
 
-    def __init__(
-        self,
-        method: str = 'get',
-        response_func: Callable = attrgetter('content'),
-        **request_kwargs,
-    ):
-        self.method = method
-        self.request_kwargs = request_kwargs
-        self.response_func = response_func
+
+class url_to_contents:
+    """A place to contain url_to_contents functions. Not meant to be intantiated.
+    The only reason for it's existence is to make it easier for a user to choose
+    available url_to_contents functions using tab suggestions.
+
+    The first argument of a url_to_contents function is a URL, and is the only
+    argument that an Internet object, where these are used, will use.
+
+    Any extra arguments in url_to_contents functions are meant to be used with
+    their defaults or be set by currying (e.g. with `functools.partial`).
+
+    For example, one can use a custom `response_func` to get the data in a particular
+    way, and or wait for a page to load, etc.
+
+    """
+
+    def __init__(self):
+        raise ValueError(
+            'Not meant to be instantiated: Just to hold url_to_contents functions'
+        )
+
+    @staticmethod
+    def requests_get(url: URL, response_func=attrgetter('content'), **request_kwargs):
+        resp = requests.request('get', url=url, **request_kwargs)
+        if resp.status_code == 200:
+            return response_func(resp)
+        else:
+            raise RequestFailure(
+                f'Response code was {resp.status_code}.\n'
+                f'The first 500 characters of the content were: {resp.content}'
+            )
+
+    @staticmethod
+    def selenium(url: URL, response_func=attrgetter('page_source'), browser='Chrome'):
+        """Function to get contents from a url, using selenium.
+
+        To work, selenium needs to be installed an setup (browser drivers (default is
+        Chrome)).
+
+        See: https://selenium-python.readthedocs.io/
+
+        :param url: The url to fetch
+        :param response_func: The function to call on browser object to return html.
+            The default is attrgetter('page_source') which just returns the page_source
+            attribute. But a custom function can be specified to check for status first,
+            or wait a number of seconds, etc.
+        :param browser: If a string, will use it as a `selenium.webdriver` attribute.
+            It's the user's responsibility to have the necessary drivers for this to
+            work. When using a string, a browser is made and closed once the page is
+            fetched. This is inefficient if many pages need to be fetched.
+            To reuse the same browser, or a browser with specific properties, one
+            can specify a already made browser.
+
+            ``
+            b = selenium.webdriver.Chrome(...)
+            my_selenium = functools.partial(url_to_contents.selenium, browser=b)
+            ``
+
+            When doing so, the browser is made/opened when ``b`` is made, and
+            won't be closed by ``url_to_contents.selenium``.
+            It's up to the user to close it (``b.close()``) when they don't need it
+            anymore.
+
+
+        """
+        from selenium import webdriver  # See: https://selenium-python.readthedocs.io/
+
+        if isinstance(browser, str):
+            browser_name = browser
+            mk_browser = getattr(webdriver, browser_name)
+            browser = mk_browser()  # start web browser
+            close_after_use = True
+        else:
+            close_after_use = False
+
+        browser.get(url)
+        html = response_func(browser)
+        if close_after_use:
+            browser.close()
+        return html
+
+
+DFLT_URL_TO_CONTENT = url_to_contents.requests_get
+
+
+class Internet:
+    def __init__(self, url_to_contents=DFLT_URL_TO_CONTENT):
+        """From the url, get content off the internet.
+
+        :param url_to_contents: The function that gets you the contents from the url
+        """
+        self.url_to_contents = url_to_contents
 
     # TODO: implement the key-specific getitem mapping externally to make it open-closed
     def __getitem__(self, k):
         if k.endswith('/'):
-            k = k[
-                :-1
-            ]  # because it shouldn't matter as url (?) and having it leads to dirs (not files) being created
+            # because it shouldn't matter as url (?) and having it leads to dirs (not
+            # files) being created:
+            k = k[:-1]
+
         if is_dropbox_url(k):
             return bytes_from_dropbox(k)
         else:
             return self._get_contents_of_url(k)
 
     def _get_contents_of_url(self, url):
-        resp = requests.request(method=self.method, url=url, **self.request_kwargs)
-        if resp.status_code == 200:
-            return self.response_func(resp)
-        else:
-            raise KeyError(f'Response code was {resp.status_code}')
+        try:
+            return self.url_to_contents(url)
+        except RequestFailure as e:
+            raise KeyError(e.args[0])
 
 
 # TODO: Use reususable caching decorator?
+# TODO: Not seeing the right signature, but the LocalGrazed one!
 class Graze(LocalGrazed):
     def __init__(self, rootdir=DFLT_GRAZE_DIR, source=Internet()):
         super().__init__(rootdir)
