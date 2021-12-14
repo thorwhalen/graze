@@ -2,7 +2,6 @@
 
 from typing import Optional, Callable, Union
 import os
-import re
 import time
 from warnings import warn
 from operator import attrgetter
