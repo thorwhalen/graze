@@ -86,6 +86,53 @@ del g[url]
 
 # Q&A
 
+## The pages I need to slurp need to be rendered, can I use selenium of other such engines?
+
+Sure!
+
+We understand that sometimes you might have special slurping needs -- such 
+as needing to let the JS render the page fully, and/or extract something 
+specific, in a specific way, from the page.
+
+Selenium is a popular choice for these needs.
+
+`graze` doesn't install selenium for you, but if you've done that, you just 
+need to specify a different `Internet` object for `Graze` to source from, 
+and to make an internet object, you just need to specify what a 
+`url_to_contents` function that does exactly what it says. 
+
+Note that the contents need to be returned in bytes for `Graze` to work.
+
+If you want to use some of the default `selenium` `url_to_contents` functions 
+to make an `Internet` (we got Chrome, Firefox, Safari, and Opera), 
+you go ahead! here's an example using the default Chrome driver
+(again, you need to have the driver installed already for this to work; 
+see https://selenium-python.readthedocs.io/):
+
+```python
+from graze import Graze, url_to_contents, Internet
+
+g = Graze(source=Internet(url_to_contents=url_to_contents.selenium_chrome))
+```
+
+And if you'll be using it often, just do:
+
+```python
+from graze import Graze, url_to_contents, Internet
+from functools import partial
+my_graze =  partial(
+    Graze,
+    rootdir='a_specific_root_dir_for_your_project',
+    source=Internet(url_to_contents=url_to_contents.selenium_chrome)
+)
+
+# and then you can just do
+g = my_graze()
+# and get on with the fun...
+```
+
+
+
 ## What if I want a fresh copy of the data?
 
 Classic caching problem. 

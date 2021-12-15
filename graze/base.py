@@ -5,7 +5,7 @@ import os
 import time
 from warnings import warn
 from operator import attrgetter
-from functools import partialmethod
+from functools import partialmethod, partial
 
 import requests
 
@@ -52,6 +52,64 @@ class RequestFailure(RuntimeError):
     """To be used when the request to get the contents of a url failed"""
 
 
+def _dflt_selenium_response_func(response_obj):
+    page_src = response_obj.page_source
+    if isinstance(page_src, str):
+        return page_src.encode()
+    return page_src
+
+
+def selenium_url_to_contents(
+    url: URL, response_func=_dflt_selenium_response_func, browser='Chrome'
+):
+    """Function to get contents from a url, using selenium.
+
+    To work, selenium needs to be installed an setup (browser drivers (default is
+    Chrome)).
+
+    See: https://selenium-python.readthedocs.io/
+
+    :param url: The url to fetch
+    :param response_func: The function to call on browser object to return html.
+        The default is attrgetter('page_source') which just returns the page_source
+        attribute. But a custom function can be specified to check for status first,
+        or wait a number of seconds, etc.
+    :param browser: If a string, will use it as a `selenium.webdriver` attribute.
+        It's the user's responsibility to have the necessary drivers for this to
+        work. When using a string, a browser is made and closed once the page is
+        fetched. This is inefficient if many pages need to be fetched.
+        To reuse the same browser, or a browser with specific properties, one
+        can specify a already made browser.
+
+        ``
+        b = selenium.webdriver.Chrome(...)
+        my_selenium = functools.partial(url_to_contents.selenium, browser=b)
+        ``
+
+        When doing so, the browser is made/opened when ``b`` is made, and
+        won't be closed by ``url_to_contents.selenium``.
+        It's up to the user to close it (``b.close()``) when they don't need it
+        anymore.
+
+
+    """
+    from selenium import webdriver  # See: https://selenium-python.readthedocs.io/
+
+    if isinstance(browser, str):
+        browser_name = browser
+        mk_browser = getattr(webdriver, browser_name)
+        browser = mk_browser()  # start web browser
+        close_after_use = True
+    else:
+        close_after_use = False
+
+    browser.get(url)
+    html = response_func(browser)
+    if close_after_use:
+        browser.close()
+    return html
+
+
 class url_to_contents:
     """A place to contain url_to_contents functions. Not meant to be intantiated.
     The only reason for it's existence is to make it easier for a user to choose
@@ -84,54 +142,12 @@ class url_to_contents:
                 f'The first 500 characters of the content were: {resp.content}'
             )
 
-    @staticmethod
-    def selenium(url: URL, response_func=attrgetter('page_source'), browser='Chrome'):
-        """Function to get contents from a url, using selenium.
-
-        To work, selenium needs to be installed an setup (browser drivers (default is
-        Chrome)).
-
-        See: https://selenium-python.readthedocs.io/
-
-        :param url: The url to fetch
-        :param response_func: The function to call on browser object to return html.
-            The default is attrgetter('page_source') which just returns the page_source
-            attribute. But a custom function can be specified to check for status first,
-            or wait a number of seconds, etc.
-        :param browser: If a string, will use it as a `selenium.webdriver` attribute.
-            It's the user's responsibility to have the necessary drivers for this to
-            work. When using a string, a browser is made and closed once the page is
-            fetched. This is inefficient if many pages need to be fetched.
-            To reuse the same browser, or a browser with specific properties, one
-            can specify a already made browser.
-
-            ``
-            b = selenium.webdriver.Chrome(...)
-            my_selenium = functools.partial(url_to_contents.selenium, browser=b)
-            ``
-
-            When doing so, the browser is made/opened when ``b`` is made, and
-            won't be closed by ``url_to_contents.selenium``.
-            It's up to the user to close it (``b.close()``) when they don't need it
-            anymore.
-
-
-        """
-        from selenium import webdriver  # See: https://selenium-python.readthedocs.io/
-
-        if isinstance(browser, str):
-            browser_name = browser
-            mk_browser = getattr(webdriver, browser_name)
-            browser = mk_browser()  # start web browser
-            close_after_use = True
-        else:
-            close_after_use = False
-
-        browser.get(url)
-        html = response_func(browser)
-        if close_after_use:
-            browser.close()
-        return html
+    selenium_chrome = staticmethod(partial(selenium_url_to_contents, browser='Chrome'))
+    selenium_safari = staticmethod(partial(selenium_url_to_contents, browser='Safari'))
+    selenium_opera = staticmethod(partial(selenium_url_to_contents, browser='Opera'))
+    selenium_firefox = staticmethod(
+        partial(selenium_url_to_contents, browser='Firefox')
+    )
 
 
 DFLT_URL_TO_CONTENT = url_to_contents.requests_get
@@ -202,6 +218,13 @@ class Graze(LocalGrazed):
 
     def __reduce__(self):
         return (Graze, (), {'rootdir': self.rootdir, 'source': self.source})
+
+
+# TODO: The following is to cope with https://github.com/i2mint/dol/issues/6
+#  --> Remove when resolved
+from inspect import signature
+
+Graze.__signature__ = signature(Graze.__init__)
 
 
 A_WEEK_IN_SECONDS = 7 * 24 * 60 * 60  # one week
