@@ -10,9 +10,15 @@ from functools import partialmethod, partial
 import requests
 
 from py2store.dig import inner_most_key
-from py2store.persisters.local_files import ensure_slash_suffix
-from py2store import add_ipython_key_completions, wrap_kvs, LocalBinaryStore
-from py2store.stores.local_store import AutoMkDirsOnSetitemMixin
+
+# from py2store.persisters.local_files import ensure_slash_suffix
+from dol.filesys import ensure_slash_suffix
+
+# from py2store import add_ipython_key_completions, wrap_kvs, LocalBinaryStore
+from dol import add_ipython_key_completions, wrap_kvs, Files
+
+# from py2store.stores.local_store import AutoMkDirsOnSetitemMixin
+from dol import MakeMissingDirsStoreMixin
 
 from graze.util import handle_missing_dir, is_dropbox_url, bytes_from_dropbox
 
@@ -21,31 +27,74 @@ pjoin = os.path.join
 psep = os.path.sep
 
 URL = str
-CONTENT_FILENAME = 'grazed'
-CONTENT_PATH_SUFFIX = psep + CONTENT_FILENAME
-CONTENT_FILENAME_INDEX = -len(CONTENT_PATH_SUFFIX)
 DFLT_GRAZE_DIR = os.path.expanduser('~/graze')
 
 
+SUBDIR_SUFFIX = '_f'
+SUBDIR_SUFFIX_IDX = -len(SUBDIR_SUFFIX)
+
+
 def _url_to_localpath(url: str) -> str:
+    """
+    >>> _url_to_localpath('http://www.example.com/subdir1/subdir2/file.txt')
+    'http/www.example.com_f/subdir1_f/subdir2_f/file.txt'
+    >>> _url_to_localpath('https://www.example.com/subdir1/subdir2/file.txt/')
+    'https/www.example.com_f/subdir1_f/subdir2_f/file.txt_f/'
+    >>> _url_to_localpath('www.example.com/subdir1/subdir2/file.txt')
+    'www.example.com/subdir1_f/subdir2_f/file.txt'
+    """
     path = url.replace('https://', 'https/').replace('http://', 'http/')
-    return pjoin(path, CONTENT_FILENAME)
+    path_subdirs = path.split(psep)
+    path_subdirs[1:-1] = [x + '_f' for x in path_subdirs[1:-1]]
+    return pjoin(*path_subdirs)
 
 
 def _localpath_to_url(path: str) -> str:
-    assert path.endswith(psep + CONTENT_FILENAME), f'Not a valid key: {path}'
-    path = path[:CONTENT_FILENAME_INDEX]  # remove the /CONTENT_FILENAME part
-    return path.replace('https/', 'https://').replace('http/', 'http://')
+    """
+    >>> _localpath_to_url('http/www.example.com_f/subdir1_f/subdir2_f/file.txt')
+    'http://www.example.com/subdir1/subdir2/file.txt'
+    >>> _localpath_to_url('https://www.example.com_f/subdir1_f/subdir2_f/file.txt_f/')
+    'https:/www.example.com/subdir1/subdir2/file.txt/'
+    >>> _localpath_to_url('www.example.com/subdir1_f/subdir2_f/file.txt')
+    'www.example.com/subdir1/subdir2/file.txt'
+    """
+    path_subdirs = path.split(psep)
+    path_subdirs[1:-1] = [x[:SUBDIR_SUFFIX_IDX] for x in path_subdirs[1:-1]]
+    url = pjoin(*path_subdirs)
+    return url.replace('https/', 'https://').replace('http/', 'http://')
+
+
+# CONTENT_FILENAME = 'grazed'
+FOLDER_SUFFIX = '_f'
+# CONTENT_PATH_SUFFIX = psep + CONTENT_FILENAME
+# CONTENT_FILENAME_INDEX = -len(CONTENT_PATH_SUFFIX)
+
+# def _url_to_localpath(url: str) -> str:
+#     path = url.replace('https://', 'https/').replace('http://', 'http/')
+#     return pjoin(path, CONTENT_FILENAME)
+#
+#
+# def _localpath_to_url(path: str) -> str:
+#     assert path.endswith(psep + CONTENT_FILENAME), f'Not a valid key: {path}'
+#     # remove the /CONTENT_FILENAME part
+#     path = path[:CONTENT_FILENAME_INDEX]
+#     return path.replace('https/', 'https://').replace('http/', 'http://')
+
+
+class LocalFiles(MakeMissingDirsStoreMixin, Files):
+    """Store to read/write/delete local files, creating directories on write."""
+
+    def __init__(self, rootdir=DFLT_GRAZE_DIR):
+        handle_missing_dir(rootdir)
+        super().__init__(ensure_slash_suffix(rootdir))
 
 
 @add_ipython_key_completions
 @wrap_kvs(
     key_of_id=_localpath_to_url, id_of_key=_url_to_localpath,
 )
-class LocalGrazed(AutoMkDirsOnSetitemMixin, LocalBinaryStore):
-    def __init__(self, rootdir=DFLT_GRAZE_DIR):
-        handle_missing_dir(rootdir)
-        super().__init__(path_format=ensure_slash_suffix(rootdir))
+class LocalGrazed(LocalFiles):
+    """LocalFiles using url as keys"""
 
 
 class RequestFailure(RuntimeError):
@@ -310,46 +359,17 @@ def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR):
     return Graze(rootdir).filepath_of_url_downloading_if_necessary(url)
 
 
-def change_files_to_new_url_to_filepath_format(src_root=DFLT_GRAZE_DIR):
-    """Util function to convert existing local files to new version of
-    the url_to_localpath mapping.
-
-    Relevant issue: https://github.com/thorwhalen/graze/issues/1
-
-    """
-    from py2store.filesys import RelPathFileBytesPersister
-    from py2store.stores.local_store import MakeMissingDirsStoreMixin
-
-    class Src(MakeMissingDirsStoreMixin, RelPathFileBytesPersister):
-        pass
-
-    class Targ(MakeMissingDirsStoreMixin, RelPathFileBytesPersister):
-        pass
-
-    src = Src(src_root)
-
-    bak_root = src_root + '_bak'
-    bak = Targ(bak_root)
-
-    print(f'copying files over to bak: {bak_root}')
-    for k, v in src.items():
-        try:
-            bak[k] = v
-        except Exception as e:
-            print(f'{k}: {e}')
-
-    print(f'deleting and recreating original source: {src_root}')
-    import shutil
-
-    shutil.rmtree(src_root)
-    os.mkdir(src_root)
-
-    print(
-        f'copying files (with transformation) from bak ({bak_root}) to original '
-        f'source: {src_root}'
+def _mk_special_local_graze(local_to_url, url_to_localpath):
+    @add_ipython_key_completions
+    @wrap_kvs(
+        key_of_id=local_to_url, id_of_key=url_to_localpath,
     )
-    for k, v in bak.items():
-        src[os.path.join(k, CONTENT_FILENAME)] = v
+    class _LocalGrazed(MakeMissingDirsStoreMixin, Files):
+        def __init__(self, rootdir=DFLT_GRAZE_DIR):
+            handle_missing_dir(rootdir)
+            super().__init__(path_format=ensure_slash_suffix(rootdir))
+
+    return _LocalGrazed
 
 
 # Old Graze, used mk_sourced_store
