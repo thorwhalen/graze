@@ -44,7 +44,7 @@ def _url_to_localpath(url: str) -> str:
     'www.example.com/subdir1_f/subdir2_f/file.txt'
     """
     path = url.replace('https://', 'https/').replace('http://', 'http/')
-    path_subdirs = path.split(psep)
+    path_subdirs = list(filter(None, path.split(psep)))
     path_subdirs[1:-1] = [x + '_f' for x in path_subdirs[1:-1]]
     return pjoin(*path_subdirs)
 
