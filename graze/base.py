@@ -212,6 +212,7 @@ class Internet:
 
     # TODO: implement the key-specific getitem mapping externally to make it open-closed
     def __getitem__(self, k):
+        k = k.strip()
         if k.endswith('/'):
             # because it shouldn't matter as url (?) and having it leads to dirs (not
             # files) being created:
@@ -299,6 +300,7 @@ class GrazeWithDataRefresh(Graze):
         self.on_error = on_error
 
     def __getitem__(self, k):
+        k = k.strip()
         v = None
         if k in self:
             # TODO: Use info store that is not necessarily a local files sys?
