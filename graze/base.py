@@ -230,15 +230,50 @@ class Internet:
             raise KeyError(e.args[0])
 
 
+# Typical function to use as a preget to Graze
+def preget_print_downloading_message(key):
+    print(f"The contents of {key} are being downloaded")
+
 # TODO: Use reususable caching decorator?
 # TODO: Not seeing the right signature, but the LocalGrazed one!
 class Graze(LocalGrazed):
-    def __init__(self, rootdir=DFLT_GRAZE_DIR, source=Internet()):
+    """A data access object that will get data from the internet if it's not
+    already stored locally.
+
+    The interface of ``Graze`` instances is a ``typing.Mapping`` (i.e. ``dict``-like).
+    When you list (or iterate over) keys, you'll get the urls
+    whose contents are stored locally.
+    When you get a value, you'll get the contents of the url (in bytes).
+    ``Graze`` will first look if the contents are stored locally, and return that,
+    if not it will get the contents from the internet and store it locally,
+    then return those bytes.
+    """
+    def __init__(
+            self,
+            rootdir=DFLT_GRAZE_DIR,
+            source=Internet(),
+            *,
+            preget: Optional[Callable] = None
+    ):
+        """
+        :param rootdir: Where to store the contents locally.
+        :param source: Where to get the contents from if they're not already stored
+            locally. By default, it's an ``Internet`` instance, but can be a custom
+            object that has a ``__getitem__`` method that takes a url and returns
+            its contents.
+        :param preget: A function to call on the key before getting the contents from
+            ``source``. Typically, this is used to notify the user that the contents
+            are being downloaded. For example, you could use
+            ``preget=lambda k: print(f"The contents of {k} are being downloaded")``.
+        """
         super().__init__(rootdir)
         self.source = source
         self.rootdir = rootdir
+        self.preget = preget
 
     def __missing__(self, k):
+        if self.preget:
+            self.preget(k)
         # if you didn't have it "locally", ask src for it
         v = self.source[k]  # ... get it from _src,
         self[k] = v  # ... store it in self
@@ -284,6 +319,10 @@ A_WEEK_IN_SECONDS = 7 * 24 * 60 * 60  # one week
 class GrazeWithDataRefresh(Graze):
     def __init__(
         self,
+        rootdir=DFLT_GRAZE_DIR,
+        source=Internet(),
+        *,
+        preget: Optional[Callable] = None,
         time_to_live: Union[int, float] = A_WEEK_IN_SECONDS,
         on_error: str = 'warn',
     ):
@@ -295,7 +334,7 @@ class GrazeWithDataRefresh(Graze):
             'warn' warn the user of the stale data (but return anyway)
             'ignore' ignore the error, and return the stale data
         """
-        super().__init__()
+        super().__init__(rootdir, source=source, preget=preget)
         self.time_to_live = time_to_live
         self.on_error = on_error
 
@@ -333,13 +372,36 @@ def graze(
     url: str,
     rootdir: str = DFLT_GRAZE_DIR,
     source=Internet(),
+    *,
+    preget: Optional[Callable] = None,
     max_age: Optional[Union[int, float]] = None,
 ):
-    """Get the contents of the url (persisting the results in a local file, for next time you'll ask for it)"""
+    """Get the contents of the url (persisting the results in a local file,
+    for next time you'll ask for it)
+
+    :param rootdir: Where to store the contents locally.
+    :param source: Where to get the contents from if they're not already stored
+        locally. By default, it's an ``Internet`` instance, but can be a custom
+        object that has a ``__getitem__`` method that takes a url and returns
+        its contents.
+    :param preget: A function to call on the key before getting the contents from
+        ``source``. Typically, this is used to notify the user that the contents
+        are being downloaded. For example, you could use
+        ``preget="The contents of {} are being downloaded".format``.
+    :param time_to_live: If not None, should be a number specifying the number of
+    seconds a the cached data is considered "fresh". If the cached data is older
+    than this, then it will be re-downloaded from the source.
+    :param on_error: What to do if there's an error when fetching the new data.
+        'raise' raise an error (but keep the cached data)
+        'warn' warn the user of the stale data (but return anyway)
+        'ignore' ignore the error, and return the stale data
+    """
+    _kwargs = dict(rootdir=rootdir, source=source, preget=preget)
     if max_age is None:
-        return Graze(rootdir=rootdir, source=source)[url]
+        g = Graze(**_kwargs)
     else:
-        return GrazeWithDataRefresh(time_to_live=max_age)[url]
+        g = GrazeWithDataRefresh(**_kwargs, time_to_live=max_age)
+    return g[url]
 
 
 def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR):

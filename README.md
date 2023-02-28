@@ -2,6 +2,9 @@
 
 Cache (a tiny part of) the internet.
 
+(For the technically inclined, graze is meant to enable the separation of the concerns 
+of getting and caching data from the internet.)
+
 ## install
 
 ```pip install graze```
@@ -86,6 +89,7 @@ del g[url]
 
 # Q&A
 
+
 ## The pages I need to slurp need to be rendered, can I use selenium of other such engines?
 
 Sure!
@@ -132,7 +136,6 @@ g = my_graze()
 ```
 
 
-
 ## What if I want a fresh copy of the data?
 
 Classic caching problem. 
@@ -162,7 +165,18 @@ from graze import graze
 content_bytes = graze(url, max_age=in_seconds)
 ```
 
-## Does it work for dropbox links?
+## Can I make graze notify me when it gets a new copy of the data?
+
+Sure! Just specify a `preget` function when you make your `Graze` object, or 
+call `graze`. This function will be called on the key (the url) just before contents 
+are being downloaded from the internet. The typical function would be:
+
+```python
+preget = lambda key: print(f"Getting {key} from the internet")
+```
+
+
+## Does graze work for dropbox links?
 
 Yes it does, but you need to be aware that dropbox systematically send the data as a zip, **even if there's only one file in it**.
 
