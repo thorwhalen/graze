@@ -6,13 +6,13 @@ import urllib
 
 def clog(condition, *args, log_func=print, **kwargs):
     """Conditional log
-    
+
     >>> clog(False, "logging this")
     >>> clog(True, "logging this")
     logging this
 
-    One common usage is when there's a verbose flag that allows the user to specify 
-    whether they want to log or not. Instead of having to litter your code with 
+    One common usage is when there's a verbose flag that allows the user to specify
+    whether they want to log or not. Instead of having to litter your code with
     `if verbose:` statements you can just do this:
 
     >>> verbose = True  # say versbose is True
@@ -22,17 +22,17 @@ def clog(condition, *args, log_func=print, **kwargs):
 
     You can also choose a different log function:
 
-    >>> _clog = clog(verbose, log_func=lambda x: f"hello {x}"})
+    >>> _clog = clog(verbose, log_func=lambda x: f"hello {x}")
     >>> _clog("logging this")
     hello logging this
 
     """
     if not args and not kwargs:
         import functools
+
         return functools.partial(clog, condition)
     if condition:
         print(*args, **kwargs)
-
 
 
 def handle_missing_dir(dirpath, prefix_msg="", ask_first=True, verbose=True):
