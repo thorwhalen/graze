@@ -18,7 +18,7 @@ from dol.filesys import ensure_slash_suffix
 from dol import add_ipython_key_completions, wrap_kvs, Files
 
 # from py2store.stores.local_store import AutoMkDirsOnSetitemMixin
-from dol import MakeMissingDirsStoreMixin
+from dol import mk_dirs_if_missing
 
 from graze.util import handle_missing_dir, is_dropbox_url, bytes_from_dropbox
 
@@ -27,10 +27,10 @@ pjoin = os.path.join
 psep = os.path.sep
 
 URL = str
-DFLT_GRAZE_DIR = os.path.expanduser('~/graze')
+DFLT_GRAZE_DIR = os.path.expanduser("~/graze")
 
 
-SUBDIR_SUFFIX = '_f'
+SUBDIR_SUFFIX = "_f"
 SUBDIR_SUFFIX_IDX = -len(SUBDIR_SUFFIX)
 
 
@@ -43,9 +43,9 @@ def _url_to_localpath(url: str) -> str:
     >>> _url_to_localpath('www.example.com/subdir1/subdir2/file.txt')
     'www.example.com/subdir1_f/subdir2_f/file.txt'
     """
-    path = url.replace('https://', 'https/').replace('http://', 'http/')
+    path = url.replace("https://", "https/").replace("http://", "http/")
     path_subdirs = list(filter(None, path.split(psep)))
-    path_subdirs[1:-1] = [x + '_f' for x in path_subdirs[1:-1]]
+    path_subdirs[1:-1] = [x + "_f" for x in path_subdirs[1:-1]]
     return pjoin(*path_subdirs)
 
 
@@ -61,11 +61,11 @@ def _localpath_to_url(path: str) -> str:
     path_subdirs = path.split(psep)
     path_subdirs[1:-1] = [x[:SUBDIR_SUFFIX_IDX] for x in path_subdirs[1:-1]]
     url = pjoin(*path_subdirs)
-    return url.replace('https/', 'https://').replace('http/', 'http://')
+    return url.replace("https/", "https://").replace("http/", "http://")
 
 
 # CONTENT_FILENAME = 'grazed'
-FOLDER_SUFFIX = '_f'
+FOLDER_SUFFIX = "_f"
 # CONTENT_PATH_SUFFIX = psep + CONTENT_FILENAME
 # CONTENT_FILENAME_INDEX = -len(CONTENT_PATH_SUFFIX)
 
@@ -81,7 +81,8 @@ FOLDER_SUFFIX = '_f'
 #     return path.replace('https/', 'https://').replace('http/', 'http://')
 
 
-class LocalFiles(MakeMissingDirsStoreMixin, Files):
+@mk_dirs_if_missing
+class LocalFiles(Files):
     """Store to read/write/delete local files, creating directories on write."""
 
     def __init__(self, rootdir=DFLT_GRAZE_DIR):
@@ -91,7 +92,8 @@ class LocalFiles(MakeMissingDirsStoreMixin, Files):
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=_localpath_to_url, id_of_key=_url_to_localpath,
+    key_of_id=_localpath_to_url,
+    id_of_key=_url_to_localpath,
 )
 class LocalGrazed(LocalFiles):
     """LocalFiles using url as keys"""
@@ -109,7 +111,7 @@ def _dflt_selenium_response_func(response_obj):
 
 
 def selenium_url_to_contents(
-    url: URL, response_func=_dflt_selenium_response_func, browser='Chrome'
+    url: URL, response_func=_dflt_selenium_response_func, browser="Chrome"
 ):
     """Function to get contents from a url, using selenium.
 
@@ -177,25 +179,25 @@ class url_to_contents:
 
     def __init__(self):
         raise ValueError(
-            'Not meant to be instantiated: Just to hold url_to_contents functions'
+            "Not meant to be instantiated: Just to hold url_to_contents functions"
         )
 
     @staticmethod
-    def requests_get(url: URL, response_func=attrgetter('content'), **request_kwargs):
-        resp = requests.request('get', url=url, **request_kwargs)
+    def requests_get(url: URL, response_func=attrgetter("content"), **request_kwargs):
+        resp = requests.request("get", url=url, **request_kwargs)
         if resp.status_code == 200:
             return response_func(resp)
         else:
             raise RequestFailure(
-                f'Response code was {resp.status_code}.\n'
-                f'The first 500 characters of the content were: {resp.content}'
+                f"Response code was {resp.status_code}.\n"
+                f"The first 500 characters of the content were: {resp.content}"
             )
 
-    selenium_chrome = staticmethod(partial(selenium_url_to_contents, browser='Chrome'))
-    selenium_safari = staticmethod(partial(selenium_url_to_contents, browser='Safari'))
-    selenium_opera = staticmethod(partial(selenium_url_to_contents, browser='Opera'))
+    selenium_chrome = staticmethod(partial(selenium_url_to_contents, browser="Chrome"))
+    selenium_safari = staticmethod(partial(selenium_url_to_contents, browser="Safari"))
+    selenium_opera = staticmethod(partial(selenium_url_to_contents, browser="Opera"))
     selenium_firefox = staticmethod(
-        partial(selenium_url_to_contents, browser='Firefox')
+        partial(selenium_url_to_contents, browser="Firefox")
     )
 
 
@@ -213,7 +215,7 @@ class Internet:
     # TODO: implement the key-specific getitem mapping externally to make it open-closed
     def __getitem__(self, k):
         k = k.strip()
-        if k.endswith('/'):
+        if k.endswith("/"):
             # because it shouldn't matter as url (?) and having it leads to dirs (not
             # files) being created:
             k = k[:-1]
@@ -234,6 +236,7 @@ class Internet:
 def preget_print_downloading_message(key):
     print(f"The contents of {key} are being downloaded")
 
+
 # TODO: Use reususable caching decorator?
 # TODO: Not seeing the right signature, but the LocalGrazed one!
 class Graze(LocalGrazed):
@@ -248,12 +251,13 @@ class Graze(LocalGrazed):
     if not it will get the contents from the internet and store it locally,
     then return those bytes.
     """
+
     def __init__(
-            self,
-            rootdir=DFLT_GRAZE_DIR,
-            source=Internet(),
-            *,
-            preget: Optional[Callable] = None
+        self,
+        rootdir=DFLT_GRAZE_DIR,
+        source=Internet(),
+        *,
+        preget: Optional[Callable] = None,
     ):
         """
         :param rootdir: Where to store the contents locally.
@@ -281,8 +285,8 @@ class Graze(LocalGrazed):
 
     filepath_of = partialmethod(inner_most_key)
     filepath_of.__doc__ = (
-        'Get the filepath of where graze stored (or would store) '
-        'the contents for a url locally'
+        "Get the filepath of where graze stored (or would store) "
+        "the contents for a url locally"
     )
 
     def filepath_of_url_downloading_if_necessary(self, url):
@@ -302,7 +306,7 @@ class Graze(LocalGrazed):
         return self.filepath_of(url)
 
     def __reduce__(self):
-        return (Graze, (), {'rootdir': self.rootdir, 'source': self.source})
+        return (Graze, (), {"rootdir": self.rootdir, "source": self.source})
 
 
 # TODO: The following is to cope with https://github.com/i2mint/dol/issues/6
@@ -324,7 +328,7 @@ class GrazeWithDataRefresh(Graze):
         *,
         preget: Optional[Callable] = None,
         time_to_live: Union[int, float] = A_WEEK_IN_SECONDS,
-        on_error: str = 'warn',
+        on_error: str = "warn",
     ):
         """Like Graze, but where you can specify a time_to_live "freshness threshold" to trigger the re-download of data
 
@@ -352,16 +356,16 @@ class GrazeWithDataRefresh(Graze):
                 try:
                     # TODO: perhaps do this with super()
                     v = Internet()[k]
-                    with open(filepath, 'wb') as f:
+                    with open(filepath, "wb") as f:
                         f.write(v)  # replace existing
                 except Exception as e:
-                    if self.on_error == 'raise':
+                    if self.on_error == "raise":
                         raise
-                    elif self.on_error == 'warn':
+                    elif self.on_error == "warn":
                         warn(
-                            f'There was an error getting a fresh copy of {k}, '
+                            f"There was an error getting a fresh copy of {k}, "
                             f"so I'll give you a copy that's {age} seconds old. "
-                            f'The error was {e}'
+                            f"The error was {e}"
                         )
         if v is None:
             v = super().__getitem__(k)  # retrieve the data normally
@@ -426,7 +430,8 @@ def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR):
 def _mk_special_local_graze(local_to_url, url_to_localpath):
     @add_ipython_key_completions
     @wrap_kvs(
-        key_of_id=local_to_url, id_of_key=url_to_localpath,
+        key_of_id=local_to_url,
+        id_of_key=url_to_localpath,
     )
     class _LocalGrazed(MakeMissingDirsStoreMixin, Files):
         def __init__(self, rootdir=DFLT_GRAZE_DIR):
