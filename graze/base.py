@@ -408,23 +408,39 @@ def graze(
     return g[url]
 
 
-def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR):
-    """Get the file path for the url, downloading contents before hand if necessary.
+def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR, *, download=None):
+    """Get the file path for the url.
+
+    :param rootdir: Where to store the contents locally.
+    :param download: Controls when to download the file.
+
+    >>> filepath = url_to_filepath(url_of_resource) # doctest: +SKIP
 
     Use case:
 
     Sometimes you need to specify a filepath as a resource for some python object.
     For example, some font definition file, or configuration file, or such.
     You can provide the file for the user, or can tell them where they can find
-    such a file if needed... or you can use `url_to_filepath` for the
-    best of both worlds.
+    such a file if needed... or you can use the following for the best of both worlds.
 
-    It works as such:
+    >>> filepath = url_to_filepath(url_of_resource, download=None) # doctest: +SKIP
 
-    >>> filepath = url_to_filepath(url_of_resource) # doctest: +SKIP
+    If you want to download the file whether it's there or not, use:
+
+    >>> filepath = url_to_filepath(url_of_resource, download=True) # doctest: +SKIP
 
     """
-    return Graze(rootdir).filepath_of_url_downloading_if_necessary(url)
+    g = Graze(rootdir)
+    filepath = g.filepath_of(url)  # gives us the target filepath via string formatting
+
+    if download is True:
+        b = url_to_contents(url)  # download it
+        with open(filepath, "wb") as f:  # write it
+            f.write(b)
+    elif download is None:
+        filepath = g.filepath_of_url_downloading_if_necessary(url)
+
+    return filepath
 
 
 def _mk_special_local_graze(local_to_url, url_to_localpath):
