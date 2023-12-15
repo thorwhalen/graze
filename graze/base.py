@@ -322,6 +322,23 @@ A_WEEK_IN_SECONDS = 7 * 24 * 60 * 60  # one week
 
 
 class GrazeReturningFilepaths(Graze):
+    """A Graze that returns filepaths instead of the contents of the url.
+
+    It will still do what graze does (i.e. download the data if it's not already there,
+    and use url keys (mapped to local filepaths). Only difference is it doesn't return
+    the contents of the url, but the filepath of the local file where the contents
+    are stored (once they are stored).
+
+    This is useful when you want to use the data in a way that doesn't require
+    loading the data in memory.
+
+    For example, let's say you're going to call a function that requires a filepath
+    as an input, and you want that function to use a specific url's contents as input.
+    Sure, you can write some docs telling the user to download the data and use the
+    filepath, but it's nicer if you can just give them the url, (or have the url even
+    be in the defaults) and let the function do the downloading if and when necessary.
+    """
+
     def __getitem__(self, k):
         if k not in self:
             _ = super().__getitem__(k)
