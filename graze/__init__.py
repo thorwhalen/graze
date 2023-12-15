@@ -5,6 +5,7 @@ from graze.base import (
     Internet,
     Graze,
     GrazeWithDataRefresh,
+    GrazeReturningFilepaths,
     graze,
     url_to_filepath,
     url_to_contents,

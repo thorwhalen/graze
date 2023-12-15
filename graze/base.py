@@ -275,6 +275,8 @@ class Graze(LocalGrazed):
         self.rootdir = rootdir
         self.preget = preget
 
+    # TODO: Could be more RAM-efficient by not systematically loading the whole file
+    #  in memory when it's not necessary.
     def __missing__(self, k):
         if self.preget:
             self.preget(k)
@@ -317,6 +319,13 @@ Graze.__signature__ = signature(Graze.__init__)
 
 
 A_WEEK_IN_SECONDS = 7 * 24 * 60 * 60  # one week
+
+
+class GrazeReturningFilepaths(Graze):
+    def __getitem__(self, k):
+        if k not in self:
+            _ = super().__getitem__(k)
+        return self.filepath_of(k)
 
 
 # TODO: Would be nicer to solve this with a reusable ttl caching decorator!
@@ -379,6 +388,7 @@ def graze(
     *,
     preget: Optional[Callable] = None,
     max_age: Optional[Union[int, float]] = None,
+    return_filepaths: bool = False,
 ):
     """Get the contents of the url (persisting the results in a local file,
     for next time you'll ask for it)
@@ -401,10 +411,18 @@ def graze(
         'ignore' ignore the error, and return the stale data
     """
     _kwargs = dict(rootdir=rootdir, source=source, preget=preget)
-    if max_age is None:
+    if max_age is None and return_filepaths is False:
         g = Graze(**_kwargs)
     else:
-        g = GrazeWithDataRefresh(**_kwargs, time_to_live=max_age)
+        if return_filepaths is False:
+            g = GrazeWithDataRefresh(**_kwargs, time_to_live=max_age)
+        else:
+            cls = type(
+                'GrazeWithDataRefreshReturningFilepaths',
+                (GrazeReturningFilepaths, GrazeWithDataRefresh),
+                {},
+            )
+            g = cls(**_kwargs, time_to_live=max_age)
     return g[url]
 
 
@@ -443,6 +461,8 @@ def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR, *, download=None):
     return filepath
 
 
+# TODO: Check this out. Is not correct/finished. MakeMissingDirsStoreMixin concernt
+#  should be handled differently (search dol for the right tool)
 def _mk_special_local_graze(local_to_url, url_to_localpath):
     @add_ipython_key_completions
     @wrap_kvs(
