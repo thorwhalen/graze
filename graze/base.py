@@ -20,7 +20,13 @@ from dol import add_ipython_key_completions, wrap_kvs, Files
 # from py2store.stores.local_store import AutoMkDirsOnSetitemMixin
 from dol import mk_dirs_if_missing
 
-from graze.util import handle_missing_dir, is_dropbox_url, bytes_from_dropbox
+from graze.util import (
+    handle_missing_dir,
+    is_special_url,
+    download_from_special_url,
+    human_readable_bytes,
+    get_content_size,
+)
 
 # TODO: handle configuration and existence of root
 pjoin = os.path.join
@@ -204,13 +210,37 @@ class url_to_contents:
 DFLT_URL_TO_CONTENT = url_to_contents.requests_get
 
 
+def _url_to_file_download(url, filepath, url_to_contents=DFLT_URL_TO_CONTENT):
+    """Helper function to make a url-to-file download function from a url-to-contents
+    one.
+    """
+    contents = url_to_contents(url)
+    dirpath = os.path.dirname(filepath)
+    os.makedirs(dirpath, exist_ok=True)  # TODO: REALLY don't like this here.
+    # --> This directory creation is also in mk_dirs_if_missing.
+    # --> Should be centralized
+    with open(filepath, "wb") as f:
+        f.write(contents)
+
+
+# TODO: Think of a better way to handle the contents vs file download cases
+#   For example, better if Internet is not aware at all of local files
 class Internet:
-    def __init__(self, url_to_contents=DFLT_URL_TO_CONTENT):
+    def __init__(
+        self,
+        url_to_contents=DFLT_URL_TO_CONTENT,
+        url_to_file_download=None,  # TODO: Find a good explicit default
+    ):
         """From the url, get content off the internet.
 
         :param url_to_contents: The function that gets you the contents from the url
         """
         self.url_to_contents = url_to_contents
+        if url_to_file_download is None:
+            url_to_file_download = partial(
+                _url_to_file_download, url_to_contents=url_to_contents
+            )
+        self.url_to_file_download = url_to_file_download
 
     # TODO: implement the key-specific getitem mapping externally to make it open-closed
     def __getitem__(self, k):
@@ -220,21 +250,46 @@ class Internet:
             # files) being created:
             k = k[:-1]
 
-        if is_dropbox_url(k):
-            return bytes_from_dropbox(k)
+        if is_special_url(k):
+            return download_from_special_url(k)
         else:
             return self._get_contents_of_url(k)
 
-    def _get_contents_of_url(self, url):
+    def _get_contents_of_url(self, url, file=None):
         try:
-            return self.url_to_contents(url)
+            if file is None:
+                return self.url_to_contents(url)
+            else:
+                return self.url_to_file_download(url, file)
         except RequestFailure as e:
             raise KeyError(e.args[0])
+
+    def download_to_file(self, url, file=None):
+        """Download the contents of the url to the given filepath"""
+        url = url.strip()
+        if url.endswith("/"):
+            # because it shouldn't matter as url (?) and having it leads to dirs (not
+            # files) being created:
+            url = url[:-1]
+
+        if is_special_url(url):
+            return download_from_special_url(url, file)
+        else:
+            return self._get_contents_of_url(url, file)
 
 
 # Typical function to use as a preget to Graze
 def preget_print_downloading_message(key):
     print(f"The contents of {key} are being downloaded")
+
+
+def preget_print_downloading_message_with_size(url):
+    size = get_content_size(url)
+    if size is None:
+        size = " (size unknown)"
+    else:
+        size = f" ({human_readable_bytes(size)})"
+    print(f"The contents {size} of {url} are being downloaded...")
 
 
 # TODO: Use reususable caching decorator?
@@ -258,6 +313,7 @@ class Graze(LocalGrazed):
         source=Internet(),
         *,
         preget: Optional[Callable] = None,
+        return_filepaths: bool = False,
     ):
         """
         :param rootdir: Where to store the contents locally.
@@ -269,21 +325,46 @@ class Graze(LocalGrazed):
             ``source``. Typically, this is used to notify the user that the contents
             are being downloaded. For example, you could use
             ``preget=lambda k: print(f"The contents of {k} are being downloaded")``.
+        :param return_filepaths: If True, will return the path to the file where the
+            contents are stored, instead of the contents themselves.
+
+
         """
         super().__init__(rootdir)
         self.source = source
         self.rootdir = rootdir
+        if preget is True:
+            preget = preget_print_downloading_message
         self.preget = preget
+        self.return_filepaths = return_filepaths
+
+    # def __getitem__(self, k):
+    #     if not super().__contains__(k):
+    #         return self.filepath_of(k)
+    #     return self.filepath_of(k)
+
+    #     path = self.filepath_of(k)  # get the target filepath
+    #     v = super().__getitem__(k)  # get the contents from the target filepath
+    #     if self.return_filepaths:
 
     # TODO: Could be more RAM-efficient by not systematically loading the whole file
     #  in memory when it's not necessary.
     def __missing__(self, k):
         if self.preget:
             self.preget(k)
-        # if you didn't have it "locally", ask src for it
-        v = self.source[k]  # ... get it from _src,
-        self[k] = v  # ... store it in self
-        return v  # ... and return it.
+
+        path = self.filepath_of(k)  # get the target filepath
+        self.source.download_to_file(k, file=path)  # download the contents to target
+        if self.return_filepaths:
+            return path  # if return_path, return the path
+        else:
+            return self[k]  # if not, retrieve contents from file and return them
+
+        # PREVIOUS WAY (using stores -- only return_path=False case
+        # # if you didn't have it "locally", ask src for it
+        # v = self.source[k]  # ... get it from _src,
+        # self[k] = v  # ... store it in self
+        # return v  # ... and return it.
 
     filepath_of = partialmethod(inner_most_key)
     filepath_of.__doc__ = (
@@ -320,32 +401,28 @@ Graze.__signature__ = signature(Graze.__init__)
 
 A_WEEK_IN_SECONDS = 7 * 24 * 60 * 60  # one week
 
+GrazeReturningFilepaths = partial(Graze, return_filepaths=True)
+GrazeReturningFilepaths.__doc__ = """
+A Graze that returns filepaths instead of the contents of the url.
 
-class GrazeReturningFilepaths(Graze):
-    """A Graze that returns filepaths instead of the contents of the url.
+It will still do what graze does (i.e. download the data if it's not already there,
+and use url keys (mapped to local filepaths). Only difference is it doesn't return
+the contents of the url, but the filepath of the local file where the contents
+are stored (once they are stored).
 
-    It will still do what graze does (i.e. download the data if it's not already there,
-    and use url keys (mapped to local filepaths). Only difference is it doesn't return
-    the contents of the url, but the filepath of the local file where the contents
-    are stored (once they are stored).
+This is useful when you want to use the data in a way that doesn't require
+loading the data in memory.
 
-    This is useful when you want to use the data in a way that doesn't require
-    loading the data in memory.
-
-    For example, let's say you're going to call a function that requires a filepath
-    as an input, and you want that function to use a specific url's contents as input.
-    Sure, you can write some docs telling the user to download the data and use the
-    filepath, but it's nicer if you can just give them the url, (or have the url even
-    be in the defaults) and let the function do the downloading if and when necessary.
-    """
-
-    def __getitem__(self, k):
-        if k not in self:
-            _ = super().__getitem__(k)
-        return self.filepath_of(k)
+For example, let's say you're going to call a function that requires a filepath
+as an input, and you want that function to use a specific url's contents as input.
+Sure, you can write some docs telling the user to download the data and use the
+filepath, but it's nicer if you can just give them the url, (or have the url even
+be in the defaults) and let the function do the downloading if and when necessary.
+"""
 
 
 # TODO: Would be nicer to solve this with a reusable ttl caching decorator!
+#       (or possibly, with a preget enhancement)
 class GrazeWithDataRefresh(Graze):
     def __init__(
         self,
@@ -427,20 +504,20 @@ def graze(
         'warn' warn the user of the stale data (but return anyway)
         'ignore' ignore the error, and return the stale data
     """
-    _kwargs = dict(rootdir=rootdir, source=source, preget=preget)
-    if max_age is None and return_filepaths is False:
+    _kwargs = dict(
+        rootdir=rootdir, source=source, preget=preget, return_filepaths=return_filepaths
+    )
+    if max_age is None:
         g = Graze(**_kwargs)
     else:
-        if return_filepaths is False:
-            g = GrazeWithDataRefresh(**_kwargs, time_to_live=max_age)
-        else:
-            cls = type(
-                'GrazeWithDataRefreshReturningFilepaths',
-                (GrazeReturningFilepaths, GrazeWithDataRefresh),
-                {},
-            )
-            g = cls(**_kwargs, time_to_live=max_age)
+        g = GrazeWithDataRefresh(**_kwargs)
     return g[url]
+
+
+graze.preget_print_downloading_message = preget_print_downloading_message
+graze.preget_print_downloading_message_with_size = (
+    preget_print_downloading_message_with_size
+)
 
 
 def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR, *, download=None):
