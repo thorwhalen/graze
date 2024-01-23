@@ -45,7 +45,7 @@ def _url_to_localpath(url: str) -> str:
     >>> _url_to_localpath('http://www.example.com/subdir1/subdir2/file.txt')
     'http/www.example.com_f/subdir1_f/subdir2_f/file.txt'
     >>> _url_to_localpath('https://www.example.com/subdir1/subdir2/file.txt/')
-    'https/www.example.com_f/subdir1_f/subdir2_f/file.txt_f/'
+    'https/www.example.com_f/subdir1_f/subdir2_f/file.txt'
     >>> _url_to_localpath('www.example.com/subdir1/subdir2/file.txt')
     'www.example.com/subdir1_f/subdir2_f/file.txt'
     """
