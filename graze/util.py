@@ -29,7 +29,7 @@ def clog(condition: bool, *args, log_func: Callable = print, **kwargs):
 
     You can also choose a different log function:
 
-    >>> _clog = clog(verbose, log_func=lambda x: f"hello {x}")
+    >>> _clog = clog(True, log_func=lambda x: print(f"hello {x}"))
     >>> _clog("logging this")
     hello logging this
 
@@ -37,9 +37,9 @@ def clog(condition: bool, *args, log_func: Callable = print, **kwargs):
     if not args and not kwargs:
         import functools
 
-        return functools.partial(clog, condition)
+        return functools.partial(clog, condition, log_func=log_func)
     if condition:
-        log_func(*args, **kwargs)
+        return log_func(*args, **kwargs)
 
 
 def handle_missing_dir(dirpath: str, prefix_msg="", ask_first=True, verbose=True):
