@@ -42,18 +42,18 @@ def clog(condition: bool, *args, log_func: Callable = print, **kwargs):
         return log_func(*args, **kwargs)
 
 
-def handle_missing_dir(dirpath: str, prefix_msg="", ask_first=True, verbose=True):
+def handle_missing_dir(dirpath: str, prefix_msg='', ask_first=True, verbose=True):
     _clog = clog(verbose)
-    if dirpath.startswith("~"):
+    if dirpath.startswith('~'):
         dirpath = os.path.expanduser(dirpath)
     if not os.path.isdir(dirpath):
         if ask_first:
             _clog(prefix_msg)
             _clog(f"This directory doesn't exist: {dirpath}")
-            answer = input("Should I make that directory for you? ([Y]/n)?") or "Y"
-            if next(iter(answer.strip().lower()), None) != "y":
+            answer = input('Should I make that directory for you? ([Y]/n)?') or 'Y'
+            if next(iter(answer.strip().lower()), None) != 'y':
                 return
-        _clog(f"Making {dirpath}...")
+        _clog(f'Making {dirpath}...')
         os.mkdir(dirpath)
 
 
@@ -73,7 +73,7 @@ def get_content_size(url: str, *, default=None):
 def human_readable_bytes(
     num_of_bytes: int,
     *,
-    approx_marker="~",
+    approx_marker='~',
     n_digits=4,
     base=1000,
     units=('B', 'KB', 'MB', 'GB', 'TB', 'PB'),
@@ -127,12 +127,12 @@ def human_readable_bytes(
     factor = 1
     for unit in units:
         if num_of_bytes < factor * base:
-            return f"{approx_marker}{num_of_bytes / factor:.{n_digits-1}f}{unit}"
+            return f'{approx_marker}{num_of_bytes / factor:.{n_digits-1}f}{unit}'
         factor *= base
-    return f"{approx_marker}{num_of_bytes:.{n_digits-1}e}{units[-1]}"
+    return f'{approx_marker}{num_of_bytes:.{n_digits-1}e}{units[-1]}'
 
 
-DFLT_USER_AGENT = "Wget/1.16 (linux-gnu)"
+DFLT_USER_AGENT = 'Wget/1.16 (linux-gnu)'
 DFLT_CHK_SIZE = 1024
 
 
@@ -150,7 +150,7 @@ def _first_bytes(src, n_bytes=None):
 def chks_of_url_contents(url, *, chk_size=DFLT_CHK_SIZE, user_agent=DFLT_USER_AGENT):
     """Yield chunks of a url's contents."""
     req = urllib.request.Request(url)
-    req.add_header("user-agent", user_agent)
+    req.add_header('user-agent', user_agent)
     with urllib.request.urlopen(req) as response:
         while True:
             chk = response.read(chk_size)
@@ -184,7 +184,7 @@ def download_url_contents(
             file.seek(0)  # rewind
             return file.read()  # read bytes from the beginning
     elif isinstance(file, str):
-        with open(file, "wb") as _target_file:
+        with open(file, 'wb') as _target_file:
             iter_content_and_copy_to(_target_file)
         return file
     else:
@@ -253,9 +253,9 @@ def _google_drive_id(url: str) -> str:
         # Return the first non-None group found in the match
         return next(g for g in match.groups() if g is not None)
     else:
-        msg = "Only FILE Google Drive URLs are supported, "
+        msg = 'Only FILE Google Drive URLs are supported, '
         msg += "which have the format '...drive.google.com/file/d/{file_id}... "
-        msg += f"This url is not supported: {url}"
+        msg += f'This url is not supported: {url}'
         raise ValueError(msg)
 
 
@@ -267,7 +267,7 @@ def google_drive_download_url(url):
     supported.
     """
     file_id = _google_drive_id(url)
-    return f"https://drive.google.com/uc?export=download&id={file_id}"
+    return f'https://drive.google.com/uc?export=download&id={file_id}'
 
 
 def _is_html_doc(src: Union[bytes, Filepath]):
@@ -316,8 +316,8 @@ def url_with_virus_scan_confirmation_token(url, page_html):
     confirm_token_match = re.search(r'confirm=([0-9A-Za-z_\-]+)&', page_html)
     if not confirm_token_match:
         raise ValueError(
-            "Could not find the confirmation token for the virus scan page of url: "
-            f" {url}."
+            'Could not find the confirmation token for the virus scan page of url: '
+            f' {url}.'
         )
 
     confirmation_token = confirm_token_match.group(1)
@@ -359,4 +359,4 @@ def download_from_special_url(
     for is_special_url, download_func in special_url_routes.items():
         if is_special_url(url):
             return download_func(url, file, **kwargs)
-    raise ValueError(f"Unsupported url: {url}")
+    raise ValueError(f'Unsupported url: {url}')
