@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.util &mdash; graze 0.1.11 documentation</title>
+  <title>graze.util &mdash; graze 0.1.12 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=1e825a29"></script>
+        <script src="../../_static/documentation_options.js?v=297ad043"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -126,18 +126,18 @@
 
 
 
-<span class="k">def</span> <span class="nf">handle_missing_dir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix_msg</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">ask_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">handle_missing_dir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix_msg</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">ask_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="n">_clog</span> <span class="o">=</span> <span class="n">clog</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">dirpath</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">dirpath</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">):</span>
         <span class="n">dirpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">ask_first</span><span class="p">:</span>
             <span class="n">_clog</span><span class="p">(</span><span class="n">prefix_msg</span><span class="p">)</span>
             <span class="n">_clog</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;This directory doesn&#39;t exist: </span><span class="si">{</span><span class="n">dirpath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">answer</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Should I make that directory for you? ([Y]/n)?&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;Y&quot;</span>
-            <span class="k">if</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">answer</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()),</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Should I make that directory for you? ([Y]/n)?&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;Y&#39;</span>
+            <span class="k">if</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">answer</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()),</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span>
                 <span class="k">return</span>
-        <span class="n">_clog</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Making </span><span class="si">{</span><span class="n">dirpath</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+        <span class="n">_clog</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Making </span><span class="si">{</span><span class="n">dirpath</span><span class="si">}</span><span class="s1">...&#39;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
 
 
@@ -162,7 +162,7 @@
 <span class="k">def</span> <span class="nf">human_readable_bytes</span><span class="p">(</span>
     <span class="n">num_of_bytes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">approx_marker</span><span class="o">=</span><span class="s2">&quot;~&quot;</span><span class="p">,</span>
+    <span class="n">approx_marker</span><span class="o">=</span><span class="s1">&#39;~&#39;</span><span class="p">,</span>
     <span class="n">n_digits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
     <span class="n">base</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">units</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;KB&#39;</span><span class="p">,</span> <span class="s1">&#39;MB&#39;</span><span class="p">,</span> <span class="s1">&#39;GB&#39;</span><span class="p">,</span> <span class="s1">&#39;TB&#39;</span><span class="p">,</span> <span class="s1">&#39;PB&#39;</span><span class="p">),</span>
@@ -216,13 +216,13 @@
     <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">units</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">num_of_bytes</span> <span class="o">&lt;</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">base</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">approx_marker</span><span class="si">}{</span><span class="n">num_of_bytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">factor</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">n_digits</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">f</span><span class="si">}{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">approx_marker</span><span class="si">}{</span><span class="n">num_of_bytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">factor</span><span class="si">:</span><span class="s1">.</span><span class="si">{</span><span class="n">n_digits</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s1">f</span><span class="si">}{</span><span class="n">unit</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="n">factor</span> <span class="o">*=</span> <span class="n">base</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">approx_marker</span><span class="si">}{</span><span class="n">num_of_bytes</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">n_digits</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">e</span><span class="si">}{</span><span class="n">units</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span></div>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">approx_marker</span><span class="si">}{</span><span class="n">num_of_bytes</span><span class="si">:</span><span class="s1">.</span><span class="si">{</span><span class="n">n_digits</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s1">e</span><span class="si">}{</span><span class="n">units</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span></div>
 
 
 
-<span class="n">DFLT_USER_AGENT</span> <span class="o">=</span> <span class="s2">&quot;Wget/1.16 (linux-gnu)&quot;</span>
+<span class="n">DFLT_USER_AGENT</span> <span class="o">=</span> <span class="s1">&#39;Wget/1.16 (linux-gnu)&#39;</span>
 <span class="n">DFLT_CHK_SIZE</span> <span class="o">=</span> <span class="mi">1024</span>
 
 
@@ -242,7 +242,7 @@
 <span class="k">def</span> <span class="nf">chks_of_url_contents</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="n">DFLT_CHK_SIZE</span><span class="p">,</span> <span class="n">user_agent</span><span class="o">=</span><span class="n">DFLT_USER_AGENT</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Yield chunks of a url&#39;s contents.&quot;&quot;&quot;</span>
     <span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-    <span class="n">req</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s2">&quot;user-agent&quot;</span><span class="p">,</span> <span class="n">user_agent</span><span class="p">)</span>
+    <span class="n">req</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;user-agent&#39;</span><span class="p">,</span> <span class="n">user_agent</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">chk</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">chk_size</span><span class="p">)</span>
@@ -279,7 +279,7 @@
             <span class="n">file</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># rewind</span>
             <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># read bytes from the beginning</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_target_file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_target_file</span><span class="p">:</span>
             <span class="n">iter_content_and_copy_to</span><span class="p">(</span><span class="n">_target_file</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">file</span>
     <span class="k">else</span><span class="p">:</span>
@@ -352,9 +352,9 @@
         <span class="c1"># Return the first non-None group found in the match</span>
         <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Only FILE Google Drive URLs are supported, &quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Only FILE Google Drive URLs are supported, &#39;</span>
         <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;which have the format &#39;...drive.google.com/file/d/</span><span class="si">{file_id}</span><span class="s2">... &quot;</span>
-        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;This url is not supported: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;This url is not supported: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 
@@ -368,7 +368,7 @@
 <span class="sd">    supported.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file_id</span> <span class="o">=</span> <span class="n">_google_drive_id</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;https://drive.google.com/uc?export=download&amp;id=</span><span class="si">{</span><span class="n">file_id</span><span class="si">}</span><span class="s2">&quot;</span></div>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;https://drive.google.com/uc?export=download&amp;id=</span><span class="si">{</span><span class="n">file_id</span><span class="si">}</span><span class="s1">&#39;</span></div>
 
 
 
@@ -421,8 +421,8 @@
     <span class="n">confirm_token_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;confirm=([0-9A-Za-z_\-]+)&amp;&#39;</span><span class="p">,</span> <span class="n">page_html</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">confirm_token_match</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;Could not find the confirmation token for the virus scan page of url: &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="s1">&#39;Could not find the confirmation token for the virus scan page of url: &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">.&#39;</span>
         <span class="p">)</span>
 
     <span class="n">confirmation_token</span> <span class="o">=</span> <span class="n">confirm_token_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -472,7 +472,7 @@
     <span class="k">for</span> <span class="n">is_special_url</span><span class="p">,</span> <span class="n">download_func</span> <span class="ow">in</span> <span class="n">special_url_routes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">is_special_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">download_func</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported url: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported url: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
 </pre></div>
 
