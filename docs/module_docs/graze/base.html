@@ -1,230 +1,439 @@
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graze.base &mdash; graze 0.1.13 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
 
-    <title>graze.base &#8212; graze 0.1.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/language_data.js"></script>
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="graze.util" href="util.html" />
-    <link rel="prev" title="graze" href="../graze.html" />
-   
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+    <link rel="next" title="graze.migration_tools" href="migration_tools.html" />
+    <link rel="prev" title="graze" href="../graze.html" /> 
+</head>
 
-  </head><body>
-  
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
           
+          
+          <a href="../../index.html" class="icon icon-home">
+            graze
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../graze.html">graze</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">graze.base</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.Graze"><code class="docutils literal notranslate"><span class="pre">Graze</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#graze.base.Graze.filepath_of_url_downloading_if_necessary"><code class="docutils literal notranslate"><span class="pre">Graze.filepath_of_url_downloading_if_necessary()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.GrazeWithDataRefresh"><code class="docutils literal notranslate"><span class="pre">GrazeWithDataRefresh</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.LocalFiles"><code class="docutils literal notranslate"><span class="pre">LocalFiles</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.LocalGrazed"><code class="docutils literal notranslate"><span class="pre">LocalGrazed</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.RequestFailure"><code class="docutils literal notranslate"><span class="pre">RequestFailure</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.graze"><code class="docutils literal notranslate"><span class="pre">graze()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.selenium_url_to_contents"><code class="docutils literal notranslate"><span class="pre">selenium_url_to_contents()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.url_to_contents"><code class="docutils literal notranslate"><span class="pre">url_to_contents</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#graze.base.url_to_contents.selenium_chrome"><code class="docutils literal notranslate"><span class="pre">url_to_contents.selenium_chrome()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#graze.base.url_to_contents.selenium_firefox"><code class="docutils literal notranslate"><span class="pre">url_to_contents.selenium_firefox()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#graze.base.url_to_contents.selenium_opera"><code class="docutils literal notranslate"><span class="pre">url_to_contents.selenium_opera()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#graze.base.url_to_contents.selenium_safari"><code class="docutils literal notranslate"><span class="pre">url_to_contents.selenium_safari()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.url_to_filepath"><code class="docutils literal notranslate"><span class="pre">url_to_filepath()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migration_tools.html">graze.migration_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">graze.util</a></li>
+</ul>
 
-          <div class="body" role="main">
-            
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">graze</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">graze.base</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/graze/base.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="module-graze.base">
-<span id="graze-base"></span><h1>graze.base<a class="headerlink" href="#module-graze.base" title="Permalink to this headline">¶</a></h1>
+<span id="graze-base"></span><h1>graze.base<a class="headerlink" href="#module-graze.base" title="Permalink to this heading"></a></h1>
 <p>Base functionality</p>
 <dl class="py class">
-<dt id="graze.base.Graze">
-<em class="property">class </em><code class="sig-prename descclassname">graze.base.</code><code class="sig-name descname">Graze</code><span class="sig-paren">(</span><em class="sig-param">rootdir='/home/runner/graze'</em>, <em class="sig-param">source=&lt;graze.base.Internet object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#Graze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graze.base.Graze" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graze.base.Graze">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">Graze</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootdir='/home/runner/graze'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source=&lt;graze.base.Internet</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preget:</span> <span class="pre">~typing.Callable</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_filepaths:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#Graze"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.Graze" title="Permalink to this definition"></a></dt>
+<dd><p>A data access object that will get data from the internet if it’s not
+already stored locally.</p>
+<p>The interface of <code class="docutils literal notranslate"><span class="pre">Graze</span></code> instances is a <code class="docutils literal notranslate"><span class="pre">typing.Mapping</span></code> (i.e. <code class="docutils literal notranslate"><span class="pre">dict</span></code>-like).
+When you list (or iterate over) keys, you’ll get the urls
+whose contents are stored locally.
+When you get a value, you’ll get the contents of the url (in bytes).
+<code class="docutils literal notranslate"><span class="pre">Graze</span></code> will first look if the contents are stored locally, and return that,
+if not it will get the contents from the internet and store it locally,
+then return those bytes.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graze.base.Graze.filepath_of_url_downloading_if_necessary">
+<span class="sig-name descname"><span class="pre">filepath_of_url_downloading_if_necessary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#Graze.filepath_of_url_downloading_if_necessary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.Graze.filepath_of_url_downloading_if_necessary" title="Permalink to this definition"></a></dt>
+<dd><p>Get the file path for the url, downloading contents before hand if necessary.</p>
+<p>Use case:</p>
+<p>Sometimes you need to specify a filepath as a resource for some python object.
+For example, some font definition file, or configuration file, or such.
+You can provide the file for the user, or can tell them where they can find
+such a file if needed…
+Use <cite>filepath_of_url_downloading_if_necessary</cite> to get that local filepath,
+ensuring that the data is there before hand.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graze.base.GrazeWithDataRefresh">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">GrazeWithDataRefresh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootdir='/home/runner/graze'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source=&lt;graze.base.Internet</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preget:</span> <span class="pre">~typing.Callable</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_filepaths:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#GrazeWithDataRefresh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.GrazeWithDataRefresh" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
-<dt id="graze.base.GrazeWithDataRefresh">
-<em class="property">class </em><code class="sig-prename descclassname">graze.base.</code><code class="sig-name descname">GrazeWithDataRefresh</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time_to_live</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">604800</span></em>, <em class="sig-param"><span class="n">on_error</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'warn'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#GrazeWithDataRefresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graze.base.GrazeWithDataRefresh" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="graze.base.LocalFiles">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">LocalFiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/runner/graze'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#LocalFiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.LocalFiles" title="Permalink to this definition"></a></dt>
+<dd><p>Store to read/write/delete local files, creating directories on write.</p>
+</dd></dl>
 
 <dl class="py class">
-<dt id="graze.base.LocalGrazed">
-<em class="property">class </em><code class="sig-prename descclassname">graze.base.</code><code class="sig-name descname">LocalGrazed</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#LocalGrazed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graze.base.LocalGrazed" title="Permalink to this definition">¶</a></dt>
-<dd><p>By store we mean key-value store. This could be files in a filesystem, objects in s3, or a database. Where and
-how the content is stored should be specified, but StoreInterface offers a dict-like interface to this.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="fm">__getitem__</span> <span class="n">calls</span><span class="p">:</span> <span class="n">_id_of_key</span>                                       <span class="n">_obj_of_data</span>
-<span class="fm">__setitem__</span> <span class="n">calls</span><span class="p">:</span> <span class="n">_id_of_key</span>                   <span class="n">_data_of_obj</span>
-<span class="fm">__delitem__</span> <span class="n">calls</span><span class="p">:</span> <span class="n">_id_of_key</span>
-<span class="fm">__iter__</span>    <span class="n">calls</span><span class="p">:</span>                  <span class="n">_key_of_id</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Default store: no key or value conversion #####################################</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">dol</span> <span class="kn">import</span> <span class="n">Store</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Store</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">33</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;bar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">65</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">==</span> <span class="p">[(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="mi">33</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="mi">65</span><span class="p">)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">==</span> <span class="p">[(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="mi">33</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="mi">65</span><span class="p">)]</span>  <span class="c1"># see that the store contains the same thing</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#################################################################################</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Now let&#39;s make stores that have a key and value conversion layer ##############</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># input keys will be upper cased, and output keys lower cased ###################</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># input values (assumed int) will be converted to ascii string, and visa versa ##</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#################################################################################</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">test_store</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">s</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">33</span>  <span class="c1"># write 33 to &#39;foo&#39;</span>
-<span class="gp">... </span>    <span class="k">assert</span> <span class="s1">&#39;foo&#39;</span> <span class="ow">in</span> <span class="n">s</span>  <span class="c1"># __contains__ works</span>
-<span class="gp">... </span>    <span class="k">assert</span> <span class="s1">&#39;no_such_key&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span>  <span class="c1"># __nin__ works</span>
-<span class="gp">... </span>    <span class="n">s</span><span class="p">[</span><span class="s1">&#39;bar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">65</span>  <span class="c1"># write 65 to &#39;bar&#39;</span>
-<span class="gp">... </span>    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>  <span class="c1"># there are indeed two elements</span>
-<span class="gp">... </span>    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">]</span>  <span class="c1"># these are the keys</span>
-<span class="gp">... </span>    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">]</span>  <span class="c1"># the keys() method works!</span>
-<span class="gp">... </span>    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">==</span> <span class="p">[</span><span class="mi">33</span><span class="p">,</span> <span class="mi">65</span><span class="p">]</span>  <span class="c1"># the values() method works!</span>
-<span class="gp">... </span>    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">==</span> <span class="p">[(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="mi">33</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="mi">65</span><span class="p">)]</span>  <span class="c1"># these are the items</span>
-<span class="gp">... </span>    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">==</span> <span class="p">[(</span><span class="s1">&#39;FOO&#39;</span><span class="p">,</span> <span class="s1">&#39;!&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;BAR&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">)]</span>  <span class="c1"># but note the internal representation</span>
-<span class="gp">... </span>    <span class="k">assert</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">33</span>  <span class="c1"># the get method works</span>
-<span class="gp">... </span>    <span class="k">assert</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;no_such_key&#39;</span><span class="p">,</span> <span class="s1">&#39;something&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;something&#39;</span>  <span class="c1"># return a default value</span>
-<span class="gp">... </span>    <span class="k">del</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">])</span>  <span class="c1"># you can delete an item given its key</span>
-<span class="gp">... </span>    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>  <span class="c1"># see, only one item left!</span>
-<span class="gp">... </span>    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">==</span> <span class="p">[(</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="mi">65</span><span class="p">)]</span>  <span class="c1"># here it is</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can introduce this conversion layer in several ways. Here&#39;s a few... ######################</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># by subclassing ###############################################################################</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyStore</span><span class="p">(</span><span class="n">Store</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">_id_of_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="n">k</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">_key_of_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_id</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="n">_id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">_data_of_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="nb">chr</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">_obj_of_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="nb">ord</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">MyStore</span><span class="p">(</span><span class="n">store</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span>  <span class="c1"># note that you don&#39;t need to specify dict(), since it&#39;s the default</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">test_store</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># by assigning functions to converters ##########################################################</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyStore</span><span class="p">(</span><span class="n">Store</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="n">_id_of_key</span><span class="p">,</span> <span class="n">_key_of_id</span><span class="p">,</span> <span class="n">_data_of_obj</span><span class="p">,</span> <span class="n">_obj_of_data</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span> <span class="o">=</span> <span class="n">_id_of_key</span>
-<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_key_of_id</span> <span class="o">=</span> <span class="n">_key_of_id</span>
-<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_data_of_obj</span> <span class="o">=</span> <span class="n">_data_of_obj</span>
-<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_obj_of_data</span> <span class="o">=</span> <span class="n">_obj_of_data</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">MyStore</span><span class="p">(</span><span class="nb">dict</span><span class="p">(),</span>
-<span class="gp">... </span>            <span class="n">_id_of_key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
-<span class="gp">... </span>            <span class="n">_key_of_id</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_id</span><span class="p">:</span> <span class="n">_id</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
-<span class="gp">... </span>            <span class="n">_data_of_obj</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">chr</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span>
-<span class="gp">... </span>            <span class="n">_obj_of_data</span><span class="o">=</span><span class="k">lambda</span> <span class="n">data</span><span class="p">:</span> <span class="nb">ord</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">test_store</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># using a Mixin class #############################################################################</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Mixin</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">_id_of_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="n">k</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">_key_of_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_id</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="n">_id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">_data_of_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="nb">chr</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">_obj_of_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="nb">ord</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyStore</span><span class="p">(</span><span class="n">Mixin</span><span class="p">,</span> <span class="n">Store</span><span class="p">):</span>  <span class="c1"># note that the Mixin must come before Store in the mro</span>
-<span class="gp">... </span>    <span class="k">pass</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">MyStore</span><span class="p">()</span>  <span class="c1"># no dict()? No, because default anyway</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">test_store</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># adding wrapper methods to an already made Store instance #########################################</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Store</span><span class="p">(</span><span class="nb">dict</span><span class="p">())</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">_id_of_key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">_key_of_id</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_id</span><span class="p">:</span> <span class="n">_id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">_data_of_obj</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">chr</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">_obj_of_data</span><span class="o">=</span><span class="k">lambda</span> <span class="n">data</span><span class="p">:</span> <span class="nb">ord</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">test_store</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-</pre></div>
-</div>
+<dt class="sig sig-object py" id="graze.base.LocalGrazed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">LocalGrazed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/runner/graze'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#LocalGrazed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.LocalGrazed" title="Permalink to this definition"></a></dt>
+<dd><p>LocalFiles using url as keys</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="graze.base.RequestFailure">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">RequestFailure</span></span><a class="reference internal" href="../../_modules/graze/base.html#RequestFailure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.RequestFailure" title="Permalink to this definition"></a></dt>
+<dd><p>To be used when the request to get the contents of a url failed</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="graze.base.graze">
-<code class="sig-prename descclassname">graze.base.</code><code class="sig-name descname">graze</code><span class="sig-paren">(</span><em class="sig-param">url: str</em>, <em class="sig-param">rootdir: str = '/home/runner/graze'</em>, <em class="sig-param">source=&lt;graze.base.Internet object&gt;</em>, <em class="sig-param">max_age: Optional[Union[int</em>, <em class="sig-param">float]] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#graze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graze.base.graze" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the contents of the url (persisting the results in a local file, for next time you’ll ask for it)</p>
+<dt class="sig sig-object py" id="graze.base.graze">
+<span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">graze</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootdir:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'/home/runner/graze'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source=&lt;graze.base.Internet</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preget:</span> <span class="pre">~typing.Callable</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_age:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_filepaths:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#graze"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.graze" title="Permalink to this definition"></a></dt>
+<dd><p>Get the contents of the url (persisting the results in a local file,
+for next time you’ll ask for it)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rootdir</strong> – Where to store the contents locally.</p></li>
+<li><p><strong>source</strong> – Where to get the contents from if they’re not already stored
+locally. By default, it’s an <code class="docutils literal notranslate"><span class="pre">Internet</span></code> instance, but can be a custom
+object that has a <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> method that takes a url and returns
+its contents.</p></li>
+<li><p><strong>preget</strong> – A function to call on the key before getting the contents from
+<code class="docutils literal notranslate"><span class="pre">source</span></code>. Typically, this is used to notify the user that the contents
+are being downloaded. For example, you could use
+<code class="docutils literal notranslate"><span class="pre">preget=&quot;The</span> <span class="pre">contents</span> <span class="pre">of</span> <span class="pre">{}</span> <span class="pre">are</span> <span class="pre">being</span> <span class="pre">downloaded&quot;.format</span></code>.</p></li>
+<li><p><strong>time_to_live</strong> – If not None, should be a number specifying the number of</p></li>
+</ul>
+</dd>
+</dl>
+<p>seconds a the cached data is considered “fresh”. If the cached data is older
+than this, then it will be re-downloaded from the source.
+:param on_error: What to do if there’s an error when fetching the new data.</p>
+<blockquote>
+<div><p>‘raise’ raise an error (but keep the cached data)
+‘warn’ warn the user of the stale data (but return anyway)
+‘ignore’ ignore the error, and return the stale data</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.base.selenium_url_to_contents">
+<span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">selenium_url_to_contents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_func=&lt;function</span> <span class="pre">_dflt_selenium_response_func&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">browser='Chrome'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#selenium_url_to_contents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.selenium_url_to_contents" title="Permalink to this definition"></a></dt>
+<dd><p>Function to get contents from a url, using selenium.</p>
+<p>To work, selenium needs to be installed an setup (browser drivers (default is
+Chrome)).</p>
+<p>See: <a class="reference external" href="https://selenium-python.readthedocs.io/">https://selenium-python.readthedocs.io/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – The url to fetch</p></li>
+<li><p><strong>response_func</strong> – The function to call on browser object to return html.
+The default is attrgetter(‘page_source’) which just returns the page_source
+attribute. But a custom function can be specified to check for status first,
+or wait a number of seconds, etc.</p></li>
+<li><p><strong>browser</strong> – <p>If a string, will use it as a <cite>selenium.webdriver</cite> attribute.
+It’s the user’s responsibility to have the necessary drivers for this to
+work. When using a string, a browser is made and closed once the page is
+fetched. This is inefficient if many pages need to be fetched.
+To reuse the same browser, or a browser with specific properties, one
+can specify a already made browser.</p>
+<p>``
+b = selenium.webdriver.Chrome(…)
+my_selenium = functools.partial(url_to_contents.selenium, browser=b)
+``</p>
+<p>When doing so, the browser is made/opened when <code class="docutils literal notranslate"><span class="pre">b</span></code> is made, and
+won’t be closed by <code class="docutils literal notranslate"><span class="pre">url_to_contents.selenium</span></code>.
+It’s up to the user to close it (<code class="docutils literal notranslate"><span class="pre">b.close()</span></code>) when they don’t need it
+anymore.</p>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graze.base.url_to_contents">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">url_to_contents</span></span><a class="reference internal" href="../../_modules/graze/base.html#url_to_contents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.url_to_contents" title="Permalink to this definition"></a></dt>
+<dd><p>A place to contain url_to_contents functions. Not meant to be intantiated.
+The only reason for it’s existence is to make it easier for a user to choose
+available url_to_contents functions using tab suggestions.</p>
+<p>The first argument of a url_to_contents function is a URL, and is the only
+argument that an Internet object, where these are used, will use.</p>
+<p>Any extra arguments in url_to_contents functions are meant to be used with
+their defaults or be set by currying (e.g. with <cite>functools.partial</cite>).</p>
+<p>For example, one can use a custom <cite>response_func</cite> to get the data in a particular
+way, and or wait for a page to load, etc.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graze.base.url_to_contents.selenium_chrome">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">selenium_chrome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_func=&lt;function</span> <span class="pre">_dflt_selenium_response_func&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">browser='Chrome'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graze.base.url_to_contents.selenium_chrome" title="Permalink to this definition"></a></dt>
+<dd><p>Function to get contents from a url, using selenium.</p>
+<p>To work, selenium needs to be installed an setup (browser drivers (default is
+Chrome)).</p>
+<p>See: <a class="reference external" href="https://selenium-python.readthedocs.io/">https://selenium-python.readthedocs.io/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – The url to fetch</p></li>
+<li><p><strong>response_func</strong> – The function to call on browser object to return html.
+The default is attrgetter(‘page_source’) which just returns the page_source
+attribute. But a custom function can be specified to check for status first,
+or wait a number of seconds, etc.</p></li>
+<li><p><strong>browser</strong> – <p>If a string, will use it as a <cite>selenium.webdriver</cite> attribute.
+It’s the user’s responsibility to have the necessary drivers for this to
+work. When using a string, a browser is made and closed once the page is
+fetched. This is inefficient if many pages need to be fetched.
+To reuse the same browser, or a browser with specific properties, one
+can specify a already made browser.</p>
+<p>``
+b = selenium.webdriver.Chrome(…)
+my_selenium = functools.partial(url_to_contents.selenium, browser=b)
+``</p>
+<p>When doing so, the browser is made/opened when <code class="docutils literal notranslate"><span class="pre">b</span></code> is made, and
+won’t be closed by <code class="docutils literal notranslate"><span class="pre">url_to_contents.selenium</span></code>.
+It’s up to the user to close it (<code class="docutils literal notranslate"><span class="pre">b.close()</span></code>) when they don’t need it
+anymore.</p>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graze.base.url_to_contents.selenium_firefox">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">selenium_firefox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_func=&lt;function</span> <span class="pre">_dflt_selenium_response_func&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">browser='Firefox'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graze.base.url_to_contents.selenium_firefox" title="Permalink to this definition"></a></dt>
+<dd><p>Function to get contents from a url, using selenium.</p>
+<p>To work, selenium needs to be installed an setup (browser drivers (default is
+Chrome)).</p>
+<p>See: <a class="reference external" href="https://selenium-python.readthedocs.io/">https://selenium-python.readthedocs.io/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – The url to fetch</p></li>
+<li><p><strong>response_func</strong> – The function to call on browser object to return html.
+The default is attrgetter(‘page_source’) which just returns the page_source
+attribute. But a custom function can be specified to check for status first,
+or wait a number of seconds, etc.</p></li>
+<li><p><strong>browser</strong> – <p>If a string, will use it as a <cite>selenium.webdriver</cite> attribute.
+It’s the user’s responsibility to have the necessary drivers for this to
+work. When using a string, a browser is made and closed once the page is
+fetched. This is inefficient if many pages need to be fetched.
+To reuse the same browser, or a browser with specific properties, one
+can specify a already made browser.</p>
+<p>``
+b = selenium.webdriver.Chrome(…)
+my_selenium = functools.partial(url_to_contents.selenium, browser=b)
+``</p>
+<p>When doing so, the browser is made/opened when <code class="docutils literal notranslate"><span class="pre">b</span></code> is made, and
+won’t be closed by <code class="docutils literal notranslate"><span class="pre">url_to_contents.selenium</span></code>.
+It’s up to the user to close it (<code class="docutils literal notranslate"><span class="pre">b.close()</span></code>) when they don’t need it
+anymore.</p>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graze.base.url_to_contents.selenium_opera">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">selenium_opera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_func=&lt;function</span> <span class="pre">_dflt_selenium_response_func&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">browser='Opera'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graze.base.url_to_contents.selenium_opera" title="Permalink to this definition"></a></dt>
+<dd><p>Function to get contents from a url, using selenium.</p>
+<p>To work, selenium needs to be installed an setup (browser drivers (default is
+Chrome)).</p>
+<p>See: <a class="reference external" href="https://selenium-python.readthedocs.io/">https://selenium-python.readthedocs.io/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – The url to fetch</p></li>
+<li><p><strong>response_func</strong> – The function to call on browser object to return html.
+The default is attrgetter(‘page_source’) which just returns the page_source
+attribute. But a custom function can be specified to check for status first,
+or wait a number of seconds, etc.</p></li>
+<li><p><strong>browser</strong> – <p>If a string, will use it as a <cite>selenium.webdriver</cite> attribute.
+It’s the user’s responsibility to have the necessary drivers for this to
+work. When using a string, a browser is made and closed once the page is
+fetched. This is inefficient if many pages need to be fetched.
+To reuse the same browser, or a browser with specific properties, one
+can specify a already made browser.</p>
+<p>``
+b = selenium.webdriver.Chrome(…)
+my_selenium = functools.partial(url_to_contents.selenium, browser=b)
+``</p>
+<p>When doing so, the browser is made/opened when <code class="docutils literal notranslate"><span class="pre">b</span></code> is made, and
+won’t be closed by <code class="docutils literal notranslate"><span class="pre">url_to_contents.selenium</span></code>.
+It’s up to the user to close it (<code class="docutils literal notranslate"><span class="pre">b.close()</span></code>) when they don’t need it
+anymore.</p>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graze.base.url_to_contents.selenium_safari">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">selenium_safari</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_func=&lt;function</span> <span class="pre">_dflt_selenium_response_func&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">browser='Safari'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graze.base.url_to_contents.selenium_safari" title="Permalink to this definition"></a></dt>
+<dd><p>Function to get contents from a url, using selenium.</p>
+<p>To work, selenium needs to be installed an setup (browser drivers (default is
+Chrome)).</p>
+<p>See: <a class="reference external" href="https://selenium-python.readthedocs.io/">https://selenium-python.readthedocs.io/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – The url to fetch</p></li>
+<li><p><strong>response_func</strong> – The function to call on browser object to return html.
+The default is attrgetter(‘page_source’) which just returns the page_source
+attribute. But a custom function can be specified to check for status first,
+or wait a number of seconds, etc.</p></li>
+<li><p><strong>browser</strong> – <p>If a string, will use it as a <cite>selenium.webdriver</cite> attribute.
+It’s the user’s responsibility to have the necessary drivers for this to
+work. When using a string, a browser is made and closed once the page is
+fetched. This is inefficient if many pages need to be fetched.
+To reuse the same browser, or a browser with specific properties, one
+can specify a already made browser.</p>
+<p>``
+b = selenium.webdriver.Chrome(…)
+my_selenium = functools.partial(url_to_contents.selenium, browser=b)
+``</p>
+<p>When doing so, the browser is made/opened when <code class="docutils literal notranslate"><span class="pre">b</span></code> is made, and
+won’t be closed by <code class="docutils literal notranslate"><span class="pre">url_to_contents.selenium</span></code>.
+It’s up to the user to close it (<code class="docutils literal notranslate"><span class="pre">b.close()</span></code>) when they don’t need it
+anymore.</p>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.base.url_to_filepath">
+<span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">url_to_filepath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/home/runner/graze'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#url_to_filepath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.url_to_filepath" title="Permalink to this definition"></a></dt>
+<dd><p>Get the file path for the url.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rootdir</strong> – Where to store the contents locally.</p></li>
+<li><p><strong>download</strong> – Controls when to download the file.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">filepath</span> <span class="o">=</span> <span class="n">url_to_filepath</span><span class="p">(</span><span class="n">url_of_resource</span><span class="p">)</span> 
+</pre></div>
+</div>
+<p>Use case:</p>
+<p>Sometimes you need to specify a filepath as a resource for some python object.
+For example, some font definition file, or configuration file, or such.
+You can provide the file for the user, or can tell them where they can find
+such a file if needed… or you can use the following for the best of both worlds.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">filepath</span> <span class="o">=</span> <span class="n">url_to_filepath</span><span class="p">(</span><span class="n">url_of_resource</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> 
+</pre></div>
+</div>
+<p>If you want to download the file whether it’s there or not, use:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">filepath</span> <span class="o">=</span> <span class="n">url_to_filepath</span><span class="p">(</span><span class="n">url_of_resource</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
 
 
+           </div>
           </div>
-          
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../graze.html" class="btn btn-neutral float-left" title="graze" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="migration_tools.html" class="btn btn-neutral float-right" title="graze.migration_tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../index.html">graze</a></h1>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../graze.html">graze</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">graze.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="util.html">graze.util</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../graze.html" title="previous chapter">graze</a></li>
-      <li>Next: <a href="util.html" title="next chapter">graze.util</a></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;NO COPYRIGHT.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../../_sources/module_docs/graze/base.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>

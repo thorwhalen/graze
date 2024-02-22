@@ -4,4 +4,5 @@
 
    module_docs/graze
    module_docs/graze/base
+   module_docs/graze/migration_tools
    module_docs/graze/util

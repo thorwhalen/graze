@@ -1,37 +1,83 @@
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graze.base &mdash; graze 0.1.13 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>graze.base &#8212; graze 0.1.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/language_data.js"></script>
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-   
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
 
-  </head><body>
-  
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
           
+          
+          <a href="../../index.html" class="icon icon-home">
+            graze
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze.html">graze</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/base.html">graze.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/migration_tools.html">graze.migration_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/util.html">graze.util</a></li>
+</ul>
 
-          <div class="body" role="main">
-            
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">graze</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">graze.base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <h1>Source code for graze.base</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Base functionality&quot;&quot;&quot;</span>
 
@@ -40,94 +86,434 @@
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partialmethod</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partialmethod</span><span class="p">,</span> <span class="n">partial</span>
 
 <span class="kn">import</span> <span class="nn">requests</span>
 
 <span class="kn">from</span> <span class="nn">py2store.dig</span> <span class="kn">import</span> <span class="n">inner_most_key</span>
-<span class="kn">from</span> <span class="nn">py2store.persisters.local_files</span> <span class="kn">import</span> <span class="n">ensure_slash_suffix</span>
-<span class="kn">from</span> <span class="nn">py2store</span> <span class="kn">import</span> <span class="n">add_ipython_key_completions</span><span class="p">,</span> <span class="n">wrap_kvs</span><span class="p">,</span> <span class="n">LocalBinaryStore</span>
-<span class="kn">from</span> <span class="nn">py2store.stores.local_store</span> <span class="kn">import</span> <span class="n">AutoMkDirsOnSetitemMixin</span>
 
-<span class="kn">from</span> <span class="nn">graze.util</span> <span class="kn">import</span> <span class="n">handle_missing_dir</span><span class="p">,</span> <span class="n">is_dropbox_url</span><span class="p">,</span> <span class="n">bytes_from_dropbox</span>
+<span class="c1"># from py2store.persisters.local_files import ensure_slash_suffix</span>
+<span class="kn">from</span> <span class="nn">dol.filesys</span> <span class="kn">import</span> <span class="n">ensure_slash_suffix</span>
+
+<span class="c1"># from py2store import add_ipython_key_completions, wrap_kvs, LocalBinaryStore</span>
+<span class="kn">from</span> <span class="nn">dol</span> <span class="kn">import</span> <span class="n">add_ipython_key_completions</span><span class="p">,</span> <span class="n">wrap_kvs</span><span class="p">,</span> <span class="n">Files</span>
+
+<span class="c1"># from py2store.stores.local_store import AutoMkDirsOnSetitemMixin</span>
+<span class="kn">from</span> <span class="nn">dol</span> <span class="kn">import</span> <span class="n">mk_dirs_if_missing</span>
+
+<span class="kn">from</span> <span class="nn">graze.util</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">handle_missing_dir</span><span class="p">,</span>
+    <span class="n">is_special_url</span><span class="p">,</span>
+    <span class="n">download_from_special_url</span><span class="p">,</span>
+    <span class="n">human_readable_bytes</span><span class="p">,</span>
+    <span class="n">get_content_size</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="c1"># TODO: handle configuration and existence of root</span>
+<span class="n">pjoin</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span>
+<span class="n">psep</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
 
+<span class="n">URL</span> <span class="o">=</span> <span class="nb">str</span>
 <span class="n">DFLT_GRAZE_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~/graze&#39;</span><span class="p">)</span>
+
+
+<span class="n">SUBDIR_SUFFIX</span> <span class="o">=</span> <span class="s1">&#39;_f&#39;</span>
+<span class="n">SUBDIR_SUFFIX_IDX</span> <span class="o">=</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">SUBDIR_SUFFIX</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_url_to_localpath</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; _url_to_localpath(&#39;http://www.example.com/subdir1/subdir2/file.txt&#39;)</span>
+<span class="sd">    &#39;http/www.example.com_f/subdir1_f/subdir2_f/file.txt&#39;</span>
+<span class="sd">    &gt;&gt;&gt; _url_to_localpath(&#39;https://www.example.com/subdir1/subdir2/file.txt/&#39;)</span>
+<span class="sd">    &#39;https/www.example.com_f/subdir1_f/subdir2_f/file.txt&#39;</span>
+<span class="sd">    &gt;&gt;&gt; _url_to_localpath(&#39;www.example.com/subdir1/subdir2/file.txt&#39;)</span>
+<span class="sd">    &#39;www.example.com/subdir1_f/subdir2_f/file.txt&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;https://&#39;</span><span class="p">,</span> <span class="s1">&#39;https/&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span><span class="p">,</span> <span class="s1">&#39;http/&#39;</span><span class="p">)</span>
+    <span class="n">path_subdirs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">psep</span><span class="p">)))</span>
+    <span class="n">path_subdirs</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="s1">&#39;_f&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">path_subdirs</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">pjoin</span><span class="p">(</span><span class="o">*</span><span class="n">path_subdirs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_localpath_to_url</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; _localpath_to_url(&#39;http/www.example.com_f/subdir1_f/subdir2_f/file.txt&#39;)</span>
+<span class="sd">    &#39;http://www.example.com/subdir1/subdir2/file.txt&#39;</span>
+<span class="sd">    &gt;&gt;&gt; _localpath_to_url(&#39;https://www.example.com_f/subdir1_f/subdir2_f/file.txt_f/&#39;)</span>
+<span class="sd">    &#39;https:/www.example.com/subdir1/subdir2/file.txt/&#39;</span>
+<span class="sd">    &gt;&gt;&gt; _localpath_to_url(&#39;www.example.com/subdir1_f/subdir2_f/file.txt&#39;)</span>
+<span class="sd">    &#39;www.example.com/subdir1/subdir2/file.txt&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path_subdirs</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">psep</span><span class="p">)</span>
+    <span class="n">path_subdirs</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[:</span><span class="n">SUBDIR_SUFFIX_IDX</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">path_subdirs</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">pjoin</span><span class="p">(</span><span class="o">*</span><span class="n">path_subdirs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;https/&#39;</span><span class="p">,</span> <span class="s1">&#39;https://&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;http/&#39;</span><span class="p">,</span> <span class="s1">&#39;http://&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># CONTENT_FILENAME = &#39;grazed&#39;</span>
+<span class="n">FOLDER_SUFFIX</span> <span class="o">=</span> <span class="s1">&#39;_f&#39;</span>
+<span class="c1"># CONTENT_PATH_SUFFIX = psep + CONTENT_FILENAME</span>
+<span class="c1"># CONTENT_FILENAME_INDEX = -len(CONTENT_PATH_SUFFIX)</span>
+
+<span class="c1"># def _url_to_localpath(url: str) -&gt; str:</span>
+<span class="c1">#     path = url.replace(&#39;https://&#39;, &#39;https/&#39;).replace(&#39;http://&#39;, &#39;http/&#39;)</span>
+<span class="c1">#     return pjoin(path, CONTENT_FILENAME)</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># def _localpath_to_url(path: str) -&gt; str:</span>
+<span class="c1">#     assert path.endswith(psep + CONTENT_FILENAME), f&#39;Not a valid key: {path}&#39;</span>
+<span class="c1">#     # remove the /CONTENT_FILENAME part</span>
+<span class="c1">#     path = path[:CONTENT_FILENAME_INDEX]</span>
+<span class="c1">#     return path.replace(&#39;https/&#39;, &#39;https://&#39;).replace(&#39;http/&#39;, &#39;http://&#39;)</span>
+
+
+<div class="viewcode-block" id="LocalFiles"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.LocalFiles">[docs]</a><span class="nd">@mk_dirs_if_missing</span>
+<span class="k">class</span> <span class="nc">LocalFiles</span><span class="p">(</span><span class="n">Files</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store to read/write/delete local files, creating directories on write.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rootdir</span><span class="o">=</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">):</span>
+        <span class="n">handle_missing_dir</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ensure_slash_suffix</span><span class="p">(</span><span class="n">rootdir</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="LocalGrazed"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.LocalGrazed">[docs]</a><span class="nd">@add_ipython_key_completions</span>
 <span class="nd">@wrap_kvs</span><span class="p">(</span>
-    <span class="n">key_of_id</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_id</span><span class="p">:</span> <span class="n">_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;https/&#39;</span><span class="p">,</span> <span class="s1">&#39;https://&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;http/&#39;</span><span class="p">,</span> <span class="s1">&#39;http://&#39;</span><span class="p">),</span>
-    <span class="n">id_of_key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;https://&#39;</span><span class="p">,</span> <span class="s1">&#39;https/&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span><span class="p">,</span> <span class="s1">&#39;http/&#39;</span><span class="p">),</span>
+    <span class="n">key_of_id</span><span class="o">=</span><span class="n">_localpath_to_url</span><span class="p">,</span> <span class="n">id_of_key</span><span class="o">=</span><span class="n">_url_to_localpath</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="k">class</span> <span class="nc">LocalGrazed</span><span class="p">(</span><span class="n">AutoMkDirsOnSetitemMixin</span><span class="p">,</span> <span class="n">LocalBinaryStore</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rootdir</span><span class="o">=</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">):</span>
-        <span class="n">handle_missing_dir</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path_format</span><span class="o">=</span><span class="n">ensure_slash_suffix</span><span class="p">(</span><span class="n">rootdir</span><span class="p">))</span></div>
+<span class="k">class</span> <span class="nc">LocalGrazed</span><span class="p">(</span><span class="n">LocalFiles</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;LocalFiles using url as keys&quot;&quot;&quot;</span></div>
 
 
+<div class="viewcode-block" id="RequestFailure"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.RequestFailure">[docs]</a><span class="k">class</span> <span class="nc">RequestFailure</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;To be used when the request to get the contents of a url failed&quot;&quot;&quot;</span></div>
+
+
+<span class="k">def</span> <span class="nf">_dflt_selenium_response_func</span><span class="p">(</span><span class="n">response_obj</span><span class="p">):</span>
+    <span class="n">page_src</span> <span class="o">=</span> <span class="n">response_obj</span><span class="o">.</span><span class="n">page_source</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">page_src</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">page_src</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">page_src</span>
+
+
+<div class="viewcode-block" id="selenium_url_to_contents"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.selenium_url_to_contents">[docs]</a><span class="k">def</span> <span class="nf">selenium_url_to_contents</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">:</span> <span class="n">URL</span><span class="p">,</span> <span class="n">response_func</span><span class="o">=</span><span class="n">_dflt_selenium_response_func</span><span class="p">,</span> <span class="n">browser</span><span class="o">=</span><span class="s1">&#39;Chrome&#39;</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to get contents from a url, using selenium.</span>
+
+<span class="sd">    To work, selenium needs to be installed an setup (browser drivers (default is</span>
+<span class="sd">    Chrome)).</span>
+
+<span class="sd">    See: https://selenium-python.readthedocs.io/</span>
+
+<span class="sd">    :param url: The url to fetch</span>
+<span class="sd">    :param response_func: The function to call on browser object to return html.</span>
+<span class="sd">        The default is attrgetter(&#39;page_source&#39;) which just returns the page_source</span>
+<span class="sd">        attribute. But a custom function can be specified to check for status first,</span>
+<span class="sd">        or wait a number of seconds, etc.</span>
+<span class="sd">    :param browser: If a string, will use it as a `selenium.webdriver` attribute.</span>
+<span class="sd">        It&#39;s the user&#39;s responsibility to have the necessary drivers for this to</span>
+<span class="sd">        work. When using a string, a browser is made and closed once the page is</span>
+<span class="sd">        fetched. This is inefficient if many pages need to be fetched.</span>
+<span class="sd">        To reuse the same browser, or a browser with specific properties, one</span>
+<span class="sd">        can specify a already made browser.</span>
+
+<span class="sd">        ``</span>
+<span class="sd">        b = selenium.webdriver.Chrome(...)</span>
+<span class="sd">        my_selenium = functools.partial(url_to_contents.selenium, browser=b)</span>
+<span class="sd">        ``</span>
+
+<span class="sd">        When doing so, the browser is made/opened when ``b`` is made, and</span>
+<span class="sd">        won&#39;t be closed by ``url_to_contents.selenium``.</span>
+<span class="sd">        It&#39;s up to the user to close it (``b.close()``) when they don&#39;t need it</span>
+<span class="sd">        anymore.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>  <span class="c1"># See: https://selenium-python.readthedocs.io/</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">browser_name</span> <span class="o">=</span> <span class="n">browser</span>
+        <span class="n">mk_browser</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">browser_name</span><span class="p">)</span>
+        <span class="n">browser</span> <span class="o">=</span> <span class="n">mk_browser</span><span class="p">()</span>  <span class="c1"># start web browser</span>
+        <span class="n">close_after_use</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">close_after_use</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">response_func</span><span class="p">(</span><span class="n">browser</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">close_after_use</span><span class="p">:</span>
+        <span class="n">browser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">html</span></div>
+
+
+<div class="viewcode-block" id="url_to_contents"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.url_to_contents">[docs]</a><span class="k">class</span> <span class="nc">url_to_contents</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A place to contain url_to_contents functions. Not meant to be intantiated.</span>
+<span class="sd">    The only reason for it&#39;s existence is to make it easier for a user to choose</span>
+<span class="sd">    available url_to_contents functions using tab suggestions.</span>
+
+<span class="sd">    The first argument of a url_to_contents function is a URL, and is the only</span>
+<span class="sd">    argument that an Internet object, where these are used, will use.</span>
+
+<span class="sd">    Any extra arguments in url_to_contents functions are meant to be used with</span>
+<span class="sd">    their defaults or be set by currying (e.g. with `functools.partial`).</span>
+
+<span class="sd">    For example, one can use a custom `response_func` to get the data in a particular</span>
+<span class="sd">    way, and or wait for a page to load, etc.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Not meant to be instantiated: Just to hold url_to_contents functions&#39;</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">requests_get</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n">URL</span><span class="p">,</span> <span class="n">response_func</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">),</span> <span class="o">**</span><span class="n">request_kwargs</span><span class="p">):</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">request_kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response_func</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">RequestFailure</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Response code was </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s1">.</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;The first 500 characters of the content were: </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+
+    <span class="n">selenium_chrome</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">selenium_url_to_contents</span><span class="p">,</span> <span class="n">browser</span><span class="o">=</span><span class="s1">&#39;Chrome&#39;</span><span class="p">))</span>
+    <span class="n">selenium_safari</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">selenium_url_to_contents</span><span class="p">,</span> <span class="n">browser</span><span class="o">=</span><span class="s1">&#39;Safari&#39;</span><span class="p">))</span>
+    <span class="n">selenium_opera</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">selenium_url_to_contents</span><span class="p">,</span> <span class="n">browser</span><span class="o">=</span><span class="s1">&#39;Opera&#39;</span><span class="p">))</span>
+    <span class="n">selenium_firefox</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span>
+        <span class="n">partial</span><span class="p">(</span><span class="n">selenium_url_to_contents</span><span class="p">,</span> <span class="n">browser</span><span class="o">=</span><span class="s1">&#39;Firefox&#39;</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+<span class="n">DFLT_URL_TO_CONTENT</span> <span class="o">=</span> <span class="n">url_to_contents</span><span class="o">.</span><span class="n">requests_get</span>
+
+
+<span class="k">def</span> <span class="nf">_url_to_file_download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">url_to_contents</span><span class="o">=</span><span class="n">DFLT_URL_TO_CONTENT</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function to make a url-to-file download function from a url-to-contents</span>
+<span class="sd">    one.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">contents</span> <span class="o">=</span> <span class="n">url_to_contents</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">dirpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># TODO: REALLY don&#39;t like this here.</span>
+    <span class="c1"># --&gt; This directory creation is also in mk_dirs_if_missing.</span>
+    <span class="c1"># --&gt; Should be centralized</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+
+
+<span class="c1"># TODO: Think of a better way to handle the contents vs file download cases</span>
+<span class="c1">#   For example, better if Internet is not aware at all of local files</span>
 <span class="k">class</span> <span class="nc">Internet</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;get&#39;</span><span class="p">,</span>
-        <span class="n">response_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">),</span>
-        <span class="o">**</span><span class="n">request_kwargs</span><span class="p">,</span>
+        <span class="n">url_to_contents</span><span class="o">=</span><span class="n">DFLT_URL_TO_CONTENT</span><span class="p">,</span>
+        <span class="n">url_to_file_download</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># TODO: Find a good explicit default</span>
     <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">request_kwargs</span> <span class="o">=</span> <span class="n">request_kwargs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">response_func</span> <span class="o">=</span> <span class="n">response_func</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;From the url, get content off the internet.</span>
+
+<span class="sd">        :param url_to_contents: The function that gets you the contents from the url</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url_to_contents</span> <span class="o">=</span> <span class="n">url_to_contents</span>
+        <span class="k">if</span> <span class="n">url_to_file_download</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">url_to_file_download</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+                <span class="n">_url_to_file_download</span><span class="p">,</span> <span class="n">url_to_contents</span><span class="o">=</span><span class="n">url_to_contents</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url_to_file_download</span> <span class="o">=</span> <span class="n">url_to_file_download</span>
 
     <span class="c1"># TODO: implement the key-specific getitem mapping externally to make it open-closed</span>
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
-            <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">[</span>
-                <span class="p">:</span><span class="o">-</span><span class="mi">1</span>
-            <span class="p">]</span>  <span class="c1"># because it shouldn&#39;t matter as url (?) and having it leads to dirs (not files) being created</span>
-        <span class="k">if</span> <span class="n">is_dropbox_url</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">bytes_from_dropbox</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="c1"># because it shouldn&#39;t matter as url (?) and having it leads to dirs (not</span>
+            <span class="c1"># files) being created:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">is_special_url</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">download_from_special_url</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_contents_of_url</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_contents_of_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
-        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">request_kwargs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_func</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_get_contents_of_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">url_to_contents</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">url_to_file_download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">RequestFailure</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">download_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download the contents of the url to the given filepath&quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+            <span class="c1"># because it shouldn&#39;t matter as url (?) and having it leads to dirs (not</span>
+            <span class="c1"># files) being created:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">is_special_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">download_from_special_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Response code was </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_contents_of_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+
+
+<span class="c1"># Typical function to use as a preget to Graze</span>
+<span class="k">def</span> <span class="nf">preget_print_downloading_message</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The contents of </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> are being downloaded&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">preget_print_downloading_message_with_size</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">get_content_size</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="s1">&#39; (size unknown)&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39; (</span><span class="si">{</span><span class="n">human_readable_bytes</span><span class="p">(</span><span class="n">size</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The contents </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s1"> of </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1"> are being downloaded...&#39;</span><span class="p">)</span>
 
 
 <span class="c1"># TODO: Use reususable caching decorator?</span>
+<span class="c1"># TODO: Not seeing the right signature, but the LocalGrazed one!</span>
 <div class="viewcode-block" id="Graze"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.Graze">[docs]</a><span class="k">class</span> <span class="nc">Graze</span><span class="p">(</span><span class="n">LocalGrazed</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rootdir</span><span class="o">=</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">()):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A data access object that will get data from the internet if it&#39;s not</span>
+<span class="sd">    already stored locally.</span>
+
+<span class="sd">    The interface of ``Graze`` instances is a ``typing.Mapping`` (i.e. ``dict``-like).</span>
+<span class="sd">    When you list (or iterate over) keys, you&#39;ll get the urls</span>
+<span class="sd">    whose contents are stored locally.</span>
+<span class="sd">    When you get a value, you&#39;ll get the contents of the url (in bytes).</span>
+<span class="sd">    ``Graze`` will first look if the contents are stored locally, and return that,</span>
+<span class="sd">    if not it will get the contents from the internet and store it locally,</span>
+<span class="sd">    then return those bytes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">rootdir</span><span class="o">=</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span>
+        <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">(),</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">preget</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">return_filepaths</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param rootdir: Where to store the contents locally.</span>
+<span class="sd">        :param source: Where to get the contents from if they&#39;re not already stored</span>
+<span class="sd">            locally. By default, it&#39;s an ``Internet`` instance, but can be a custom</span>
+<span class="sd">            object that has a ``__getitem__`` method that takes a url and returns</span>
+<span class="sd">            its contents.</span>
+<span class="sd">        :param preget: A function to call on the key before getting the contents from</span>
+<span class="sd">            ``source``. Typically, this is used to notify the user that the contents</span>
+<span class="sd">            are being downloaded. For example, you could use</span>
+<span class="sd">            ``preget=lambda k: print(f&quot;The contents of {k} are being downloaded&quot;)``.</span>
+<span class="sd">        :param return_filepaths: If True, will return the path to the file where the</span>
+<span class="sd">            contents are stored, instead of the contents themselves.</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rootdir</span> <span class="o">=</span> <span class="n">rootdir</span>
+        <span class="k">if</span> <span class="n">preget</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">preget</span> <span class="o">=</span> <span class="n">preget_print_downloading_message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preget</span> <span class="o">=</span> <span class="n">preget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_filepaths</span> <span class="o">=</span> <span class="n">return_filepaths</span>
 
+    <span class="c1"># def __getitem__(self, k):</span>
+    <span class="c1">#     if not super().__contains__(k):</span>
+    <span class="c1">#         return self.filepath_of(k)</span>
+    <span class="c1">#     return self.filepath_of(k)</span>
+
+    <span class="c1">#     path = self.filepath_of(k)  # get the target filepath</span>
+    <span class="c1">#     v = super().__getitem__(k)  # get the contents from the target filepath</span>
+    <span class="c1">#     if self.return_filepaths:</span>
+
+    <span class="c1"># TODO: Could be more RAM-efficient by not systematically loading the whole file</span>
+    <span class="c1">#  in memory when it&#39;s not necessary.</span>
     <span class="k">def</span> <span class="fm">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-        <span class="c1"># if you didn&#39;t have it &quot;locally&quot;, ask src for it</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>  <span class="c1"># ... get it from _src,</span>
-        <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>  <span class="c1"># ... store it in self</span>
-        <span class="k">return</span> <span class="n">v</span>  <span class="c1"># ... and return it.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">preget</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">preget</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filepath_of</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>  <span class="c1"># get the target filepath</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">download_to_file</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>  <span class="c1"># download the contents to target</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_filepaths</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">path</span>  <span class="c1"># if return_path, return the path</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>  <span class="c1"># if not, retrieve contents from file and return them</span>
+
+        <span class="c1"># PREVIOUS WAY (using stores -- only return_path=False case</span>
+        <span class="c1"># # if you didn&#39;t have it &quot;locally&quot;, ask src for it</span>
+        <span class="c1"># v = self.source[k]  # ... get it from _src,</span>
+        <span class="c1"># self[k] = v  # ... store it in self</span>
+        <span class="c1"># return v  # ... and return it.</span>
 
     <span class="n">filepath_of</span> <span class="o">=</span> <span class="n">partialmethod</span><span class="p">(</span><span class="n">inner_most_key</span><span class="p">)</span>
-    <span class="n">filepath_of</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s1">&#39;Get the filepath of where graze stored (or would store) the contents for a url locally&#39;</span>
+    <span class="n">filepath_of</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;Get the filepath of where graze stored (or would store) &#39;</span>
+        <span class="s1">&#39;the contents for a url locally&#39;</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="Graze.filepath_of_url_downloading_if_necessary"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.Graze.filepath_of_url_downloading_if_necessary">[docs]</a>    <span class="k">def</span> <span class="nf">filepath_of_url_downloading_if_necessary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the file path for the url, downloading contents before hand if necessary.</span>
+
+<span class="sd">        Use case:</span>
+
+<span class="sd">        Sometimes you need to specify a filepath as a resource for some python object.</span>
+<span class="sd">        For example, some font definition file, or configuration file, or such.</span>
+<span class="sd">        You can provide the file for the user, or can tell them where they can find</span>
+<span class="sd">        such a file if needed...</span>
+<span class="sd">        Use `filepath_of_url_downloading_if_necessary` to get that local filepath,</span>
+<span class="sd">        ensuring that the data is there before hand.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">url</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>  <span class="c1"># load to make sure we have it (getting it if not)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filepath_of</span><span class="p">(</span><span class="n">url</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">Graze</span><span class="p">,</span> <span class="p">(),</span> <span class="p">{</span><span class="s1">&#39;rootdir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootdir</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">})</span></div>
 
 
+<span class="c1"># TODO: The following is to cope with https://github.com/i2mint/dol/issues/6</span>
+<span class="c1">#  --&gt; Remove when resolved</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
+
+<span class="n">Graze</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">Graze</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+
+
 <span class="n">A_WEEK_IN_SECONDS</span> <span class="o">=</span> <span class="mi">7</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>  <span class="c1"># one week</span>
+
+<span class="n">GrazeReturningFilepaths</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">Graze</span><span class="p">,</span> <span class="n">return_filepaths</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">GrazeReturningFilepaths</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">A Graze that returns filepaths instead of the contents of the url.</span>
+
+<span class="s1">It will still do what graze does (i.e. download the data if it&#39;s not already there,</span>
+<span class="s1">and use url keys (mapped to local filepaths). Only difference is it doesn&#39;t return</span>
+<span class="s1">the contents of the url, but the filepath of the local file where the contents</span>
+<span class="s1">are stored (once they are stored).</span>
+
+<span class="s1">This is useful when you want to use the data in a way that doesn&#39;t require</span>
+<span class="s1">loading the data in memory.</span>
+
+<span class="s1">For example, let&#39;s say you&#39;re going to call a function that requires a filepath</span>
+<span class="s1">as an input, and you want that function to use a specific url&#39;s contents as input.</span>
+<span class="s1">Sure, you can write some docs telling the user to download the data and use the</span>
+<span class="s1">filepath, but it&#39;s nicer if you can just give them the url, (or have the url even</span>
+<span class="s1">be in the defaults) and let the function do the downloading if and when necessary.</span>
+<span class="s1">&#39;&#39;&#39;</span>
 
 
 <span class="c1"># TODO: Would be nicer to solve this with a reusable ttl caching decorator!</span>
+<span class="c1">#       (or possibly, with a preget enhancement)</span>
 <div class="viewcode-block" id="GrazeWithDataRefresh"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.GrazeWithDataRefresh">[docs]</a><span class="k">class</span> <span class="nc">GrazeWithDataRefresh</span><span class="p">(</span><span class="n">Graze</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
+        <span class="n">rootdir</span><span class="o">=</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span>
+        <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">(),</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">preget</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">time_to_live</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_WEEK_IN_SECONDS</span><span class="p">,</span>
         <span class="n">on_error</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Like Graze, but where you can specify a time_to_live &quot;freshness threshold&quot; to trigger the re-download of data</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Like Graze, but where you can specify a time_to_live &quot;freshness threshold&quot; to trigger the re-download of data</span>
 
 <span class="sd">        :param time_to_live: In seconds.</span>
 <span class="sd">        :param on_error: What to do if there&#39;s an error when fetching the new data.</span>
@@ -135,11 +521,12 @@
 <span class="sd">            &#39;warn&#39; warn the user of the stale data (but return anyway)</span>
 <span class="sd">            &#39;ignore&#39; ignore the error, and return the stale data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">preget</span><span class="o">=</span><span class="n">preget</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_to_live</span> <span class="o">=</span> <span class="n">time_to_live</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span> <span class="o">=</span> <span class="n">on_error</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="n">v</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
             <span class="c1"># TODO: Use info store that is not necessarily a local files sys?</span>
@@ -172,13 +559,95 @@
     <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">rootdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span>
     <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">(),</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">preget</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_age</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_filepaths</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get the contents of the url (persisting the results in a local file, for next time you&#39;ll ask for it)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the contents of the url (persisting the results in a local file,</span>
+<span class="sd">    for next time you&#39;ll ask for it)</span>
+
+<span class="sd">    :param rootdir: Where to store the contents locally.</span>
+<span class="sd">    :param source: Where to get the contents from if they&#39;re not already stored</span>
+<span class="sd">        locally. By default, it&#39;s an ``Internet`` instance, but can be a custom</span>
+<span class="sd">        object that has a ``__getitem__`` method that takes a url and returns</span>
+<span class="sd">        its contents.</span>
+<span class="sd">    :param preget: A function to call on the key before getting the contents from</span>
+<span class="sd">        ``source``. Typically, this is used to notify the user that the contents</span>
+<span class="sd">        are being downloaded. For example, you could use</span>
+<span class="sd">        ``preget=&quot;The contents of {} are being downloaded&quot;.format``.</span>
+<span class="sd">    :param time_to_live: If not None, should be a number specifying the number of</span>
+<span class="sd">    seconds a the cached data is considered &quot;fresh&quot;. If the cached data is older</span>
+<span class="sd">    than this, then it will be re-downloaded from the source.</span>
+<span class="sd">    :param on_error: What to do if there&#39;s an error when fetching the new data.</span>
+<span class="sd">        &#39;raise&#39; raise an error (but keep the cached data)</span>
+<span class="sd">        &#39;warn&#39; warn the user of the stale data (but return anyway)</span>
+<span class="sd">        &#39;ignore&#39; ignore the error, and return the stale data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">rootdir</span><span class="o">=</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">preget</span><span class="o">=</span><span class="n">preget</span><span class="p">,</span> <span class="n">return_filepaths</span><span class="o">=</span><span class="n">return_filepaths</span>
+    <span class="p">)</span>
     <span class="k">if</span> <span class="n">max_age</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Graze</span><span class="p">(</span><span class="n">rootdir</span><span class="o">=</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">)[</span><span class="n">url</span><span class="p">]</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">Graze</span><span class="p">(</span><span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">GrazeWithDataRefresh</span><span class="p">(</span><span class="n">time_to_live</span><span class="o">=</span><span class="n">max_age</span><span class="p">)[</span><span class="n">url</span><span class="p">]</span></div>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">GrazeWithDataRefresh</span><span class="p">(</span><span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">g</span><span class="p">[</span><span class="n">url</span><span class="p">]</span></div>
+
+
+<span class="n">graze</span><span class="o">.</span><span class="n">preget_print_downloading_message</span> <span class="o">=</span> <span class="n">preget_print_downloading_message</span>
+<span class="n">graze</span><span class="o">.</span><span class="n">preget_print_downloading_message_with_size</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">preget_print_downloading_message_with_size</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="url_to_filepath"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.url_to_filepath">[docs]</a><span class="k">def</span> <span class="nf">url_to_filepath</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rootdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the file path for the url.</span>
+
+<span class="sd">    :param rootdir: Where to store the contents locally.</span>
+<span class="sd">    :param download: Controls when to download the file.</span>
+
+<span class="sd">    &gt;&gt;&gt; filepath = url_to_filepath(url_of_resource) # doctest: +SKIP</span>
+
+<span class="sd">    Use case:</span>
+
+<span class="sd">    Sometimes you need to specify a filepath as a resource for some python object.</span>
+<span class="sd">    For example, some font definition file, or configuration file, or such.</span>
+<span class="sd">    You can provide the file for the user, or can tell them where they can find</span>
+<span class="sd">    such a file if needed... or you can use the following for the best of both worlds.</span>
+
+<span class="sd">    &gt;&gt;&gt; filepath = url_to_filepath(url_of_resource, download=None) # doctest: +SKIP</span>
+
+<span class="sd">    If you want to download the file whether it&#39;s there or not, use:</span>
+
+<span class="sd">    &gt;&gt;&gt; filepath = url_to_filepath(url_of_resource, download=True) # doctest: +SKIP</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">Graze</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">filepath_of</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>  <span class="c1"># gives us the target filepath via string formatting</span>
+
+    <span class="k">if</span> <span class="n">download</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">url_to_contents</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>  <span class="c1"># download it</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># write it</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">download</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">filepath_of_url_downloading_if_necessary</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filepath</span></div>
+
+
+<span class="c1"># TODO: Check this out. Is not correct/finished. MakeMissingDirsStoreMixin concernt</span>
+<span class="c1">#  should be handled differently (search dol for the right tool)</span>
+<span class="k">def</span> <span class="nf">_mk_special_local_graze</span><span class="p">(</span><span class="n">local_to_url</span><span class="p">,</span> <span class="n">url_to_localpath</span><span class="p">):</span>
+    <span class="nd">@add_ipython_key_completions</span>
+    <span class="nd">@wrap_kvs</span><span class="p">(</span>
+        <span class="n">key_of_id</span><span class="o">=</span><span class="n">local_to_url</span><span class="p">,</span> <span class="n">id_of_key</span><span class="o">=</span><span class="n">url_to_localpath</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">class</span> <span class="nc">_LocalGrazed</span><span class="p">(</span><span class="n">MakeMissingDirsStoreMixin</span><span class="p">,</span> <span class="n">Files</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rootdir</span><span class="o">=</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">):</span>
+            <span class="n">handle_missing_dir</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path_format</span><span class="o">=</span><span class="n">ensure_slash_suffix</span><span class="p">(</span><span class="n">rootdir</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">_LocalGrazed</span>
 
 
 <span class="c1"># Old Graze, used mk_sourced_store</span>
@@ -192,71 +661,31 @@
 <span class="c1"># )</span>
 </pre></div>
 
+           </div>
           </div>
-          
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../index.html">graze</a></h1>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze.html">graze</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/base.html">graze.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/util.html">graze.util</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;NO COPYRIGHT.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>

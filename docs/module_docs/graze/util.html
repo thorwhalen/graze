@@ -1,112 +1,316 @@
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graze.util &mdash; graze 0.1.13 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
 
-    <title>graze.util &#8212; graze 0.1.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/language_data.js"></script>
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="graze.base" href="base.html" />
-   
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+    <link rel="prev" title="graze.migration_tools" href="migration_tools.html" /> 
+</head>
 
-  </head><body>
-  
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
           
-
-          <div class="body" role="main">
-            
-  <section id="module-graze.util">
-<span id="graze-util"></span><h1>graze.util<a class="headerlink" href="#module-graze.util" title="Permalink to this headline">¶</a></h1>
-<p>Utils</p>
-</section>
-
-
-          </div>
           
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../index.html">graze</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p><span class="caption-text">Contents:</span></p>
+          <a href="../../index.html" class="icon icon-home">
+            graze
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../graze.html">graze</a></li>
 <li class="toctree-l1"><a class="reference internal" href="base.html">graze.base</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">graze.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration_tools.html">graze.migration_tools</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">graze.util</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.add_special_url_route"><code class="docutils literal notranslate"><span class="pre">add_special_url_route()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.bytes_from_dropbox"><code class="docutils literal notranslate"><span class="pre">bytes_from_dropbox()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.bytes_of_url_content"><code class="docutils literal notranslate"><span class="pre">bytes_of_url_content()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.chks_of_url_contents"><code class="docutils literal notranslate"><span class="pre">chks_of_url_contents()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.clog"><code class="docutils literal notranslate"><span class="pre">clog()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.download_from_dropbox"><code class="docutils literal notranslate"><span class="pre">download_from_dropbox()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.download_from_google_drive"><code class="docutils literal notranslate"><span class="pre">download_from_google_drive()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.download_from_special_url"><code class="docutils literal notranslate"><span class="pre">download_from_special_url()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.download_url_contents"><code class="docutils literal notranslate"><span class="pre">download_url_contents()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.get_content_size"><code class="docutils literal notranslate"><span class="pre">get_content_size()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.google_drive_download_url"><code class="docutils literal notranslate"><span class="pre">google_drive_download_url()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.human_readable_bytes"><code class="docutils literal notranslate"><span class="pre">human_readable_bytes()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.is_google_drive_url"><code class="docutils literal notranslate"><span class="pre">is_google_drive_url()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.is_special_url"><code class="docutils literal notranslate"><span class="pre">is_special_url()</span></code></a></li>
 </ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="base.html" title="previous chapter">graze.base</a></li>
-  </ul></li>
+</li>
 </ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;NO COPYRIGHT.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../../_sources/module_docs/graze/util.rst.txt"
-          rel="nofollow">Page source</a>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">graze</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">graze.util</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/graze/util.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-graze.util">
+<span id="graze-util"></span><h1>graze.util<a class="headerlink" href="#module-graze.util" title="Permalink to this heading"></a></h1>
+<p>Utils</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.add_special_url_route">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">add_special_url_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url_download_func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/util.html#add_special_url_route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.add_special_url_route" title="Permalink to this definition"></a></dt>
+<dd><p>Add a special url route, i.e. a function that downloads a url’s contents
+for a specific condition on the url.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.bytes_from_dropbox">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">bytes_from_dropbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wget/1.16</span> <span class="pre">(linux-gnu)'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graze.util.bytes_from_dropbox" title="Permalink to this definition"></a></dt>
+<dd><p>Download url contents into a <cite>file</cite> object, or return bytes if <cite>file</cite> is None.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.bytes_of_url_content">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">bytes_of_url_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wget/1.16</span> <span class="pre">(linux-gnu)'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graze.util.bytes_of_url_content" title="Permalink to this definition"></a></dt>
+<dd><p>Download url contents into a <cite>file</cite> object, or return bytes if <cite>file</cite> is None.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.chks_of_url_contents">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">chks_of_url_contents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wget/1.16</span> <span class="pre">(linux-gnu)'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/util.html#chks_of_url_contents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.chks_of_url_contents" title="Permalink to this definition"></a></dt>
+<dd><p>Yield chunks of a url’s contents.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.clog">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">clog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition:</span> <span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_func:</span> <span class="pre">~typing.Callable</span> <span class="pre">=</span> <span class="pre">&lt;built-in</span> <span class="pre">function</span> <span class="pre">print&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/util.html#clog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.clog" title="Permalink to this definition"></a></dt>
+<dd><p>Conditional log</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">clog</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;logging this&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clog</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;logging this&quot;</span><span class="p">)</span>
+<span class="go">logging this</span>
+</pre></div>
+</div>
+<p>One common usage is when there’s a verbose flag that allows the user to specify
+whether they want to log or not. Instead of having to litter your code with
+<cite>if verbose:</cite> statements you can just do this:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># say versbose is True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_clog</span> <span class="o">=</span> <span class="n">clog</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span>  <span class="c1"># makes a clog with a fixed condition</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_clog</span><span class="p">(</span><span class="s2">&quot;logging this&quot;</span><span class="p">)</span>
+<span class="go">logging this</span>
+</pre></div>
+</div>
+<p>You can also choose a different log function:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_clog</span> <span class="o">=</span> <span class="n">clog</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">log_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;hello </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_clog</span><span class="p">(</span><span class="s2">&quot;logging this&quot;</span><span class="p">)</span>
+<span class="go">hello logging this</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.download_from_dropbox">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">download_from_dropbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wget/1.16</span> <span class="pre">(linux-gnu)'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graze.util.download_from_dropbox" title="Permalink to this definition"></a></dt>
+<dd><p>Download url contents into a <cite>file</cite> object, or return bytes if <cite>file</cite> is None.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.download_from_google_drive">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">download_from_google_drive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wget/1.16</span> <span class="pre">(linux-gnu)'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_virus_scan_confirmation_page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/util.html#download_from_google_drive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.download_from_google_drive" title="Permalink to this definition"></a></dt>
+<dd><p>Download a file from a Google Drive URL.
+Will write the downloaded contents bytes to <cite>file</cite>, which can be a local file path
+or file-like object.
+If <cite>file=None</cite>, returns the bytes of the contents of the url.</p>
+<p>Note: File URLs have the format: <cite>…drive.google.com/file/d/{file_id}…</cite>.
+Folder URLs as well as “special format” (google docs, sheets, etc.) URLs are not
+supported.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.download_from_special_url">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">download_from_special_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wget/1.16</span> <span class="pre">(linux-gnu)'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/util.html#download_from_special_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.download_from_special_url" title="Permalink to this definition"></a></dt>
+<dd><p>Download a url’s contents, using a special url route.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.download_url_contents">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">download_url_contents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wget/1.16</span> <span class="pre">(linux-gnu)'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/util.html#download_url_contents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.download_url_contents" title="Permalink to this definition"></a></dt>
+<dd><p>Download url contents into a <cite>file</cite> object, or return bytes if <cite>file</cite> is None.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.get_content_size">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">get_content_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/util.html#get_content_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.get_content_size" title="Permalink to this definition"></a></dt>
+<dd><p>Get the content size of a url, if available, without downloading the content.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.google_drive_download_url">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">google_drive_download_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/util.html#google_drive_download_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.google_drive_download_url" title="Permalink to this definition"></a></dt>
+<dd><p>Get the download url from a FILE Google Drive URL.</p>
+<p>Note: File URLs have the format: <cite>…drive.google.com/file/d/{file_id}…</cite>.
+Folder URLs as well as “special format” (google docs, sheets, etc.) URLs are not
+supported.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.human_readable_bytes">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">human_readable_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_of_bytes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'~'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('B',</span> <span class="pre">'KB',</span> <span class="pre">'MB',</span> <span class="pre">'GB',</span> <span class="pre">'TB',</span> <span class="pre">'PB')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/util.html#human_readable_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.human_readable_bytes" title="Permalink to this definition"></a></dt>
+<dd><p>Convert a number of bytes into a human-readable format with units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_of_bytes</strong> (<em>int</em>) – The number of bytes.</p></li>
+<li><p><strong>approx_marker</strong> (<em>str</em><em>, </em><em>optional</em>) – Marker indicating approximation. Defaults to “~”.</p></li>
+<li><p><strong>n_digits</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of significant digits in the output. Defaults to 4.</p></li>
+<li><p><strong>base</strong> (<em>int</em><em>, </em><em>optional</em>) – Conversion base, 1024 or 1000. Defaults to 1000.</p></li>
+<li><p><strong>units</strong> (<em>tuple</em><em>, </em><em>optional</em>) – Units for conversion. Defaults to (‘B’, ‘KB’, ‘MB’, ‘GB’, ‘TB’, ‘PB’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Human-readable string representing the number of bytes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p>Examples:
+&gt;&gt;&gt; human_readable_bytes(123456)
+‘~123.456KB’
+&gt;&gt;&gt; human_readable_bytes(123456789)
+‘~123.457MB’</p>
+<p>Using <cite>base=1000</cite> (default) is the International System of Units (SI) standard.
+But base=1024 is a common practice in computing.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">human_readable_bytes</span><span class="p">(</span><span class="mi">123456789</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+<span class="go">&#39;~117.738MB&#39;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">human_readable_bytes</span><span class="p">(</span><span class="mi">1234567890123</span><span class="p">)</span>
+<span class="go">&#39;~1.235TB&#39;</span>
+</pre></div>
+</div>
+<p>Tip: Use <cite>functools.partial</cite> to customize the function to your needs.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">readable</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">human_readable_bytes</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">approx_marker</span><span class="o">=</span><span class="s1">&#39;approximately &#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">units</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39; bytes&#39;</span><span class="p">,</span> <span class="s1">&#39; kilobytes&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">readable</span><span class="p">(</span><span class="mi">123456</span><span class="p">)</span>
+<span class="go">&#39;approximately 123.456 kilobytes&#39;</span>
+</pre></div>
+</div>
+<p>Note how the function starts using the scientific notation when it runs out of
+units.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">readable</span><span class="p">(</span><span class="mi">123456789</span><span class="p">)</span>
+<span class="go">&#39;approximately 1.235e+08 kilobytes&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.is_google_drive_url">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">is_google_drive_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/graze/util.html#is_google_drive_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.is_google_drive_url" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if the provided URL is a Google Drive URL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – The URL to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the URL is a Google Drive URL, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">is_google_drive_url</span><span class="p">(</span><span class="s1">&#39;https://drive.google.com/file/d/1Ul5mPePKAO11dG98GN/view&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_google_drive_url</span><span class="p">(</span><span class="s1">&#39;http://drive.google.com/file/d/1Ul5mPePKAO11dG98GN/view&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_google_drive_url</span><span class="p">(</span><span class="s1">&#39;https://example.com/file/d/1Ul5mPePKAO11dG98GN/view&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.is_special_url">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">is_special_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/util.html#is_special_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.is_special_url" title="Permalink to this definition"></a></dt>
+<dd><p>Check if a url is a special url, i.e. if it has a special url route.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="migration_tools.html" class="btn btn-neutral float-left" title="graze.migration_tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
-    
+  <hr/>
 
-    
-  </body>
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>
