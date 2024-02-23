@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.base &mdash; graze 0.1.13 documentation</title>
+  <title>graze.base &mdash; graze 0.1.14 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
@@ -358,12 +358,13 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_contents_of_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
 
 
-<span class="c1"># Typical function to use as a preget to Graze</span>
-<span class="k">def</span> <span class="nf">preget_print_downloading_message</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The contents of </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> are being downloaded&#39;</span><span class="p">)</span>
+<span class="c1"># Typical function to use as a key_ingress to Graze</span>
+<span class="k">def</span> <span class="nf">key_egress_print_downloading_message</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The contents of </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1"> are being downloaded&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">url</span>
 
 
-<span class="k">def</span> <span class="nf">preget_print_downloading_message_with_size</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">key_egress_print_downloading_message_with_size</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">get_content_size</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">size</span> <span class="o">=</span> <span class="s1">&#39; (size unknown)&#39;</span>
@@ -392,7 +393,7 @@
         <span class="n">rootdir</span><span class="o">=</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span>
         <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">(),</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">preget</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">key_ingress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">return_filepaths</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -401,10 +402,9 @@
 <span class="sd">            locally. By default, it&#39;s an ``Internet`` instance, but can be a custom</span>
 <span class="sd">            object that has a ``__getitem__`` method that takes a url and returns</span>
 <span class="sd">            its contents.</span>
-<span class="sd">        :param preget: A function to call on the key before getting the contents from</span>
-<span class="sd">            ``source``. Typically, this is used to notify the user that the contents</span>
-<span class="sd">            are being downloaded. For example, you could use</span>
-<span class="sd">            ``preget=lambda k: print(f&quot;The contents of {k} are being downloaded&quot;)``.</span>
+<span class="sd">        :param key_ingress: A function to call on the key before getting the contents from</span>
+<span class="sd">            ``source``. By default, this is used to notify the user that the contents</span>
+<span class="sd">            are being downloaded.</span>
 <span class="sd">        :param return_filepaths: If True, will return the path to the file where the</span>
 <span class="sd">            contents are stored, instead of the contents themselves.</span>
 
@@ -413,9 +413,9 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rootdir</span> <span class="o">=</span> <span class="n">rootdir</span>
-        <span class="k">if</span> <span class="n">preget</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">preget</span> <span class="o">=</span> <span class="n">preget_print_downloading_message</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">preget</span> <span class="o">=</span> <span class="n">preget</span>
+        <span class="k">if</span> <span class="n">key_ingress</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">key_ingress</span> <span class="o">=</span> <span class="n">key_egress_print_downloading_message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key_ingress</span> <span class="o">=</span> <span class="n">key_ingress</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">return_filepaths</span> <span class="o">=</span> <span class="n">return_filepaths</span>
 
     <span class="c1"># def __getitem__(self, k):</span>
@@ -430,8 +430,8 @@
     <span class="c1"># TODO: Could be more RAM-efficient by not systematically loading the whole file</span>
     <span class="c1">#  in memory when it&#39;s not necessary.</span>
     <span class="k">def</span> <span class="fm">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">preget</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">preget</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_ingress</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_ingress</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filepath_of</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>  <span class="c1"># get the target filepath</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">download_to_file</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>  <span class="c1"># download the contents to target</span>
@@ -502,14 +502,14 @@
 
 
 <span class="c1"># TODO: Would be nicer to solve this with a reusable ttl caching decorator!</span>
-<span class="c1">#       (or possibly, with a preget enhancement)</span>
+<span class="c1">#       (or possibly, with a key_ingress enhancement)</span>
 <div class="viewcode-block" id="GrazeWithDataRefresh"><a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.GrazeWithDataRefresh">[docs]</a><span class="k">class</span> <span class="nc">GrazeWithDataRefresh</span><span class="p">(</span><span class="n">Graze</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rootdir</span><span class="o">=</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span>
         <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">(),</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">preget</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">key_ingress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">time_to_live</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_WEEK_IN_SECONDS</span><span class="p">,</span>
         <span class="n">on_error</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span>
     <span class="p">):</span>
@@ -521,7 +521,7 @@
 <span class="sd">            &#39;warn&#39; warn the user of the stale data (but return anyway)</span>
 <span class="sd">            &#39;ignore&#39; ignore the error, and return the stale data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">preget</span><span class="o">=</span><span class="n">preget</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">key_ingress</span><span class="o">=</span><span class="n">key_ingress</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_to_live</span> <span class="o">=</span> <span class="n">time_to_live</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span> <span class="o">=</span> <span class="n">on_error</span>
 
@@ -560,7 +560,7 @@
     <span class="n">rootdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span>
     <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">(),</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">preget</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">key_ingress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_age</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">return_filepaths</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
@@ -572,10 +572,10 @@
 <span class="sd">        locally. By default, it&#39;s an ``Internet`` instance, but can be a custom</span>
 <span class="sd">        object that has a ``__getitem__`` method that takes a url and returns</span>
 <span class="sd">        its contents.</span>
-<span class="sd">    :param preget: A function to call on the key before getting the contents from</span>
+<span class="sd">    :param key_ingress: A function to call on the key before getting the contents from</span>
 <span class="sd">        ``source``. Typically, this is used to notify the user that the contents</span>
 <span class="sd">        are being downloaded. For example, you could use</span>
-<span class="sd">        ``preget=&quot;The contents of {} are being downloaded&quot;.format``.</span>
+<span class="sd">        ``key_ingress=&quot;The contents of {} are being downloaded&quot;.format``.</span>
 <span class="sd">    :param time_to_live: If not None, should be a number specifying the number of</span>
 <span class="sd">    seconds a the cached data is considered &quot;fresh&quot;. If the cached data is older</span>
 <span class="sd">    than this, then it will be re-downloaded from the source.</span>
@@ -585,7 +585,10 @@
 <span class="sd">        &#39;ignore&#39; ignore the error, and return the stale data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">rootdir</span><span class="o">=</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">preget</span><span class="o">=</span><span class="n">preget</span><span class="p">,</span> <span class="n">return_filepaths</span><span class="o">=</span><span class="n">return_filepaths</span>
+        <span class="n">rootdir</span><span class="o">=</span><span class="n">rootdir</span><span class="p">,</span>
+        <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
+        <span class="n">key_ingress</span><span class="o">=</span><span class="n">key_ingress</span><span class="p">,</span>
+        <span class="n">return_filepaths</span><span class="o">=</span><span class="n">return_filepaths</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">max_age</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">g</span> <span class="o">=</span> <span class="n">Graze</span><span class="p">(</span><span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
@@ -594,9 +597,9 @@
     <span class="k">return</span> <span class="n">g</span><span class="p">[</span><span class="n">url</span><span class="p">]</span></div>
 
 
-<span class="n">graze</span><span class="o">.</span><span class="n">preget_print_downloading_message</span> <span class="o">=</span> <span class="n">preget_print_downloading_message</span>
-<span class="n">graze</span><span class="o">.</span><span class="n">preget_print_downloading_message_with_size</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">preget_print_downloading_message_with_size</span>
+<span class="n">graze</span><span class="o">.</span><span class="n">key_ingress_print_downloading_message</span> <span class="o">=</span> <span class="n">key_egress_print_downloading_message</span>
+<span class="n">graze</span><span class="o">.</span><span class="n">key_ingress_print_downloading_message_with_size</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">key_egress_print_downloading_message_with_size</span>
 <span class="p">)</span>
 
 
