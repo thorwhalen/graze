@@ -9,6 +9,6 @@ from graze.base import (
     graze,
     url_to_filepath,
     url_to_contents,
-    preget_print_downloading_message,
+    key_egress_print_downloading_message,
 )
 from graze.util import handle_missing_dir

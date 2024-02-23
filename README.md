@@ -167,14 +167,13 @@ content_bytes = graze(url, max_age=in_seconds)
 
 ## Can I make graze notify me when it gets a new copy of the data?
 
-Sure! Just specify a `preget` function when you make your `Graze` object, or 
+Sure! Just specify a `key_ingress` function when you make your `Graze` object, or 
 call `graze`. This function will be called on the key (the url) just before contents 
 are being downloaded from the internet. The typical function would be:
 
 ```python
-preget = lambda key: print(f"Getting {key} from the internet")
+key_ingress = lambda key: print(f"Getting {key} from the internet")
 ```
-
 
 ## Does graze work for dropbox links?
 

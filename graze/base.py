@@ -98,7 +98,8 @@ class LocalFiles(Files):
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=_localpath_to_url, id_of_key=_url_to_localpath,
+    key_of_id=_localpath_to_url,
+    id_of_key=_url_to_localpath,
 )
 class LocalGrazed(LocalFiles):
     """LocalFiles using url as keys"""
@@ -277,12 +278,13 @@ class Internet:
             return self._get_contents_of_url(url, file)
 
 
-# Typical function to use as a preget to Graze
-def preget_print_downloading_message(key):
-    print(f'The contents of {key} are being downloaded')
+# Typical function to use as a key_ingress to Graze
+def key_egress_print_downloading_message(url):
+    print(f'The contents of {url} are being downloaded')
+    return url
 
 
-def preget_print_downloading_message_with_size(url):
+def key_egress_print_downloading_message_with_size(url):
     size = get_content_size(url)
     if size is None:
         size = ' (size unknown)'
@@ -311,7 +313,7 @@ class Graze(LocalGrazed):
         rootdir=DFLT_GRAZE_DIR,
         source=Internet(),
         *,
-        preget: Optional[Callable] = None,
+        key_ingress: Optional[Callable] = None,
         return_filepaths: bool = False,
     ):
         """
@@ -320,10 +322,9 @@ class Graze(LocalGrazed):
             locally. By default, it's an ``Internet`` instance, but can be a custom
             object that has a ``__getitem__`` method that takes a url and returns
             its contents.
-        :param preget: A function to call on the key before getting the contents from
-            ``source``. Typically, this is used to notify the user that the contents
-            are being downloaded. For example, you could use
-            ``preget=lambda k: print(f"The contents of {k} are being downloaded")``.
+        :param key_ingress: A function to call on the key before getting the contents from
+            ``source``. By default, this is used to notify the user that the contents
+            are being downloaded.
         :param return_filepaths: If True, will return the path to the file where the
             contents are stored, instead of the contents themselves.
 
@@ -332,9 +333,9 @@ class Graze(LocalGrazed):
         super().__init__(rootdir)
         self.source = source
         self.rootdir = rootdir
-        if preget is True:
-            preget = preget_print_downloading_message
-        self.preget = preget
+        if key_ingress is True:
+            key_ingress = key_egress_print_downloading_message
+        self.key_ingress = key_ingress
         self.return_filepaths = return_filepaths
 
     # def __getitem__(self, k):
@@ -349,8 +350,8 @@ class Graze(LocalGrazed):
     # TODO: Could be more RAM-efficient by not systematically loading the whole file
     #  in memory when it's not necessary.
     def __missing__(self, k):
-        if self.preget:
-            self.preget(k)
+        if self.key_ingress:
+            k = self.key_ingress(k)
 
         path = self.filepath_of(k)  # get the target filepath
         self.source.download_to_file(k, file=path)  # download the contents to target
@@ -421,14 +422,14 @@ be in the defaults) and let the function do the downloading if and when necessar
 
 
 # TODO: Would be nicer to solve this with a reusable ttl caching decorator!
-#       (or possibly, with a preget enhancement)
+#       (or possibly, with a key_ingress enhancement)
 class GrazeWithDataRefresh(Graze):
     def __init__(
         self,
         rootdir=DFLT_GRAZE_DIR,
         source=Internet(),
         *,
-        preget: Optional[Callable] = None,
+        key_ingress: Optional[Callable] = None,
         time_to_live: Union[int, float] = A_WEEK_IN_SECONDS,
         on_error: str = 'warn',
     ):
@@ -440,7 +441,7 @@ class GrazeWithDataRefresh(Graze):
             'warn' warn the user of the stale data (but return anyway)
             'ignore' ignore the error, and return the stale data
         """
-        super().__init__(rootdir, source=source, preget=preget)
+        super().__init__(rootdir, source=source, key_ingress=key_ingress)
         self.time_to_live = time_to_live
         self.on_error = on_error
 
@@ -479,7 +480,7 @@ def graze(
     rootdir: str = DFLT_GRAZE_DIR,
     source=Internet(),
     *,
-    preget: Optional[Callable] = None,
+    key_ingress: Optional[Callable] = None,
     max_age: Optional[Union[int, float]] = None,
     return_filepaths: bool = False,
 ):
@@ -491,10 +492,10 @@ def graze(
         locally. By default, it's an ``Internet`` instance, but can be a custom
         object that has a ``__getitem__`` method that takes a url and returns
         its contents.
-    :param preget: A function to call on the key before getting the contents from
+    :param key_ingress: A function to call on the key before getting the contents from
         ``source``. Typically, this is used to notify the user that the contents
         are being downloaded. For example, you could use
-        ``preget="The contents of {} are being downloaded".format``.
+        ``key_ingress="The contents of {} are being downloaded".format``.
     :param time_to_live: If not None, should be a number specifying the number of
     seconds a the cached data is considered "fresh". If the cached data is older
     than this, then it will be re-downloaded from the source.
@@ -504,7 +505,7 @@ def graze(
         'ignore' ignore the error, and return the stale data
     """
     _kwargs = dict(
-        rootdir=rootdir, source=source, preget=preget, return_filepaths=return_filepaths
+        rootdir=rootdir, source=source, key_ingress=key_ingress, return_filepaths=return_filepaths
     )
     if max_age is None:
         g = Graze(**_kwargs)
@@ -513,9 +514,9 @@ def graze(
     return g[url]
 
 
-graze.preget_print_downloading_message = preget_print_downloading_message
-graze.preget_print_downloading_message_with_size = (
-    preget_print_downloading_message_with_size
+graze.key_ingress_print_downloading_message = key_egress_print_downloading_message
+graze.key_ingress_print_downloading_message_with_size = (
+    key_egress_print_downloading_message_with_size
 )
 
 
@@ -559,7 +560,8 @@ def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR, *, download=None):
 def _mk_special_local_graze(local_to_url, url_to_localpath):
     @add_ipython_key_completions
     @wrap_kvs(
-        key_of_id=local_to_url, id_of_key=url_to_localpath,
+        key_of_id=local_to_url,
+        id_of_key=url_to_localpath,
     )
     class _LocalGrazed(MakeMissingDirsStoreMixin, Files):
         def __init__(self, rootdir=DFLT_GRAZE_DIR):
