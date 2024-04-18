@@ -98,7 +98,8 @@ class LocalFiles(Files):
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=_localpath_to_url, id_of_key=_url_to_localpath,
+    key_of_id=_localpath_to_url,
+    id_of_key=_url_to_localpath,
 )
 class LocalGrazed(LocalFiles):
     """LocalFiles using url as keys"""
@@ -431,6 +432,7 @@ class GrazeWithDataRefresh(Graze):
         key_ingress: Optional[Callable] = None,
         time_to_live: Union[int, float] = A_WEEK_IN_SECONDS,
         on_error: str = 'warn',
+        return_filepaths: bool = False,
     ):
         """Like Graze, but where you can specify a time_to_live "freshness threshold" to trigger the re-download of data
 
@@ -440,7 +442,12 @@ class GrazeWithDataRefresh(Graze):
             'warn' warn the user of the stale data (but return anyway)
             'ignore' ignore the error, and return the stale data
         """
-        super().__init__(rootdir, source=source, key_ingress=key_ingress)
+        super().__init__(
+            rootdir,
+            source=source,
+            key_ingress=key_ingress,
+            return_filepaths=return_filepaths,
+        )
         self.time_to_live = time_to_live
         self.on_error = on_error
 
@@ -562,7 +569,8 @@ def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR, *, download=None):
 def _mk_special_local_graze(local_to_url, url_to_localpath):
     @add_ipython_key_completions
     @wrap_kvs(
-        key_of_id=local_to_url, id_of_key=url_to_localpath,
+        key_of_id=local_to_url,
+        id_of_key=url_to_localpath,
     )
     class _LocalGrazed(MakeMissingDirsStoreMixin, Files):
         def __init__(self, rootdir=DFLT_GRAZE_DIR):
