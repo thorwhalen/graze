@@ -98,8 +98,7 @@ class LocalFiles(Files):
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=_localpath_to_url,
-    id_of_key=_url_to_localpath,
+    key_of_id=_localpath_to_url, id_of_key=_url_to_localpath,
 )
 class LocalGrazed(LocalFiles):
     """LocalFiles using url as keys"""
@@ -569,8 +568,7 @@ def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR, *, download=None):
 def _mk_special_local_graze(local_to_url, url_to_localpath):
     @add_ipython_key_completions
     @wrap_kvs(
-        key_of_id=local_to_url,
-        id_of_key=url_to_localpath,
+        key_of_id=local_to_url, id_of_key=url_to_localpath,
     )
     class _LocalGrazed(MakeMissingDirsStoreMixin, Files):
         def __init__(self, rootdir=DFLT_GRAZE_DIR):
