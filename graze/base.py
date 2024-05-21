@@ -34,7 +34,7 @@ psep = os.path.sep
 URL = str
 DFLT_GRAZE_DIR = os.path.expanduser('~/graze')
 
-
+# TODO: Make url-localpath conversion a plugin (with class or partials)
 SUBDIR_SUFFIX = '_f'
 SUBDIR_SUFFIX_IDX = -len(SUBDIR_SUFFIX)
 
@@ -50,7 +50,7 @@ def _url_to_localpath(url: str) -> str:
     """
     path = url.replace('https://', 'https/').replace('http://', 'http/')
     path_subdirs = list(filter(None, path.split(psep)))
-    path_subdirs[1:-1] = [x + '_f' for x in path_subdirs[1:-1]]
+    path_subdirs[1:-1] = [x + SUBDIR_SUFFIX for x in path_subdirs[1:-1]]
     return pjoin(*path_subdirs)
 
 
@@ -70,7 +70,7 @@ def _localpath_to_url(path: str) -> str:
 
 
 # CONTENT_FILENAME = 'grazed'
-FOLDER_SUFFIX = '_f'
+FOLDER_SUFFIX = SUBDIR_SUFFIX  # TODO: Check usage and delete if none
 # CONTENT_PATH_SUFFIX = psep + CONTENT_FILENAME
 # CONTENT_FILENAME_INDEX = -len(CONTENT_PATH_SUFFIX)
 
@@ -97,7 +97,8 @@ class LocalFiles(Files):
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=_localpath_to_url, id_of_key=_url_to_localpath,
+    key_of_id=_localpath_to_url,
+    id_of_key=_url_to_localpath,
 )
 class LocalGrazed(LocalFiles):
     """LocalFiles using url as keys"""
@@ -532,6 +533,7 @@ def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR, *, download=None):
 
     :param rootdir: Where to store the contents locally.
     :param download: Controls when to download the file.
+        If None (default), will download only if "necessary"
 
     >>> filepath = url_to_filepath(url_of_resource) # doctest: +SKIP
 
@@ -558,6 +560,7 @@ def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR, *, download=None):
             f.write(b)
     elif download is None:
         filepath = g.filepath_of_url_downloading_if_necessary(url)
+    # else: download is False, or anything else, we won't download
 
     return filepath
 
