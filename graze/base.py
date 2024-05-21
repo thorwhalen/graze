@@ -97,8 +97,7 @@ class LocalFiles(Files):
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=_localpath_to_url,
-    id_of_key=_url_to_localpath,
+    key_of_id=_localpath_to_url, id_of_key=_url_to_localpath,
 )
 class LocalGrazed(LocalFiles):
     """LocalFiles using url as keys"""

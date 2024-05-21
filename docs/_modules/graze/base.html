@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.base &mdash; graze 0.1.16 documentation</title>
+  <title>graze.base &mdash; graze 0.1.17 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
@@ -115,7 +115,7 @@
 <span class="n">URL</span> <span class="o">=</span> <span class="nb">str</span>
 <span class="n">DFLT_GRAZE_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~/graze&#39;</span><span class="p">)</span>
 
-
+<span class="c1"># TODO: Make url-localpath conversion a plugin (with class or partials)</span>
 <span class="n">SUBDIR_SUFFIX</span> <span class="o">=</span> <span class="s1">&#39;_f&#39;</span>
 <span class="n">SUBDIR_SUFFIX_IDX</span> <span class="o">=</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">SUBDIR_SUFFIX</span><span class="p">)</span>
 
@@ -131,7 +131,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;https://&#39;</span><span class="p">,</span> <span class="s1">&#39;https/&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span><span class="p">,</span> <span class="s1">&#39;http/&#39;</span><span class="p">)</span>
     <span class="n">path_subdirs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">psep</span><span class="p">)))</span>
-    <span class="n">path_subdirs</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="s1">&#39;_f&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">path_subdirs</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">path_subdirs</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">SUBDIR_SUFFIX</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">path_subdirs</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
     <span class="k">return</span> <span class="n">pjoin</span><span class="p">(</span><span class="o">*</span><span class="n">path_subdirs</span><span class="p">)</span>
 
 
@@ -151,7 +151,7 @@
 
 
 <span class="c1"># CONTENT_FILENAME = &#39;grazed&#39;</span>
-<span class="n">FOLDER_SUFFIX</span> <span class="o">=</span> <span class="s1">&#39;_f&#39;</span>
+<span class="n">FOLDER_SUFFIX</span> <span class="o">=</span> <span class="n">SUBDIR_SUFFIX</span>  <span class="c1"># TODO: Check usage and delete if none</span>
 <span class="c1"># CONTENT_PATH_SUFFIX = psep + CONTENT_FILENAME</span>
 <span class="c1"># CONTENT_FILENAME_INDEX = -len(CONTENT_PATH_SUFFIX)</span>
 
@@ -613,6 +613,7 @@
 
 <span class="sd">    :param rootdir: Where to store the contents locally.</span>
 <span class="sd">    :param download: Controls when to download the file.</span>
+<span class="sd">        If None (default), will download only if &quot;necessary&quot;</span>
 
 <span class="sd">    &gt;&gt;&gt; filepath = url_to_filepath(url_of_resource) # doctest: +SKIP</span>
 
@@ -639,6 +640,7 @@
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">download</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">filepath</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">filepath_of_url_downloading_if_necessary</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="c1"># else: download is False, or anything else, we won&#39;t download</span>
 
     <span class="k">return</span> <span class="n">filepath</span></div>
 
