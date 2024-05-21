@@ -8,6 +8,39 @@ import re
 from io import BytesIO
 
 Filepath = str
+
+
+def last_element(iterable, *, default=None):
+    """
+    Returns the last element of an iterable, or a default if the iterable is empty.
+    """
+    x = default
+    for x in iterable:
+        pass
+    return x
+
+
+def store_trans_path(store, arg, method):
+    f = getattr(store, method, None)
+    if f is not None:
+        trans_arg = f(arg)
+        yield trans_arg
+        if hasattr(store, 'store'):
+            yield from unravel_key(store.store, trans_arg)
+
+
+unravel_key = partial(store_trans_path, method='_id_of_key')
+
+
+def inner_most(store, arg, method):
+    return last_element(store_trans_path(store, arg, method))
+
+
+# The only raison d'être of everything above is to define inner_most_key:
+# TODO: Write a standalone for inner_most_key? (Came originally from py2store.dig)
+inner_most_key = partial(inner_most, method='_id_of_key')
+
+
 # --------------------- General ---------------------
 
 

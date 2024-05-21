@@ -9,8 +9,6 @@ from functools import partialmethod, partial
 
 import requests
 
-from py2store.dig import inner_most_key
-
 # from py2store.persisters.local_files import ensure_slash_suffix
 from dol.filesys import ensure_slash_suffix
 
@@ -26,6 +24,7 @@ from graze.util import (
     download_from_special_url,
     human_readable_bytes,
     get_content_size,
+    inner_most_key,
 )
 
 # TODO: handle configuration and existence of root
@@ -563,19 +562,19 @@ def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR, *, download=None):
     return filepath
 
 
-# TODO: Check this out. Is not correct/finished. MakeMissingDirsStoreMixin concernt
-#  should be handled differently (search dol for the right tool)
-def _mk_special_local_graze(local_to_url, url_to_localpath):
-    @add_ipython_key_completions
-    @wrap_kvs(
-        key_of_id=local_to_url, id_of_key=url_to_localpath,
-    )
-    class _LocalGrazed(MakeMissingDirsStoreMixin, Files):
-        def __init__(self, rootdir=DFLT_GRAZE_DIR):
-            handle_missing_dir(rootdir)
-            super().__init__(path_format=ensure_slash_suffix(rootdir))
+# # TODO: Check this out. Is not correct/finished. MakeMissingDirsStoreMixin concernt
+# #  should be handled differently (search dol for the right tool)
+# def _mk_special_local_graze(local_to_url, url_to_localpath):
+#     @add_ipython_key_completions
+#     @wrap_kvs(
+#         key_of_id=local_to_url, id_of_key=url_to_localpath,
+#     )
+#     class _LocalGrazed(MakeMissingDirsStoreMixin, Files):
+#         def __init__(self, rootdir=DFLT_GRAZE_DIR):
+#             handle_missing_dir(rootdir)
+#             super().__init__(path_format=ensure_slash_suffix(rootdir))
 
-    return _LocalGrazed
+#     return _LocalGrazed
 
 
 # Old Graze, used mk_sourced_store
