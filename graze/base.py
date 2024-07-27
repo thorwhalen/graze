@@ -1,6 +1,6 @@
 """Base functionality"""
 
-from typing import Optional, Callable, Union
+from typing import Optional, Callable, Union, Any
 import os
 import time
 from warnings import warn
@@ -26,6 +26,10 @@ from graze.util import (
     get_content_size,
     inner_most_key,
 )
+
+Url = str
+LocalPath = str
+Contents = Union[bytes, str]
 
 # TODO: handle configuration and existence of root
 pjoin = os.path.join
@@ -100,7 +104,8 @@ class LocalFiles(Files):
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=localpath_to_url, id_of_key=url_to_localpath,
+    key_of_id=localpath_to_url,
+    id_of_key=url_to_localpath,
 )
 class LocalGrazed(LocalFiles):
     """LocalFiles using url as keys"""
@@ -211,17 +216,94 @@ class url_to_contents:
 DFLT_URL_TO_CONTENT = url_to_contents.requests_get
 
 
-def _url_to_file_download(url, filepath, url_to_contents=DFLT_URL_TO_CONTENT):
-    """Helper function to make a url-to-file download function from a url-to-contents
-    one.
-    """
-    contents = url_to_contents(url)
+def _ensure_dirs_of_file_exists(filepath: str):
     dirpath = os.path.dirname(filepath)
     os.makedirs(dirpath, exist_ok=True)  # TODO: REALLY don't like this here.
-    # --> This directory creation is also in mk_dirs_if_missing.
-    # --> Should be centralized
-    with open(filepath, 'wb') as f:
+
+
+def _write_to_file(contents, filepath, *, mode='wb'):
+    with open(filepath, mode) as f:
         f.write(contents)
+
+
+def _read_file(filepath, *, mode='rb'):
+    with open(filepath, mode) as f:
+        return f.read()
+
+
+def return_contents(filepath, contents, url):
+    return contents
+
+
+def return_filepath(filepath, contents, url):
+    return filepath
+
+
+# TODO: The function boils down a more abstract key-value caching pattern.
+#   (src_key, targ_key, *, read_src_key, write_to_targ_key, src_key_to_targ_key, ...)
+# TODO: This function is in line to become the most central function of the package.
+#   -> Refactor the package to use it?
+def url_to_file_download(
+    url,
+    filepath=None,
+    *,
+    url_to_contents: Callable[[Url], Contents] = DFLT_URL_TO_CONTENT,
+    write_contents_to_file: Callable[[Contents, LocalPath], Any] = _write_to_file,
+    url_to_path: Callable = url_to_localpath,
+    overwrite: Union[bool, Callable[[LocalPath, Url], bool]] = True,
+    rootdir: LocalPath = DFLT_GRAZE_DIR,
+    ensure_dirs: bool = True,
+    read_contents_of_file: Callable[[LocalPath], Contents] = _read_file,
+    return_func: Callable[[LocalPath, Contents, Url], Any] = return_contents,
+):
+    """Helper to make a url-to-file download functions (using partial).
+
+    Args:
+        url: The url to download from
+        filepath: The local file path to download to. If None, will be derived from url
+        url_to_contents: The function to get the contents from the url
+        write_contents_to_file: The function to write the contents to a file
+        url_to_path: The function to get the local file path from the url
+        overwrite: Whether to overwrite the file if it exists.
+            Can be a boolean, or a function that takes a LocalPath and Url and returns
+            a boolean. For example, one can use this to only redownload and overwrite
+            the data if the file hasn't been modified for X days (i.e. stale contents).
+        rootdir: The root directory where the file will be stored
+        ensure_dirs: Whether to ensure the directories of the file exist
+        read_contents_of_file: The function to read the contents of a file
+        return_func: The function that determines what to return.
+            The default is to return the contents, but could be any function of
+            filepath, contents and url.
+
+    A few recipes:
+
+    Download in chunks, and possibly to multiple files in a directory?
+    You can make `url_to_contents` return the url itself, and `write_contents_to_file`
+    do the work of opening url and filepath, and launch a get-chunk-write-chunk
+    process.
+
+    Need to decide how to download the url based on some characteristics of the url?
+    For example, if it's a dropbox url with dl=0, change that to dl=1.
+    Put this in the url_to_contents logic.
+
+    """
+    if filepath is None:
+        filepath = os.path.join(rootdir, url_to_path(url))
+
+    if os.path.exists(filepath) and not overwrite:
+        # if file exists and we're not supposed to overwrite it, just get the contents
+        contents = read_contents_of_file(filepath)
+    else:
+        # if not, get the contents of the url
+        contents = url_to_contents(url)
+        if ensure_dirs:
+            _ensure_dirs_of_file_exists(filepath)
+        write_contents_to_file(contents, filepath)
+
+    return return_func(filepath, contents, url)
+
+
+_url_to_file_download = url_to_file_download  # backcompatibility alias
 
 
 # TODO: Think of a better way to handle the contents vs file download cases

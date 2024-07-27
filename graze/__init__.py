@@ -1,6 +1,7 @@
 """Getting stuff from the internet (and caching locally, automatically)"""
 
 from graze.base import (
+    url_to_file_download,
     DFLT_GRAZE_DIR,
     Internet,
     Graze,
