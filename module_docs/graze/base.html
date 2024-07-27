@@ -4,11 +4,11 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.base &mdash; graze 0.1.13 documentation</title>
+  <title>graze.base &mdash; graze 0.1.17 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
 
   
   <!--[if lt IE 9]>
@@ -17,8 +17,8 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=8d02545a"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/documentation_options.js?v=71734efd"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
         <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.LocalGrazed"><code class="docutils literal notranslate"><span class="pre">LocalGrazed</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.RequestFailure"><code class="docutils literal notranslate"><span class="pre">RequestFailure</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.graze"><code class="docutils literal notranslate"><span class="pre">graze()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.localpath_to_url"><code class="docutils literal notranslate"><span class="pre">localpath_to_url()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.selenium_url_to_contents"><code class="docutils literal notranslate"><span class="pre">selenium_url_to_contents()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.url_to_contents"><code class="docutils literal notranslate"><span class="pre">url_to_contents</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#graze.base.url_to_contents.selenium_chrome"><code class="docutils literal notranslate"><span class="pre">url_to_contents.selenium_chrome()</span></code></a></li>
@@ -71,6 +72,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.url_to_filepath"><code class="docutils literal notranslate"><span class="pre">url_to_filepath()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.url_to_localpath"><code class="docutils literal notranslate"><span class="pre">url_to_localpath()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="migration_tools.html">graze.migration_tools</a></li>
@@ -183,6 +185,19 @@ than this, then it will be re-downloaded from the source.
 ‘warn’ warn the user of the stale data (but return anyway)
 ‘ignore’ ignore the error, and return the stale data</p>
 </div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.base.localpath_to_url">
+<span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">localpath_to_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/graze/base.html#localpath_to_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.localpath_to_url" title="Link to this definition"></a></dt>
+<dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">localpath_to_url</span><span class="p">(</span><span class="s1">&#39;http/www.example.com_f/subdir1_f/subdir2_f/file.txt&#39;</span><span class="p">)</span>
+<span class="go">&#39;http://www.example.com/subdir1/subdir2/file.txt&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">localpath_to_url</span><span class="p">(</span><span class="s1">&#39;https://www.example.com_f/subdir1_f/subdir2_f/file.txt_f/&#39;</span><span class="p">)</span>
+<span class="go">&#39;https:/www.example.com/subdir1/subdir2/file.txt/&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">localpath_to_url</span><span class="p">(</span><span class="s1">&#39;www.example.com/subdir1_f/subdir2_f/file.txt&#39;</span><span class="p">)</span>
+<span class="go">&#39;www.example.com/subdir1/subdir2/file.txt&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -382,7 +397,8 @@ anymore.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rootdir</strong> – Where to store the contents locally.</p></li>
-<li><p><strong>download</strong> – Controls when to download the file.</p></li>
+<li><p><strong>download</strong> – Controls when to download the file.
+If None (default), will download only if “necessary”</p></li>
 </ul>
 </dd>
 </dl>
@@ -399,6 +415,19 @@ such a file if needed… or you can use the following for the best of both world
 </div>
 <p>If you want to download the file whether it’s there or not, use:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">filepath</span> <span class="o">=</span> <span class="n">url_to_filepath</span><span class="p">(</span><span class="n">url_of_resource</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.base.url_to_localpath">
+<span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">url_to_localpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/graze/base.html#url_to_localpath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.url_to_localpath" title="Link to this definition"></a></dt>
+<dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">url_to_localpath</span><span class="p">(</span><span class="s1">&#39;http://www.example.com/subdir1/subdir2/file.txt&#39;</span><span class="p">)</span>
+<span class="go">&#39;http/www.example.com_f/subdir1_f/subdir2_f/file.txt&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url_to_localpath</span><span class="p">(</span><span class="s1">&#39;https://www.example.com/subdir1/subdir2/file.txt/&#39;</span><span class="p">)</span>
+<span class="go">&#39;https/www.example.com_f/subdir1_f/subdir2_f/file.txt&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url_to_localpath</span><span class="p">(</span><span class="s1">&#39;www.example.com/subdir1/subdir2/file.txt&#39;</span><span class="p">)</span>
+<span class="go">&#39;www.example.com/subdir1_f/subdir2_f/file.txt&#39;</span>
 </pre></div>
 </div>
 </dd></dl>
