@@ -68,6 +68,7 @@ def localpath_to_url(path: str) -> str:
     url = pjoin(*path_subdirs)
     return url.replace('https/', 'https://').replace('http/', 'http://')
 
+
 _url_to_localpath = url_to_localpath  # backward compatibility
 _localpath_to_url = localpath_to_url  # backward compatibility
 
