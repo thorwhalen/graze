@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.base &mdash; graze 0.1.18 documentation</title>
+  <title>graze.base &mdash; graze 0.1.19 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=9969ed3f"></script>
+        <script src="../../_static/documentation_options.js?v=3d116926"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -81,7 +81,7 @@
   <h1>Source code for graze.base</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Base functionality&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
@@ -107,6 +107,10 @@
     <span class="n">get_content_size</span><span class="p">,</span>
     <span class="n">inner_most_key</span><span class="p">,</span>
 <span class="p">)</span>
+
+<span class="n">Url</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="n">LocalPath</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="n">Contents</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
 
 <span class="c1"># TODO: handle configuration and existence of root</span>
 <span class="n">pjoin</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span>
@@ -192,7 +196,8 @@
 <a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.LocalGrazed">[docs]</a>
 <span class="nd">@add_ipython_key_completions</span>
 <span class="nd">@wrap_kvs</span><span class="p">(</span>
-    <span class="n">key_of_id</span><span class="o">=</span><span class="n">localpath_to_url</span><span class="p">,</span> <span class="n">id_of_key</span><span class="o">=</span><span class="n">url_to_localpath</span><span class="p">,</span>
+    <span class="n">key_of_id</span><span class="o">=</span><span class="n">localpath_to_url</span><span class="p">,</span>
+    <span class="n">id_of_key</span><span class="o">=</span><span class="n">url_to_localpath</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="k">class</span> <span class="nc">LocalGrazed</span><span class="p">(</span><span class="n">LocalFiles</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;LocalFiles using url as keys&quot;&quot;&quot;</span></div>
@@ -313,17 +318,97 @@
 <span class="n">DFLT_URL_TO_CONTENT</span> <span class="o">=</span> <span class="n">url_to_contents</span><span class="o">.</span><span class="n">requests_get</span>
 
 
-<span class="k">def</span> <span class="nf">_url_to_file_download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">url_to_contents</span><span class="o">=</span><span class="n">DFLT_URL_TO_CONTENT</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function to make a url-to-file download function from a url-to-contents</span>
-<span class="sd">    one.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">contents</span> <span class="o">=</span> <span class="n">url_to_contents</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_ensure_dirs_of_file_exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="n">dirpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># TODO: REALLY don&#39;t like this here.</span>
-    <span class="c1"># --&gt; This directory creation is also in mk_dirs_if_missing.</span>
-    <span class="c1"># --&gt; Should be centralized</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+
+<span class="k">def</span> <span class="nf">_write_to_file</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;wb&#39;</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_read_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">return_contents</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">contents</span>
+
+
+<span class="k">def</span> <span class="nf">return_filepath</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">filepath</span>
+
+
+<span class="c1"># TODO: The function boils down a more abstract key-value caching pattern.</span>
+<span class="c1">#   (src_key, targ_key, *, read_src_key, write_to_targ_key, src_key_to_targ_key, ...)</span>
+<span class="c1"># TODO: This function is in line to become the most central function of the package.</span>
+<span class="c1">#   -&gt; Refactor the package to use it?</span>
+<div class="viewcode-block" id="url_to_file_download">
+<a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.url_to_file_download">[docs]</a>
+<span class="k">def</span> <span class="nf">url_to_file_download</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">,</span>
+    <span class="n">filepath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">url_to_contents</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Url</span><span class="p">],</span> <span class="n">Contents</span><span class="p">]</span> <span class="o">=</span> <span class="n">DFLT_URL_TO_CONTENT</span><span class="p">,</span>
+    <span class="n">write_contents_to_file</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Contents</span><span class="p">,</span> <span class="n">LocalPath</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_write_to_file</span><span class="p">,</span>
+    <span class="n">url_to_path</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">url_to_localpath</span><span class="p">,</span>
+    <span class="n">overwrite</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">LocalPath</span><span class="p">,</span> <span class="n">Url</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">rootdir</span><span class="p">:</span> <span class="n">LocalPath</span> <span class="o">=</span> <span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span>
+    <span class="n">ensure_dirs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">read_contents_of_file</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">LocalPath</span><span class="p">],</span> <span class="n">Contents</span><span class="p">]</span> <span class="o">=</span> <span class="n">_read_file</span><span class="p">,</span>
+    <span class="n">return_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">LocalPath</span><span class="p">,</span> <span class="n">Contents</span><span class="p">,</span> <span class="n">Url</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">return_contents</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper to make a url-to-file download functions (using partial).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url: The url to download from</span>
+<span class="sd">        filepath: The local file path to download to. If None, will be derived from url</span>
+<span class="sd">        url_to_contents: The function to get the contents from the url</span>
+<span class="sd">        write_contents_to_file: The function to write the contents to a file</span>
+<span class="sd">        url_to_path: The function to get the local file path from the url</span>
+<span class="sd">        overwrite: Whether to overwrite the file if it exists.</span>
+<span class="sd">            Can be a boolean, or a function that takes a LocalPath and Url and returns</span>
+<span class="sd">            a boolean. For example, one can use this to only redownload and overwrite</span>
+<span class="sd">            the data if the file hasn&#39;t been modified for X days (i.e. stale contents).</span>
+<span class="sd">        rootdir: The root directory where the file will be stored</span>
+<span class="sd">        ensure_dirs: Whether to ensure the directories of the file exist</span>
+<span class="sd">        read_contents_of_file: The function to read the contents of a file</span>
+<span class="sd">        return_func: The function that determines what to return.</span>
+<span class="sd">            The default is to return the contents, but could be any function of</span>
+<span class="sd">            filepath, contents and url.</span>
+
+<span class="sd">    A few recipes:</span>
+
+<span class="sd">    Download in chunks, and possibly to multiple files in a directory?</span>
+<span class="sd">    You can make `url_to_contents` return the url itself, and `write_contents_to_file`</span>
+<span class="sd">    do the work of opening url and filepath, and launch a get-chunk-write-chunk</span>
+<span class="sd">    process.</span>
+
+<span class="sd">    Need to decide how to download the url based on some characteristics of the url?</span>
+<span class="sd">    For example, if it&#39;s a dropbox url with dl=0, change that to dl=1.</span>
+<span class="sd">    Put this in the url_to_contents logic.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">filepath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">url_to_path</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+        <span class="c1"># if file exists and we&#39;re not supposed to overwrite it, just get the contents</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">read_contents_of_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># if not, get the contents of the url</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">url_to_contents</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ensure_dirs</span><span class="p">:</span>
+            <span class="n">_ensure_dirs_of_file_exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">write_contents_to_file</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">return_func</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span></div>
+
+
+
+<span class="n">_url_to_file_download</span> <span class="o">=</span> <span class="n">url_to_file_download</span>  <span class="c1"># backcompatibility alias</span>
 
 
 <span class="c1"># TODO: Think of a better way to handle the contents vs file download cases</span>

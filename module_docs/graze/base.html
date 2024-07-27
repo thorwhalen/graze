@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.base &mdash; graze 0.1.18 documentation</title>
+  <title>graze.base &mdash; graze 0.1.19 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -17,7 +17,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=9969ed3f"></script>
+        <script src="../../_static/documentation_options.js?v=3d116926"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -71,6 +71,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#graze.base.url_to_contents.selenium_safari"><code class="docutils literal notranslate"><span class="pre">url_to_contents.selenium_safari()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.url_to_file_download"><code class="docutils literal notranslate"><span class="pre">url_to_file_download()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.url_to_filepath"><code class="docutils literal notranslate"><span class="pre">url_to_filepath()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.url_to_localpath"><code class="docutils literal notranslate"><span class="pre">url_to_localpath()</span></code></a></li>
 </ul>
@@ -387,6 +388,41 @@ anymore.</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.base.url_to_file_download">
+<span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">url_to_file_download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">url,</span> <span class="pre">filepath=None,</span> <span class="pre">*,</span> <span class="pre">url_to_contents:</span> <span class="pre">~typing.Callable[[str],</span> <span class="pre">bytes</span> <span class="pre">|</span> <span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">url_to_contents.requests_get&gt;,</span> <span class="pre">write_contents_to_file:</span> <span class="pre">~typing.Callable[[bytes</span> <span class="pre">|</span> <span class="pre">str,</span> <span class="pre">str],</span> <span class="pre">~typing.Any]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">_write_to_file&gt;,</span> <span class="pre">url_to_path:</span> <span class="pre">~typing.Callable</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">url_to_localpath&gt;,</span> <span class="pre">overwrite:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">~typing.Callable[[str,</span> <span class="pre">str],</span> <span class="pre">bool]</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">rootdir:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'/home/runner/graze',</span> <span class="pre">ensure_dirs:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">read_contents_of_file:</span> <span class="pre">~typing.Callable[[str],</span> <span class="pre">bytes</span> <span class="pre">|</span> <span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">_read_file&gt;,</span> <span class="pre">return_func:</span> <span class="pre">~typing.Callable[[str,</span> <span class="pre">bytes</span> <span class="pre">|</span> <span class="pre">str,</span> <span class="pre">str],</span> <span class="pre">~typing.Any]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">return_contents&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#url_to_file_download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.url_to_file_download" title="Link to this definition"></a></dt>
+<dd><p>Helper to make a url-to-file download functions (using partial).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – The url to download from</p></li>
+<li><p><strong>filepath</strong> – The local file path to download to. If None, will be derived from url</p></li>
+<li><p><strong>url_to_contents</strong> – The function to get the contents from the url</p></li>
+<li><p><strong>write_contents_to_file</strong> – The function to write the contents to a file</p></li>
+<li><p><strong>url_to_path</strong> – The function to get the local file path from the url</p></li>
+<li><p><strong>overwrite</strong> – Whether to overwrite the file if it exists.
+Can be a boolean, or a function that takes a LocalPath and Url and returns
+a boolean. For example, one can use this to only redownload and overwrite
+the data if the file hasn’t been modified for X days (i.e. stale contents).</p></li>
+<li><p><strong>rootdir</strong> – The root directory where the file will be stored</p></li>
+<li><p><strong>ensure_dirs</strong> – Whether to ensure the directories of the file exist</p></li>
+<li><p><strong>read_contents_of_file</strong> – The function to read the contents of a file</p></li>
+<li><p><strong>return_func</strong> – The function that determines what to return.
+The default is to return the contents, but could be any function of
+filepath, contents and url.</p></li>
+</ul>
+</dd>
+</dl>
+<p>A few recipes:</p>
+<p>Download in chunks, and possibly to multiple files in a directory?
+You can make <cite>url_to_contents</cite> return the url itself, and <cite>write_contents_to_file</cite>
+do the work of opening url and filepath, and launch a get-chunk-write-chunk
+process.</p>
+<p>Need to decide how to download the url based on some characteristics of the url?
+For example, if it’s a dropbox url with dl=0, change that to dl=1.
+Put this in the url_to_contents logic.</p>
 </dd></dl>
 
 <dl class="py function">
