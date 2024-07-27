@@ -39,13 +39,13 @@ SUBDIR_SUFFIX = '_f'
 SUBDIR_SUFFIX_IDX = -len(SUBDIR_SUFFIX)
 
 
-def _url_to_localpath(url: str) -> str:
+def url_to_localpath(url: str) -> str:
     """
-    >>> _url_to_localpath('http://www.example.com/subdir1/subdir2/file.txt')
+    >>> url_to_localpath('http://www.example.com/subdir1/subdir2/file.txt')
     'http/www.example.com_f/subdir1_f/subdir2_f/file.txt'
-    >>> _url_to_localpath('https://www.example.com/subdir1/subdir2/file.txt/')
+    >>> url_to_localpath('https://www.example.com/subdir1/subdir2/file.txt/')
     'https/www.example.com_f/subdir1_f/subdir2_f/file.txt'
-    >>> _url_to_localpath('www.example.com/subdir1/subdir2/file.txt')
+    >>> url_to_localpath('www.example.com/subdir1/subdir2/file.txt')
     'www.example.com/subdir1_f/subdir2_f/file.txt'
     """
     path = url.replace('https://', 'https/').replace('http://', 'http/')
@@ -54,13 +54,13 @@ def _url_to_localpath(url: str) -> str:
     return pjoin(*path_subdirs)
 
 
-def _localpath_to_url(path: str) -> str:
+def localpath_to_url(path: str) -> str:
     """
-    >>> _localpath_to_url('http/www.example.com_f/subdir1_f/subdir2_f/file.txt')
+    >>> localpath_to_url('http/www.example.com_f/subdir1_f/subdir2_f/file.txt')
     'http://www.example.com/subdir1/subdir2/file.txt'
-    >>> _localpath_to_url('https://www.example.com_f/subdir1_f/subdir2_f/file.txt_f/')
+    >>> localpath_to_url('https://www.example.com_f/subdir1_f/subdir2_f/file.txt_f/')
     'https:/www.example.com/subdir1/subdir2/file.txt/'
-    >>> _localpath_to_url('www.example.com/subdir1_f/subdir2_f/file.txt')
+    >>> localpath_to_url('www.example.com/subdir1_f/subdir2_f/file.txt')
     'www.example.com/subdir1/subdir2/file.txt'
     """
     path_subdirs = path.split(psep)
@@ -68,6 +68,8 @@ def _localpath_to_url(path: str) -> str:
     url = pjoin(*path_subdirs)
     return url.replace('https/', 'https://').replace('http/', 'http://')
 
+_url_to_localpath = url_to_localpath  # backward compatibility
+_localpath_to_url = localpath_to_url  # backward compatibility
 
 # CONTENT_FILENAME = 'grazed'
 FOLDER_SUFFIX = SUBDIR_SUFFIX  # TODO: Check usage and delete if none
@@ -97,7 +99,7 @@ class LocalFiles(Files):
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=_localpath_to_url, id_of_key=_url_to_localpath,
+    key_of_id=localpath_to_url, id_of_key=url_to_localpath,
 )
 class LocalGrazed(LocalFiles):
     """LocalFiles using url as keys"""

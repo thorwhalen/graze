@@ -28,11 +28,11 @@ class _KeyMapVersion02:
     CONTENT_PATH_SUFFIX = psep + CONTENT_FILENAME
     CONTENT_FILENAME_INDEX = -len(CONTENT_PATH_SUFFIX)
 
-    def _url_to_localpath(url: str) -> str:
+    def url_to_localpath(url: str) -> str:
         path = url.replace('https://', 'https/').replace('http://', 'http/')
         return pjoin(path, _KeyMapVersion02.CONTENT_FILENAME)
 
-    def _localpath_to_url(path: str) -> str:
+    def localpath_to_url(path: str) -> str:
         assert path.endswith(
             psep + _KeyMapVersion02.CONTENT_FILENAME
         ), f'Not a valid key: {path}'
@@ -43,8 +43,8 @@ class _KeyMapVersion02:
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=_KeyMapVersion02._localpath_to_url,
-    id_of_key=_KeyMapVersion02._url_to_localpath,
+    key_of_id=_KeyMapVersion02.localpath_to_url,
+    id_of_key=_KeyMapVersion02.url_to_localpath,
 )
 class LocalGrazedVersion02(LocalFiles):
     """LocalFiles using url as keys"""
