@@ -7,6 +7,8 @@ from graze.base import (
     GrazeWithDataRefresh,
     GrazeReturningFilepaths,
     graze,
+    url_to_localpath,
+    localpath_to_url,
     url_to_filepath,
     url_to_contents,
     key_egress_print_downloading_message,
