@@ -227,7 +227,7 @@ def _ensure_dirs_of_file_exists(filepath: str):
 def _write_to_file(contents, filepath, *, mode='wb'):
     with open(filepath, mode) as f:
         f.write(contents)
-    return filepath 
+    return filepath
 
 
 def _read_file(filepath, *, mode='rb'):
@@ -243,6 +243,21 @@ def return_filepath(filepath, contents, url):
     return filepath
 
 
+# Typical function to use as a key_ingress to Graze
+def key_egress_print_downloading_message(url):
+    print(f'The contents of {url} are being downloaded')
+    return url
+
+
+def key_egress_print_downloading_message_with_size(url):
+    size = get_content_size(url)
+    if size is None:
+        size = ' (size unknown)'
+    else:
+        size = f' ({human_readable_bytes(size)})'
+    print(f'The contents {size} of {url} are being downloaded...')
+
+
 # TODO: The function boils down a more abstract key-value caching pattern.
 #   (src_key, targ_key, *, read_src_key, write_to_targ_key, src_key_to_targ_key, ...)
 # TODO: This function is in line to become the most central function of the package.
@@ -255,6 +270,7 @@ def url_to_file_download(
     write_contents_to_file: Callable[[Contents, LocalPath], Any] = _write_to_file,
     url_to_path: Callable = url_to_localpath,
     overwrite: Union[bool, Callable[[LocalPath, Url], bool]] = True,
+    url_egress: Optional[Callable[[Url], Url]] = None,
     rootdir: LocalPath = DFLT_GRAZE_DIR,
     ensure_dirs: bool = True,
     read_contents_of_file: Callable[[LocalPath], Contents] = _read_file,
@@ -272,6 +288,10 @@ def url_to_file_download(
             Can be a boolean, or a function that takes a LocalPath and Url and returns
             a boolean. For example, one can use this to only redownload and overwrite
             the data if the file hasn't been modified for X days (i.e. stale contents).
+        url_egress: The function to call on the url before getting the contents from it.
+            This can, for example, be used to notify the user that data is being 
+            downloaded, or to modify the url before fetching the contents (for example, 
+            replacing the dl=0 in a dropbox url with dl=1).
         rootdir: The root directory where the file will be stored
         ensure_dirs: Whether to ensure the directories of the file exist
         read_contents_of_file: The function to read the contents of a file
@@ -299,6 +319,7 @@ def url_to_file_download(
         contents = read_contents_of_file(filepath)
     else:
         # if not, get the contents of the url
+        url = url if url_egress is None else url_egress(url)
         contents = url_to_contents(url)
         if ensure_dirs:
             _ensure_dirs_of_file_exists(filepath)
@@ -363,21 +384,6 @@ class Internet:
             return download_from_special_url(url, file)
         else:
             return self._get_contents_of_url(url, file)
-
-
-# Typical function to use as a key_ingress to Graze
-def key_egress_print_downloading_message(url):
-    print(f'The contents of {url} are being downloaded')
-    return url
-
-
-def key_egress_print_downloading_message_with_size(url):
-    size = get_content_size(url)
-    if size is None:
-        size = ' (size unknown)'
-    else:
-        size = f' ({human_readable_bytes(size)})'
-    print(f'The contents {size} of {url} are being downloaded...')
 
 
 # TODO: Use reususable caching decorator?
