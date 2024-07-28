@@ -104,8 +104,7 @@ class LocalFiles(Files):
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=localpath_to_url,
-    id_of_key=url_to_localpath,
+    key_of_id=localpath_to_url, id_of_key=url_to_localpath,
 )
 class LocalGrazed(LocalFiles):
     """LocalFiles using url as keys"""
@@ -227,7 +226,7 @@ def _ensure_dirs_of_file_exists(filepath: str):
 def _write_to_file(contents, filepath, *, mode='wb'):
     with open(filepath, mode) as f:
         f.write(contents)
-    return filepath 
+    return filepath
 
 
 def _read_file(filepath, *, mode='rb'):
