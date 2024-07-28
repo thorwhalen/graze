@@ -104,7 +104,8 @@ class LocalFiles(Files):
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=localpath_to_url, id_of_key=url_to_localpath,
+    key_of_id=localpath_to_url,
+    id_of_key=url_to_localpath,
 )
 class LocalGrazed(LocalFiles):
     """LocalFiles using url as keys"""
@@ -216,13 +217,17 @@ DFLT_URL_TO_CONTENT = url_to_contents.requests_get
 
 
 def _ensure_dirs_of_file_exists(filepath: str):
+    """Recursively ensure all dirs necessary for filepath exist.
+    Return filepath (useful for pipelines)"""
     dirpath = os.path.dirname(filepath)
     os.makedirs(dirpath, exist_ok=True)  # TODO: REALLY don't like this here.
+    return filepath
 
 
 def _write_to_file(contents, filepath, *, mode='wb'):
     with open(filepath, mode) as f:
         f.write(contents)
+    return filepath 
 
 
 def _read_file(filepath, *, mode='rb'):
