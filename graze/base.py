@@ -255,6 +255,7 @@ def key_egress_print_downloading_message_with_size(url):
     else:
         size = f' ({human_readable_bytes(size)})'
     print(f'The contents {size} of {url} are being downloaded...')
+    return url
 
 
 # TODO: The function boils down a more abstract key-value caching pattern.
