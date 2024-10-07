@@ -44,6 +44,14 @@ inner_most_key = partial(inner_most, method='_id_of_key')
 # --------------------- General ---------------------
 
 
+def _ensure_dirs_of_file_exists(filepath: str):
+    """Recursively ensure all dirs necessary for filepath exist.
+    Return filepath (useful for pipelines)"""
+    dirpath = os.path.dirname(filepath)
+    os.makedirs(dirpath, exist_ok=True)  # TODO: REALLY don't like this here.
+    return filepath
+
+
 def clog(condition: bool, *args, log_func: Callable = print, **kwargs):
     """Conditional log
 
@@ -217,6 +225,7 @@ def download_url_contents(
             file.seek(0)  # rewind
             return file.read()  # read bytes from the beginning
     elif isinstance(file, str):
+        _ensure_dirs_of_file_exists(file)  # TODO: Make optional?
         with open(file, 'wb') as _target_file:
             iter_content_and_copy_to(_target_file)
         return file
@@ -251,6 +260,35 @@ bytes_from_dropbox = bytes_of_url_content  # backwards compatibility alias
 
 # --------------------- Google Drive ---------------------
 
+_google_drive_file_id_patterns = (
+    r'drive\.google\.com/file/d/([\w-]+)',  # Standard file URL
+    r'drive\.google\.com/uc\?export=download&id=([\w-]+)',  # Direct download link
+    r'drive\.google\.com/open\?id=([\w-]+)',  # Open link format
+    r'docs\.google\.com/spreadsheets/d/([\w-]+)',  # Google Sheets URL
+    r'docs\.google\.com/document/d/([\w-]+)',  # Google Docs URL
+    r'docs\.google\.com/presentation/d/([\w-]+)',  # Google Slides URL
+    r'docs\.google\.com/forms/d/([\w-]+)',  # Google Forms URL
+    r'drive\.google\.com/drive/folders/([\w-]+)',  # Google Drive folder URL
+    r'drive\.google\.com/drive/u/\d/folders/([\w-]+)',  # Google Drive folder with user ID
+    r'drive\.google\.com/file/d/([\w-]+)',  # Standard file link with variations
+    r'drive\.google\.com/file/d/([\w-]+)/view',  # File view URL
+    r'drive\.google\.com/file/d/([\w-]+)/edit',  # File edit URL
+    r'drive\.google\.com/file/d/([\w-]+)/preview',  # File preview URL
+)
+_google_drive_file_id_pattern = re.compile('|'.join(_google_drive_file_id_patterns))
+
+
+def _google_drive_id(url: str) -> str:
+    match = _google_drive_file_id_pattern.search(url)
+    if match:
+        # Return the first non-None group found in the match
+        return next(g for g in match.groups() if g is not None)
+    else:
+        msg = 'Only FILE Google Drive URLs are supported, '
+        msg += "which have the format '...drive.google.com/file/d/{file_id}... "
+        msg += f'This url is not supported: {url}'
+        raise ValueError(msg)
+
 
 def is_google_drive_url(url: str) -> bool:
     """
@@ -269,27 +307,11 @@ def is_google_drive_url(url: str) -> bool:
     >>> is_google_drive_url('https://example.com/file/d/1Ul5mPePKAO11dG98GN/view')
     False
     """
-    pattern = r'https?://drive\.google\.com/(file/d/|open\?id=|drive/folders/)[\w-]+'
-    return bool(re.match(pattern, url))
-
-
-_google_drive_file_id_patterns = (
-    r'drive\.google\.com/file/d/([\w-]+)',
-    r'drive\.google\.com/uc\?export=download&id=([\w-]+)',
-)
-_google_drive_file_id_pattern = re.compile('|'.join(_google_drive_file_id_patterns))
-
-
-def _google_drive_id(url: str) -> str:
-    match = _google_drive_file_id_pattern.search(url)
-    if match:
-        # Return the first non-None group found in the match
-        return next(g for g in match.groups() if g is not None)
-    else:
-        msg = 'Only FILE Google Drive URLs are supported, '
-        msg += "which have the format '...drive.google.com/file/d/{file_id}... "
-        msg += f'This url is not supported: {url}'
-        raise ValueError(msg)
+    try:
+        _google_drive_id(url)
+        return True
+    except ValueError:
+        return False
 
 
 def google_drive_download_url(url):

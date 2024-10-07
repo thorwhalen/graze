@@ -214,13 +214,15 @@ class url_to_contents:
 
 DFLT_URL_TO_CONTENT = url_to_contents.requests_get
 
-
-def _ensure_dirs_of_file_exists(filepath: str):
-    """Recursively ensure all dirs necessary for filepath exist.
-    Return filepath (useful for pipelines)"""
-    dirpath = os.path.dirname(filepath)
-    os.makedirs(dirpath, exist_ok=True)  # TODO: REALLY don't like this here.
-    return filepath
+# Moved to util
+# TODO: Should move more of this stuff below to util too
+# def _ensure_dirs_of_file_exists(filepath: str):
+#     """Recursively ensure all dirs necessary for filepath exist.
+#     Return filepath (useful for pipelines)"""
+#     dirpath = os.path.dirname(filepath)
+#     os.makedirs(dirpath, exist_ok=True)  # TODO: REALLY don't like this here.
+#     return filepath
+from graze.util import _ensure_dirs_of_file_exists
 
 
 def _write_to_file(contents, filepath, *, mode='wb'):
