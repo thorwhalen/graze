@@ -1,27 +1,25 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.util &mdash; graze 0.1.23 documentation</title>
+  <title>graze.util &mdash; graze 0.1.25 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=20522496"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
-        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4fa33042"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -126,6 +124,14 @@
 
 
 <span class="c1"># --------------------- General ---------------------</span>
+
+
+<span class="k">def</span> <span class="nf">_ensure_dirs_of_file_exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recursively ensure all dirs necessary for filepath exist.</span>
+<span class="sd">    Return filepath (useful for pipelines)&quot;&quot;&quot;</span>
+    <span class="n">dirpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># TODO: REALLY don&#39;t like this here.</span>
+    <span class="k">return</span> <span class="n">filepath</span>
 
 
 <div class="viewcode-block" id="clog">
@@ -315,6 +321,7 @@
             <span class="n">file</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># rewind</span>
             <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># read bytes from the beginning</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">_ensure_dirs_of_file_exists</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>  <span class="c1"># TODO: Make optional?</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_target_file</span><span class="p">:</span>
             <span class="n">iter_content_and_copy_to</span><span class="p">(</span><span class="n">_target_file</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">file</span>
@@ -350,6 +357,35 @@
 
 <span class="c1"># --------------------- Google Drive ---------------------</span>
 
+<span class="n">_google_drive_file_id_patterns</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/file/d/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Standard file URL</span>
+    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/uc\?export=download&amp;id=([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Direct download link</span>
+    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/open\?id=([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Open link format</span>
+    <span class="sa">r</span><span class="s1">&#39;docs\.google\.com/spreadsheets/d/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Google Sheets URL</span>
+    <span class="sa">r</span><span class="s1">&#39;docs\.google\.com/document/d/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Google Docs URL</span>
+    <span class="sa">r</span><span class="s1">&#39;docs\.google\.com/presentation/d/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Google Slides URL</span>
+    <span class="sa">r</span><span class="s1">&#39;docs\.google\.com/forms/d/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Google Forms URL</span>
+    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/drive/folders/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Google Drive folder URL</span>
+    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/drive/u/\d/folders/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Google Drive folder with user ID</span>
+    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/file/d/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Standard file link with variations</span>
+    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/file/d/([\w-]+)/view&#39;</span><span class="p">,</span>  <span class="c1"># File view URL</span>
+    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/file/d/([\w-]+)/edit&#39;</span><span class="p">,</span>  <span class="c1"># File edit URL</span>
+    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/file/d/([\w-]+)/preview&#39;</span><span class="p">,</span>  <span class="c1"># File preview URL</span>
+<span class="p">)</span>
+<span class="n">_google_drive_file_id_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_google_drive_file_id_patterns</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_google_drive_id</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">_google_drive_file_id_pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="c1"># Return the first non-None group found in the match</span>
+        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Only FILE Google Drive URLs are supported, &#39;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;which have the format &#39;...drive.google.com/file/d/</span><span class="si">{file_id}</span><span class="s2">... &quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;This url is not supported: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="is_google_drive_url">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.is_google_drive_url">[docs]</a>
@@ -370,28 +406,12 @@
 <span class="sd">    &gt;&gt;&gt; is_google_drive_url(&#39;https://example.com/file/d/1Ul5mPePKAO11dG98GN/view&#39;)</span>
 <span class="sd">    False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;https?://drive\.google\.com/(file/d/|open\?id=|drive/folders/)[\w-]+&#39;</span>
-    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">url</span><span class="p">))</span></div>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_google_drive_id</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
 
-
-
-<span class="n">_google_drive_file_id_patterns</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/file/d/([\w-]+)&#39;</span><span class="p">,</span>
-    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/uc\?export=download&amp;id=([\w-]+)&#39;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">_google_drive_file_id_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_google_drive_file_id_patterns</span><span class="p">))</span>
-
-
-<span class="k">def</span> <span class="nf">_google_drive_id</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="n">match</span> <span class="o">=</span> <span class="n">_google_drive_file_id_pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-        <span class="c1"># Return the first non-None group found in the match</span>
-        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Only FILE Google Drive URLs are supported, &#39;</span>
-        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;which have the format &#39;...drive.google.com/file/d/</span><span class="si">{file_id}</span><span class="s2">... &quot;</span>
-        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;This url is not supported: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&#39;</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="google_drive_download_url">
