@@ -597,7 +597,7 @@ def graze(
         ``source``. Typically, this is used to notify the user that the contents
         are being downloaded. For example, you could use
         ``key_ingress="The contents of {} are being downloaded".format``.
-    :param time_to_live: If not None, should be a number specifying the number of
+    :param max_age: If not None, should be a number specifying the number of
     seconds a the cached data is considered "fresh". If the cached data is older
     than this, then it will be re-downloaded from the source.
     :param on_error: What to do if there's an error when fetching the new data.
