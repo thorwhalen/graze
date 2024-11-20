@@ -25,11 +25,11 @@ def store_trans_path(store, arg, method):
     if f is not None:
         trans_arg = f(arg)
         yield trans_arg
-        if hasattr(store, 'store'):
+        if hasattr(store, "store"):
             yield from unravel_key(store.store, trans_arg)
 
 
-unravel_key = partial(store_trans_path, method='_id_of_key')
+unravel_key = partial(store_trans_path, method="_id_of_key")
 
 
 def inner_most(store, arg, method):
@@ -38,7 +38,7 @@ def inner_most(store, arg, method):
 
 # The only raison d'être of everything above is to define inner_most_key:
 # TODO: Write a standalone for inner_most_key? (Came originally from py2store.dig)
-inner_most_key = partial(inner_most, method='_id_of_key')
+inner_most_key = partial(inner_most, method="_id_of_key")
 
 
 # --------------------- General ---------------------
@@ -83,26 +83,26 @@ def clog(condition: bool, *args, log_func: Callable = print, **kwargs):
         return log_func(*args, **kwargs)
 
 
-def handle_missing_dir(dirpath: str, prefix_msg='', ask_first=True, verbose=True):
+def handle_missing_dir(dirpath: str, prefix_msg="", ask_first=True, verbose=True):
     _clog = clog(verbose)
-    if dirpath.startswith('~'):
+    if dirpath.startswith("~"):
         dirpath = os.path.expanduser(dirpath)
     if not os.path.isdir(dirpath):
         if ask_first:
             _clog(prefix_msg)
             _clog(f"This directory doesn't exist: {dirpath}")
-            answer = input('Should I make that directory for you? ([Y]/n)?') or 'Y'
-            if next(iter(answer.strip().lower()), None) != 'y':
+            answer = input("Should I make that directory for you? ([Y]/n)?") or "Y"
+            if next(iter(answer.strip().lower()), None) != "y":
                 return
-        _clog(f'Making {dirpath}...')
+        _clog(f"Making {dirpath}...")
         os.mkdir(dirpath)
 
 
 def get_content_size(url: str, *, default=None):
     """Get the content size of a url, if available, without downloading the content."""
-    request = urllib.request.Request(url, method='HEAD')
+    request = urllib.request.Request(url, method="HEAD")
     with urllib.request.urlopen(request) as response:
-        content_length = response.getheader('Content-Length')
+        content_length = response.getheader("Content-Length")
         if content_length is not None:
             return int(content_length)
         else:
@@ -114,10 +114,10 @@ def get_content_size(url: str, *, default=None):
 def human_readable_bytes(
     num_of_bytes: int,
     *,
-    approx_marker='~',
+    approx_marker="~",
     n_digits=4,
     base=1000,
-    units=('B', 'KB', 'MB', 'GB', 'TB', 'PB'),
+    units=("B", "KB", "MB", "GB", "TB", "PB"),
 ):
     """
     Convert a number of bytes into a human-readable format with units.
@@ -168,12 +168,12 @@ def human_readable_bytes(
     factor = 1
     for unit in units:
         if num_of_bytes < factor * base:
-            return f'{approx_marker}{num_of_bytes / factor:.{n_digits-1}f}{unit}'
+            return f"{approx_marker}{num_of_bytes / factor:.{n_digits-1}f}{unit}"
         factor *= base
-    return f'{approx_marker}{num_of_bytes:.{n_digits-1}e}{units[-1]}'
+    return f"{approx_marker}{num_of_bytes:.{n_digits-1}e}{units[-1]}"
 
 
-DFLT_USER_AGENT = 'Wget/1.16 (linux-gnu)'
+DFLT_USER_AGENT = "Wget/1.16 (linux-gnu)"
 DFLT_CHK_SIZE = 1024
 
 
@@ -182,7 +182,7 @@ def _first_bytes(src, n_bytes=None):
     if isinstance(src, bytes):
         return src[slice(0, n_bytes)]
     elif isinstance(src, str):
-        with open(src, 'rb') as file:
+        with open(src, "rb") as file:
             return file.read(n_bytes)
     else:  # assume it's a file-like object
         file.read(n_bytes)
@@ -191,7 +191,7 @@ def _first_bytes(src, n_bytes=None):
 def chks_of_url_contents(url, *, chk_size=DFLT_CHK_SIZE, user_agent=DFLT_USER_AGENT):
     """Yield chunks of a url's contents."""
     req = urllib.request.Request(url)
-    req.add_header('user-agent', user_agent)
+    req.add_header("user-agent", user_agent)
     with urllib.request.urlopen(req) as response:
         while True:
             chk = response.read(chk_size)
@@ -226,7 +226,7 @@ def download_url_contents(
             return file.read()  # read bytes from the beginning
     elif isinstance(file, str):
         _ensure_dirs_of_file_exists(file)  # TODO: Make optional?
-        with open(file, 'wb') as _target_file:
+        with open(file, "wb") as _target_file:
             iter_content_and_copy_to(_target_file)
         return file
     else:
@@ -248,7 +248,7 @@ bytes_of_url_content = partial(download_url_contents, file=None)
 # Changing the value of dl in a Dropbox link is a common way to control the user
 # experience when accessing shared files.
 
-drobox_url_re = re.compile(r'https?://www\.dropbox\.com/s/.+\?dl=(0|1)$')
+drobox_url_re = re.compile(r"https?://www\.dropbox\.com/s/.+\?dl=(0|1)$")
 
 
 def is_dropbox_url(url: str):
@@ -261,21 +261,21 @@ bytes_from_dropbox = bytes_of_url_content  # backwards compatibility alias
 # --------------------- Google Drive ---------------------
 
 _google_drive_file_id_patterns = (
-    r'drive\.google\.com/file/d/([\w-]+)',  # Standard file URL
-    r'drive\.google\.com/uc\?export=download&id=([\w-]+)',  # Direct download link
-    r'drive\.google\.com/open\?id=([\w-]+)',  # Open link format
-    r'docs\.google\.com/spreadsheets/d/([\w-]+)',  # Google Sheets URL
-    r'docs\.google\.com/document/d/([\w-]+)',  # Google Docs URL
-    r'docs\.google\.com/presentation/d/([\w-]+)',  # Google Slides URL
-    r'docs\.google\.com/forms/d/([\w-]+)',  # Google Forms URL
-    r'drive\.google\.com/drive/folders/([\w-]+)',  # Google Drive folder URL
-    r'drive\.google\.com/drive/u/\d/folders/([\w-]+)',  # Google Drive folder with user ID
-    r'drive\.google\.com/file/d/([\w-]+)',  # Standard file link with variations
-    r'drive\.google\.com/file/d/([\w-]+)/view',  # File view URL
-    r'drive\.google\.com/file/d/([\w-]+)/edit',  # File edit URL
-    r'drive\.google\.com/file/d/([\w-]+)/preview',  # File preview URL
+    r"drive\.google\.com/file/d/([\w-]+)",  # Standard file URL
+    r"drive\.google\.com/uc\?export=download&id=([\w-]+)",  # Direct download link
+    r"drive\.google\.com/open\?id=([\w-]+)",  # Open link format
+    r"docs\.google\.com/spreadsheets/d/([\w-]+)",  # Google Sheets URL
+    r"docs\.google\.com/document/d/([\w-]+)",  # Google Docs URL
+    r"docs\.google\.com/presentation/d/([\w-]+)",  # Google Slides URL
+    r"docs\.google\.com/forms/d/([\w-]+)",  # Google Forms URL
+    r"drive\.google\.com/drive/folders/([\w-]+)",  # Google Drive folder URL
+    r"drive\.google\.com/drive/u/\d/folders/([\w-]+)",  # Google Drive folder with user ID
+    r"drive\.google\.com/file/d/([\w-]+)",  # Standard file link with variations
+    r"drive\.google\.com/file/d/([\w-]+)/view",  # File view URL
+    r"drive\.google\.com/file/d/([\w-]+)/edit",  # File edit URL
+    r"drive\.google\.com/file/d/([\w-]+)/preview",  # File preview URL
 )
-_google_drive_file_id_pattern = re.compile('|'.join(_google_drive_file_id_patterns))
+_google_drive_file_id_pattern = re.compile("|".join(_google_drive_file_id_patterns))
 
 
 def _google_drive_id(url: str) -> str:
@@ -284,9 +284,9 @@ def _google_drive_id(url: str) -> str:
         # Return the first non-None group found in the match
         return next(g for g in match.groups() if g is not None)
     else:
-        msg = 'Only FILE Google Drive URLs are supported, '
+        msg = "Only FILE Google Drive URLs are supported, "
         msg += "which have the format '...drive.google.com/file/d/{file_id}... "
-        msg += f'This url is not supported: {url}'
+        msg += f"This url is not supported: {url}"
         raise ValueError(msg)
 
 
@@ -322,12 +322,12 @@ def google_drive_download_url(url):
     supported.
     """
     file_id = _google_drive_id(url)
-    return f'https://drive.google.com/uc?export=download&id={file_id}'
+    return f"https://drive.google.com/uc?export=download&id={file_id}"
 
 
 def _is_html_doc(src: Union[bytes, Filepath]):
     """Check if the src is an html document."""
-    html_prefix = b'<!DOCTYPE html>'
+    html_prefix = b"<!DOCTYPE html>"
     first_bytes = _first_bytes(src, len(html_prefix))
     return first_bytes == html_prefix
 
@@ -354,10 +354,10 @@ def download_from_google_drive(
     download_url = google_drive_download_url(url)
     src = download_url_contents(download_url, file, **_download_kwargs)
     if skip_virus_scan_confirmation_page:
-        html_prefix = b'<!DOCTYPE html>'
+        html_prefix = b"<!DOCTYPE html>"
         first_bytes = _first_bytes(src, len(html_prefix))
         if first_bytes == html_prefix:
-            html_content = src.decode('utf-8')
+            html_content = src.decode("utf-8")
             url_with_token = url_with_virus_scan_confirmation_token(
                 download_url, html_content
             )
@@ -368,17 +368,17 @@ def download_from_google_drive(
 
 def url_with_virus_scan_confirmation_token(url, page_html):
     # Use regular expressions to find the confirmation token
-    confirm_token_match = re.search(r'confirm=([0-9A-Za-z_\-]+)&', page_html)
+    confirm_token_match = re.search(r"confirm=([0-9A-Za-z_\-]+)&", page_html)
     if not confirm_token_match:
         raise ValueError(
-            'Could not find the confirmation token for the virus scan page of url: '
-            f' {url}.'
+            "Could not find the confirmation token for the virus scan page of url: "
+            f" {url}."
         )
 
     confirmation_token = confirm_token_match.group(1)
 
     # Construct the URL with the confirmation token
-    return url + '&confirm=' + confirmation_token
+    return url + "&confirm=" + confirmation_token
 
 
 # --------------------- Special URLS ---------------------
@@ -414,4 +414,4 @@ def download_from_special_url(
     for is_special_url, download_func in special_url_routes.items():
         if is_special_url(url):
             return download_func(url, file, **kwargs)
-    raise ValueError(f'Unsupported url: {url}')
+    raise ValueError(f"Unsupported url: {url}")
