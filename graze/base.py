@@ -373,7 +373,7 @@ class Internet:
             else:
                 return self.url_to_file_download(url, file)
         except RequestFailure as e:
-            raise KeyError(e.args[0])
+            raise KeyError(str(e))
 
     def download_to_file(self, url, file=None):
         """Download the contents of the url to the given filepath"""
