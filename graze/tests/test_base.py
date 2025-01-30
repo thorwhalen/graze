@@ -1,6 +1,4 @@
-"""Test the base module.
-
-"""
+"""Test the base module."""
 
 import tempfile
 from typing import Union
