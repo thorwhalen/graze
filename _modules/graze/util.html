@@ -5,8 +5,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.util &mdash; graze 0.1.26 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+  <title>graze.util &mdash; graze 0.1.27 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=785bba28"></script>
+      <script src="../../_static/documentation_options.js?v=dc233e31"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -79,19 +79,19 @@
   <h1>Source code for graze.util</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utils&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">urllib</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BytesIO</span>
 
 <span class="n">Filepath</span> <span class="o">=</span> <span class="nb">str</span>
 
 
 <div class="viewcode-block" id="last_element">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.last_element">[docs]</a>
-<span class="k">def</span> <span class="nf">last_element</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">last_element</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the last element of an iterable, or a default if the iterable is empty.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -102,31 +102,31 @@
 
 
 
-<span class="k">def</span> <span class="nf">store_trans_path</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">store_trans_path</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
     <span class="n">f</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">trans_arg</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
         <span class="k">yield</span> <span class="n">trans_arg</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="s1">&#39;store&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="s2">&quot;store&quot;</span><span class="p">):</span>
             <span class="k">yield from</span> <span class="n">unravel_key</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">store</span><span class="p">,</span> <span class="n">trans_arg</span><span class="p">)</span>
 
 
-<span class="n">unravel_key</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">store_trans_path</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;_id_of_key&#39;</span><span class="p">)</span>
+<span class="n">unravel_key</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">store_trans_path</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;_id_of_key&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">inner_most</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">inner_most</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">last_element</span><span class="p">(</span><span class="n">store_trans_path</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">method</span><span class="p">))</span>
 
 
 <span class="c1"># The only raison d&#39;être of everything above is to define inner_most_key:</span>
 <span class="c1"># TODO: Write a standalone for inner_most_key? (Came originally from py2store.dig)</span>
-<span class="n">inner_most_key</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">inner_most</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;_id_of_key&#39;</span><span class="p">)</span>
+<span class="n">inner_most_key</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">inner_most</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;_id_of_key&quot;</span><span class="p">)</span>
 
 
 <span class="c1"># --------------------- General ---------------------</span>
 
 
-<span class="k">def</span> <span class="nf">_ensure_dirs_of_file_exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ensure_dirs_of_file_exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Recursively ensure all dirs necessary for filepath exist.</span>
 <span class="sd">    Return filepath (useful for pipelines)&quot;&quot;&quot;</span>
     <span class="n">dirpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
@@ -136,7 +136,7 @@
 
 <div class="viewcode-block" id="clog">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.clog">[docs]</a>
-<span class="k">def</span> <span class="nf">clog</span><span class="p">(</span><span class="n">condition</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">log_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="nb">print</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clog</span><span class="p">(</span><span class="n">condition</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">log_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="nb">print</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Conditional log</span>
 
 <span class="sd">    &gt;&gt;&gt; clog(False, &quot;logging this&quot;)</span>
@@ -160,7 +160,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">functools</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 
         <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">clog</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">log_func</span><span class="o">=</span><span class="n">log_func</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">condition</span><span class="p">:</span>
@@ -168,28 +168,28 @@
 
 
 
-<span class="k">def</span> <span class="nf">handle_missing_dir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix_msg</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">ask_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_missing_dir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix_msg</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">ask_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="n">_clog</span> <span class="o">=</span> <span class="n">clog</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">dirpath</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">dirpath</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">):</span>
         <span class="n">dirpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">ask_first</span><span class="p">:</span>
             <span class="n">_clog</span><span class="p">(</span><span class="n">prefix_msg</span><span class="p">)</span>
             <span class="n">_clog</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;This directory doesn&#39;t exist: </span><span class="si">{</span><span class="n">dirpath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">answer</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Should I make that directory for you? ([Y]/n)?&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;Y&#39;</span>
-            <span class="k">if</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">answer</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()),</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Should I make that directory for you? ([Y]/n)?&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;Y&quot;</span>
+            <span class="k">if</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">answer</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()),</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
                 <span class="k">return</span>
-        <span class="n">_clog</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Making </span><span class="si">{</span><span class="n">dirpath</span><span class="si">}</span><span class="s1">...&#39;</span><span class="p">)</span>
+        <span class="n">_clog</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Making </span><span class="si">{</span><span class="n">dirpath</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_content_size">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.get_content_size">[docs]</a>
-<span class="k">def</span> <span class="nf">get_content_size</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_content_size</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the content size of a url, if available, without downloading the content.&quot;&quot;&quot;</span>
-    <span class="n">request</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;HEAD&#39;</span><span class="p">)</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;HEAD&quot;</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
-        <span class="n">content_length</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s1">&#39;Content-Length&#39;</span><span class="p">)</span>
+        <span class="n">content_length</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s2">&quot;Content-Length&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">content_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">content_length</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -201,13 +201,13 @@
 <span class="c1"># TODO: Consider moving general util (to lkj?)</span>
 <div class="viewcode-block" id="human_readable_bytes">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.human_readable_bytes">[docs]</a>
-<span class="k">def</span> <span class="nf">human_readable_bytes</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">human_readable_bytes</span><span class="p">(</span>
     <span class="n">num_of_bytes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">approx_marker</span><span class="o">=</span><span class="s1">&#39;~&#39;</span><span class="p">,</span>
+    <span class="n">approx_marker</span><span class="o">=</span><span class="s2">&quot;~&quot;</span><span class="p">,</span>
     <span class="n">n_digits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
     <span class="n">base</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;KB&#39;</span><span class="p">,</span> <span class="s1">&#39;MB&#39;</span><span class="p">,</span> <span class="s1">&#39;GB&#39;</span><span class="p">,</span> <span class="s1">&#39;TB&#39;</span><span class="p">,</span> <span class="s1">&#39;PB&#39;</span><span class="p">),</span>
+    <span class="n">units</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;KB&quot;</span><span class="p">,</span> <span class="s2">&quot;MB&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">,</span> <span class="s2">&quot;TB&quot;</span><span class="p">,</span> <span class="s2">&quot;PB&quot;</span><span class="p">),</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert a number of bytes into a human-readable format with units.</span>
@@ -258,22 +258,22 @@
     <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">units</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">num_of_bytes</span> <span class="o">&lt;</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">base</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">approx_marker</span><span class="si">}{</span><span class="n">num_of_bytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">factor</span><span class="si">:</span><span class="s1">.</span><span class="si">{</span><span class="n">n_digits</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s1">f</span><span class="si">}{</span><span class="n">unit</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">approx_marker</span><span class="si">}{</span><span class="n">num_of_bytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">factor</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">n_digits</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">f</span><span class="si">}{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">factor</span> <span class="o">*=</span> <span class="n">base</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">approx_marker</span><span class="si">}{</span><span class="n">num_of_bytes</span><span class="si">:</span><span class="s1">.</span><span class="si">{</span><span class="n">n_digits</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s1">e</span><span class="si">}{</span><span class="n">units</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span></div>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">approx_marker</span><span class="si">}{</span><span class="n">num_of_bytes</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">n_digits</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">e</span><span class="si">}{</span><span class="n">units</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
 
-<span class="n">DFLT_USER_AGENT</span> <span class="o">=</span> <span class="s1">&#39;Wget/1.16 (linux-gnu)&#39;</span>
+<span class="n">DFLT_USER_AGENT</span> <span class="o">=</span> <span class="s2">&quot;Wget/1.16 (linux-gnu)&quot;</span>
 <span class="n">DFLT_CHK_SIZE</span> <span class="o">=</span> <span class="mi">1024</span>
 
 
-<span class="k">def</span> <span class="nf">_first_bytes</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">n_bytes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_first_bytes</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">n_bytes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the first n_bytes of a src, which can be a bytes object or a file path.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">src</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_bytes</span><span class="p">)]</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n_bytes</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># assume it&#39;s a file-like object</span>
         <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n_bytes</span><span class="p">)</span>
@@ -281,10 +281,10 @@
 
 <div class="viewcode-block" id="chks_of_url_contents">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.chks_of_url_contents">[docs]</a>
-<span class="k">def</span> <span class="nf">chks_of_url_contents</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="n">DFLT_CHK_SIZE</span><span class="p">,</span> <span class="n">user_agent</span><span class="o">=</span><span class="n">DFLT_USER_AGENT</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">chks_of_url_contents</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="n">DFLT_CHK_SIZE</span><span class="p">,</span> <span class="n">user_agent</span><span class="o">=</span><span class="n">DFLT_USER_AGENT</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Yield chunks of a url&#39;s contents.&quot;&quot;&quot;</span>
     <span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-    <span class="n">req</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;user-agent&#39;</span><span class="p">,</span> <span class="n">user_agent</span><span class="p">)</span>
+    <span class="n">req</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s2">&quot;user-agent&quot;</span><span class="p">,</span> <span class="n">user_agent</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">chk</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">chk_size</span><span class="p">)</span>
@@ -297,14 +297,14 @@
 
 <div class="viewcode-block" id="download_url_contents">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.download_url_contents">[docs]</a>
-<span class="k">def</span> <span class="nf">download_url_contents</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_url_contents</span><span class="p">(</span>
     <span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="n">DFLT_CHK_SIZE</span><span class="p">,</span> <span class="n">user_agent</span><span class="o">=</span><span class="n">DFLT_USER_AGENT</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Download url contents into a `file` object, or return bytes if `file` is None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">iter_content_and_copy_to</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iter_content_and_copy_to</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">chk</span> <span class="ow">in</span> <span class="n">chks_of_url_contents</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="n">chk_size</span><span class="p">,</span> <span class="n">user_agent</span><span class="o">=</span><span class="n">user_agent</span><span class="p">):</span>
             <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span>
 
@@ -322,7 +322,7 @@
             <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># read bytes from the beginning</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">_ensure_dirs_of_file_exists</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>  <span class="c1"># TODO: Make optional?</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_target_file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_target_file</span><span class="p">:</span>
             <span class="n">iter_content_and_copy_to</span><span class="p">(</span><span class="n">_target_file</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">file</span>
     <span class="k">else</span><span class="p">:</span>
@@ -345,10 +345,10 @@
 <span class="c1"># Changing the value of dl in a Dropbox link is a common way to control the user</span>
 <span class="c1"># experience when accessing shared files.</span>
 
-<span class="n">drobox_url_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;https?://www\.dropbox\.com/s/.+\?dl=(0|1)$&#39;</span><span class="p">)</span>
+<span class="n">drobox_url_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;https?://www\.dropbox\.com/s/.+\?dl=(0|1)$&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">is_dropbox_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_dropbox_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">drobox_url_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
 
 
@@ -358,38 +358,38 @@
 <span class="c1"># --------------------- Google Drive ---------------------</span>
 
 <span class="n">_google_drive_file_id_patterns</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/file/d/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Standard file URL</span>
-    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/uc\?export=download&amp;id=([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Direct download link</span>
-    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/open\?id=([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Open link format</span>
-    <span class="sa">r</span><span class="s1">&#39;docs\.google\.com/spreadsheets/d/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Google Sheets URL</span>
-    <span class="sa">r</span><span class="s1">&#39;docs\.google\.com/document/d/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Google Docs URL</span>
-    <span class="sa">r</span><span class="s1">&#39;docs\.google\.com/presentation/d/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Google Slides URL</span>
-    <span class="sa">r</span><span class="s1">&#39;docs\.google\.com/forms/d/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Google Forms URL</span>
-    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/drive/folders/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Google Drive folder URL</span>
-    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/drive/u/\d/folders/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Google Drive folder with user ID</span>
-    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/file/d/([\w-]+)&#39;</span><span class="p">,</span>  <span class="c1"># Standard file link with variations</span>
-    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/file/d/([\w-]+)/view&#39;</span><span class="p">,</span>  <span class="c1"># File view URL</span>
-    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/file/d/([\w-]+)/edit&#39;</span><span class="p">,</span>  <span class="c1"># File edit URL</span>
-    <span class="sa">r</span><span class="s1">&#39;drive\.google\.com/file/d/([\w-]+)/preview&#39;</span><span class="p">,</span>  <span class="c1"># File preview URL</span>
+    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/file/d/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Standard file URL</span>
+    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/uc\?export=download&amp;id=([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Direct download link</span>
+    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/open\?id=([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Open link format</span>
+    <span class="sa">r</span><span class="s2">&quot;docs\.google\.com/spreadsheets/d/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Google Sheets URL</span>
+    <span class="sa">r</span><span class="s2">&quot;docs\.google\.com/document/d/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Google Docs URL</span>
+    <span class="sa">r</span><span class="s2">&quot;docs\.google\.com/presentation/d/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Google Slides URL</span>
+    <span class="sa">r</span><span class="s2">&quot;docs\.google\.com/forms/d/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Google Forms URL</span>
+    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/drive/folders/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Google Drive folder URL</span>
+    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/drive/u/\d/folders/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Google Drive folder with user ID</span>
+    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/file/d/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Standard file link with variations</span>
+    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/file/d/([\w-]+)/view&quot;</span><span class="p">,</span>  <span class="c1"># File view URL</span>
+    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/file/d/([\w-]+)/edit&quot;</span><span class="p">,</span>  <span class="c1"># File edit URL</span>
+    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/file/d/([\w-]+)/preview&quot;</span><span class="p">,</span>  <span class="c1"># File preview URL</span>
 <span class="p">)</span>
-<span class="n">_google_drive_file_id_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_google_drive_file_id_patterns</span><span class="p">))</span>
+<span class="n">_google_drive_file_id_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_google_drive_file_id_patterns</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_google_drive_id</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_google_drive_id</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">match</span> <span class="o">=</span> <span class="n">_google_drive_file_id_pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
         <span class="c1"># Return the first non-None group found in the match</span>
         <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Only FILE Google Drive URLs are supported, &#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Only FILE Google Drive URLs are supported, &quot;</span>
         <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;which have the format &#39;...drive.google.com/file/d/</span><span class="si">{file_id}</span><span class="s2">... &quot;</span>
-        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;This url is not supported: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;This url is not supported: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="is_google_drive_url">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.is_google_drive_url">[docs]</a>
-<span class="k">def</span> <span class="nf">is_google_drive_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_google_drive_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks if the provided URL is a Google Drive URL.</span>
 
@@ -416,7 +416,7 @@
 
 <div class="viewcode-block" id="google_drive_download_url">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.google_drive_download_url">[docs]</a>
-<span class="k">def</span> <span class="nf">google_drive_download_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">google_drive_download_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the download url from a FILE Google Drive URL.</span>
 
 <span class="sd">    Note: File URLs have the format: `...drive.google.com/file/d/{file_id}...`.</span>
@@ -424,20 +424,20 @@
 <span class="sd">    supported.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file_id</span> <span class="o">=</span> <span class="n">_google_drive_id</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;https://drive.google.com/uc?export=download&amp;id=</span><span class="si">{</span><span class="n">file_id</span><span class="si">}</span><span class="s1">&#39;</span></div>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;https://drive.google.com/uc?export=download&amp;id=</span><span class="si">{</span><span class="n">file_id</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">_is_html_doc</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">Filepath</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_html_doc</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">Filepath</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the src is an html document.&quot;&quot;&quot;</span>
-    <span class="n">html_prefix</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&lt;!DOCTYPE html&gt;&#39;</span>
+    <span class="n">html_prefix</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&lt;!DOCTYPE html&gt;&quot;</span>
     <span class="n">first_bytes</span> <span class="o">=</span> <span class="n">_first_bytes</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">html_prefix</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">first_bytes</span> <span class="o">==</span> <span class="n">html_prefix</span>
 
 
 <div class="viewcode-block" id="download_from_google_drive">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.download_from_google_drive">[docs]</a>
-<span class="k">def</span> <span class="nf">download_from_google_drive</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_from_google_drive</span><span class="p">(</span>
     <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -459,10 +459,10 @@
     <span class="n">download_url</span> <span class="o">=</span> <span class="n">google_drive_download_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
     <span class="n">src</span> <span class="o">=</span> <span class="n">download_url_contents</span><span class="p">(</span><span class="n">download_url</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">_download_kwargs</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">skip_virus_scan_confirmation_page</span><span class="p">:</span>
-        <span class="n">html_prefix</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&lt;!DOCTYPE html&gt;&#39;</span>
+        <span class="n">html_prefix</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&lt;!DOCTYPE html&gt;&quot;</span>
         <span class="n">first_bytes</span> <span class="o">=</span> <span class="n">_first_bytes</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">html_prefix</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">first_bytes</span> <span class="o">==</span> <span class="n">html_prefix</span><span class="p">:</span>
-            <span class="n">html_content</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="n">html_content</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
             <span class="n">url_with_token</span> <span class="o">=</span> <span class="n">url_with_virus_scan_confirmation_token</span><span class="p">(</span>
                 <span class="n">download_url</span><span class="p">,</span> <span class="n">html_content</span>
             <span class="p">)</span>
@@ -472,19 +472,19 @@
 
 
 
-<span class="k">def</span> <span class="nf">url_with_virus_scan_confirmation_token</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">page_html</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">url_with_virus_scan_confirmation_token</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">page_html</span><span class="p">):</span>
     <span class="c1"># Use regular expressions to find the confirmation token</span>
-    <span class="n">confirm_token_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;confirm=([0-9A-Za-z_\-]+)&amp;&#39;</span><span class="p">,</span> <span class="n">page_html</span><span class="p">)</span>
+    <span class="n">confirm_token_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;confirm=([0-9A-Za-z_\-]+)&amp;&quot;</span><span class="p">,</span> <span class="n">page_html</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">confirm_token_match</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s1">&#39;Could not find the confirmation token for the virus scan page of url: &#39;</span>
-            <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="s2">&quot;Could not find the confirmation token for the virus scan page of url: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
 
     <span class="n">confirmation_token</span> <span class="o">=</span> <span class="n">confirm_token_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Construct the URL with the confirmation token</span>
-    <span class="k">return</span> <span class="n">url</span> <span class="o">+</span> <span class="s1">&#39;&amp;confirm=&#39;</span> <span class="o">+</span> <span class="n">confirmation_token</span>
+    <span class="k">return</span> <span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;&amp;confirm=&quot;</span> <span class="o">+</span> <span class="n">confirmation_token</span>
 
 
 <span class="c1"># --------------------- Special URLS ---------------------</span>
@@ -498,7 +498,7 @@
 
 <div class="viewcode-block" id="add_special_url_route">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.add_special_url_route">[docs]</a>
-<span class="k">def</span> <span class="nf">add_special_url_route</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">url_download_func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_special_url_route</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">url_download_func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add a special url route, i.e. a function that downloads a url&#39;s contents</span>
 <span class="sd">    for a specific condition on the url.</span>
@@ -509,7 +509,7 @@
 
 <div class="viewcode-block" id="is_special_url">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.is_special_url">[docs]</a>
-<span class="k">def</span> <span class="nf">is_special_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_special_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a url is a special url, i.e. if it has a special url route.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">_is_special_url</span> <span class="ow">in</span> <span class="n">special_url_routes</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">_is_special_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
@@ -520,7 +520,7 @@
 
 <div class="viewcode-block" id="download_from_special_url">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.download_from_special_url">[docs]</a>
-<span class="k">def</span> <span class="nf">download_from_special_url</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_from_special_url</span><span class="p">(</span>
     <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="n">DFLT_CHK_SIZE</span><span class="p">,</span> <span class="n">user_agent</span><span class="o">=</span><span class="n">DFLT_USER_AGENT</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Download a url&#39;s contents, using a special url route.&quot;&quot;&quot;</span>
@@ -528,7 +528,7 @@
     <span class="k">for</span> <span class="n">is_special_url</span><span class="p">,</span> <span class="n">download_func</span> <span class="ow">in</span> <span class="n">special_url_routes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">is_special_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">download_func</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported url: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported url: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 </pre></div>
 
