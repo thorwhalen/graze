@@ -516,6 +516,8 @@ filepath, but it's nicer if you can just give them the url, (or have the url eve
 be in the defaults) and let the function do the downloading if and when necessary.
 """
 
+from typing import Literal
+
 
 # TODO: Would be nicer to solve this with a reusable ttl caching decorator!
 #       (or possibly, with a key_ingress enhancement)
@@ -526,17 +528,27 @@ class GrazeWithDataRefresh(Graze):
         source=Internet(),
         *,
         key_ingress: Optional[Callable] = None,
-        time_to_live: Union[int, float] = A_WEEK_IN_SECONDS,
-        on_error: str = "warn",
+        time_to_live: Union[int, float] = 0,
+        on_error: Literal[
+            "warn", "raise", "ignore", "warn_and_return_local"
+        ] = "ignore",
         return_filepaths: bool = False,
     ):
-        """Like Graze, but where you can specify a time_to_live "freshness threshold" to trigger the re-download of data
+        """Like Graze, but where you can specify a time_to_live "freshness threshold"
+        to trigger the re-download of data
+
+        Note: The default is time_to_live=0, on_error='ignore'. This means that
+        the data will be re-downloaded every time you ask for it, and if there's
+        an error, the stale data will be returned.
 
         :param time_to_live: In seconds.
         :param on_error: What to do if there's an error when fetching the new data.
             'raise' raise an error (but keep the cached data)
             'warn' warn the user of the stale data (but return anyway)
             'ignore' ignore the error, and return the stale data
+            'warn_and_return_local' warn the user of the stale data, but return the
+            stale data anyway
+
         """
         super().__init__(
             rootdir,
@@ -564,7 +576,12 @@ class GrazeWithDataRefresh(Graze):
                     with open(filepath, "wb") as f:
                         f.write(v)  # replace existing
                 except Exception as e:
-                    if self.on_error == "raise":
+                    if self.on_error == "warn_and_return_local":
+                        warn(
+                            "There was an error getting a fresh copy of {k}, "
+                            f"so I'll give you a copy that's {age} seconds old."
+                        )
+                    elif self.on_error == "raise":
                         raise
                     elif self.on_error == "warn":
                         warn(
