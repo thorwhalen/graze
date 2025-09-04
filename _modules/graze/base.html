@@ -5,17 +5,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.base &mdash; graze 0.1.27 documentation</title>
+  <title>graze.base &mdash; graze 0.1.28 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=dc233e31"></script>
-      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/documentation_options.js?v=34399df3"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -301,7 +301,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">RequestFailure</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Response code was </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;The first 500 characters of the content were: </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;The first 500 characters of the content were: </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">[:</span><span class="mi">500</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
     <span class="n">selenium_chrome</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">selenium_url_to_contents</span><span class="p">,</span> <span class="n">browser</span><span class="o">=</span><span class="s2">&quot;Chrome&quot;</span><span class="p">))</span>
@@ -625,6 +625,8 @@
 <span class="s2">be in the defaults) and let the function do the downloading if and when necessary.</span>
 <span class="s2">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+
 
 <span class="c1"># TODO: Would be nicer to solve this with a reusable ttl caching decorator!</span>
 <span class="c1">#       (or possibly, with a key_ingress enhancement)</span>
@@ -637,17 +639,27 @@
         <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">(),</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">key_ingress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">time_to_live</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_WEEK_IN_SECONDS</span><span class="p">,</span>
-        <span class="n">on_error</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
+        <span class="n">time_to_live</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">on_error</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
+            <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;raise&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="s2">&quot;warn_and_return_local&quot;</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ignore&quot;</span><span class="p">,</span>
         <span class="n">return_filepaths</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Like Graze, but where you can specify a time_to_live &quot;freshness threshold&quot; to trigger the re-download of data</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Like Graze, but where you can specify a time_to_live &quot;freshness threshold&quot;</span>
+<span class="sd">        to trigger the re-download of data</span>
+
+<span class="sd">        Note: The default is time_to_live=0, on_error=&#39;ignore&#39;. This means that</span>
+<span class="sd">        the data will be re-downloaded every time you ask for it, and if there&#39;s</span>
+<span class="sd">        an error, the stale data will be returned.</span>
 
 <span class="sd">        :param time_to_live: In seconds.</span>
 <span class="sd">        :param on_error: What to do if there&#39;s an error when fetching the new data.</span>
 <span class="sd">            &#39;raise&#39; raise an error (but keep the cached data)</span>
 <span class="sd">            &#39;warn&#39; warn the user of the stale data (but return anyway)</span>
 <span class="sd">            &#39;ignore&#39; ignore the error, and return the stale data</span>
+<span class="sd">            &#39;warn_and_return_local&#39; warn the user of the stale data, but return the</span>
+<span class="sd">            stale data anyway</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">rootdir</span><span class="p">,</span>
@@ -675,7 +687,12 @@
                     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># replace existing</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span> <span class="o">==</span> <span class="s2">&quot;warn_and_return_local&quot;</span><span class="p">:</span>
+                        <span class="n">warn</span><span class="p">(</span>
+                            <span class="s2">&quot;There was an error getting a fresh copy of </span><span class="si">{k}</span><span class="s2">, &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;so I&#39;ll give you a copy that&#39;s </span><span class="si">{</span><span class="n">age</span><span class="si">}</span><span class="s2"> seconds old.&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
                         <span class="k">raise</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span> <span class="o">==</span> <span class="s2">&quot;warn&quot;</span><span class="p">:</span>
                         <span class="n">warn</span><span class="p">(</span>
