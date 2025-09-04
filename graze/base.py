@@ -202,7 +202,7 @@ class url_to_contents:
         else:
             raise RequestFailure(
                 f"Response code was {resp.status_code}.\n"
-                f"The first 500 characters of the content were: {resp.content}"
+                f"The first 500 characters of the content were: {resp.content[:500]}"
             )
 
     selenium_chrome = staticmethod(partial(selenium_url_to_contents, browser="Chrome"))
