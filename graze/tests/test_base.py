@@ -10,7 +10,7 @@ from graze.base import url_to_file_download, Contents
 test_url_1 = (
     "https://raw.githubusercontent.com/thorwhalen/graze/master/graze/tests/test_base.py"
 )
-test_url_contents_1_first_line = b'"""Test the base module.'
+test_url_contents_1_first_line = b'"""Test the base module."""'
 
 
 def _get_temp_path(relative_path: str = ""):
