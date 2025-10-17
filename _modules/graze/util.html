@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.util &mdash; graze 0.1.28 documentation</title>
+  <title>graze.util &mdash; graze 0.1.30 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=34399df3"></script>
+      <script src="../../_static/documentation_options.js?v=73657eb8"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -79,7 +79,8 @@
   <h1>Source code for graze.util</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utils&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">urllib</span>
@@ -428,7 +429,7 @@
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_is_html_doc</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">Filepath</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_html_doc</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Filepath</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the src is an html document.&quot;&quot;&quot;</span>
     <span class="n">html_prefix</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&lt;!DOCTYPE html&gt;&quot;</span>
     <span class="n">first_bytes</span> <span class="o">=</span> <span class="n">_first_bytes</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">html_prefix</span><span class="p">))</span>
