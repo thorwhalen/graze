@@ -1,6 +1,7 @@
 """Base functionality"""
 
-from typing import Optional, Callable, Union, Any
+from typing import Optional, Union, Any
+from collections.abc import Callable
 import os
 import time
 from warnings import warn
@@ -272,8 +273,8 @@ def url_to_file_download(
     url_to_contents: Callable[[Url], Contents] = DFLT_URL_TO_CONTENT,
     write_contents_to_file: Callable[[Contents, LocalPath], Any] = _write_to_file,
     url_to_path: Callable = url_to_localpath,
-    overwrite: Union[bool, Callable[[LocalPath, Url], bool]] = True,
-    url_egress: Optional[Callable[[Url], Url]] = None,
+    overwrite: bool | Callable[[LocalPath, Url], bool] = True,
+    url_egress: Callable[[Url], Url] | None = None,
     rootdir: LocalPath = DFLT_GRAZE_DIR,
     ensure_dirs: bool = True,
     read_contents_of_file: Callable[[LocalPath], Contents] = _read_file,
@@ -409,7 +410,7 @@ class Graze(LocalGrazed):
         rootdir=DFLT_GRAZE_DIR,
         source=Internet(),
         *,
-        key_ingress: Optional[Callable] = None,
+        key_ingress: Callable | None = None,
         return_filepaths: bool = False,
     ):
         """
@@ -527,8 +528,8 @@ class GrazeWithDataRefresh(Graze):
         rootdir=DFLT_GRAZE_DIR,
         source=Internet(),
         *,
-        key_ingress: Optional[Callable] = None,
-        time_to_live: Union[int, float] = 0,
+        key_ingress: Callable | None = None,
+        time_to_live: int | float = 0,
         on_error: Literal[
             "warn", "raise", "ignore", "warn_and_return_local"
         ] = "ignore",
@@ -599,8 +600,8 @@ def graze(
     rootdir: str = DFLT_GRAZE_DIR,
     source=Internet(),
     *,
-    key_ingress: Optional[Callable] = None,
-    max_age: Optional[Union[int, float]] = None,
+    key_ingress: Callable | None = None,
+    max_age: int | float | None = None,
     return_filepaths: bool = False,
 ):
     """Get the contents of the url (persisting the results in a local file,

@@ -1,6 +1,7 @@
 """Utils"""
 
-from typing import Callable, Union
+from typing import Union
+from collections.abc import Callable
 from functools import partial
 import os
 import urllib
@@ -325,7 +326,7 @@ def google_drive_download_url(url):
     return f"https://drive.google.com/uc?export=download&id={file_id}"
 
 
-def _is_html_doc(src: Union[bytes, Filepath]):
+def _is_html_doc(src: bytes | Filepath):
     """Check if the src is an html document."""
     html_prefix = b"<!DOCTYPE html>"
     first_bytes = _first_bytes(src, len(html_prefix))
