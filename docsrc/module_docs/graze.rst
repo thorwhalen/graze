@@ -1,4 +1,0 @@
-graze
-=====
-.. automodule:: graze
-   :members:

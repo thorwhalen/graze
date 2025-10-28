@@ -1,7 +1,7 @@
 """Base functionality"""
 
-from typing import Optional, Union, Any
-from collections.abc import Callable
+from typing import Optional, Union, Any, Protocol
+from collections.abc import Callable, MutableMapping
 import os
 import time
 from warnings import warn
@@ -31,6 +31,13 @@ from graze.util import (
 Url = str
 LocalPath = str
 Contents = Union[bytes, str]
+
+
+class Gettable(Protocol):
+    """Protocol for objects with __getitem__ method."""
+
+    def __getitem__(self, key: str) -> Contents: ...
+
 
 # TODO: handle configuration and existence of root
 pjoin = os.path.join
@@ -76,6 +83,211 @@ def localpath_to_url(path: str) -> str:
 
 _url_to_localpath = url_to_localpath  # backward compatibility
 _localpath_to_url = localpath_to_url  # backward compatibility
+
+
+# --------------------------------------------------------------------------------------
+# Cache helpers for flexible caching backends
+
+
+def _is_full_filepath(path: str) -> bool:
+    """
+    Check if path is a full filepath (platform-independent).
+
+    >>> _is_full_filepath('/usr/local/data')
+    True
+    >>> _is_full_filepath('~/data')
+    True
+    >>> _is_full_filepath('relative/path')
+    False
+    >>> _is_full_filepath('C:\\\\Users\\\\data')  # doctest: +SKIP
+    True
+    """
+    if path.startswith("~"):
+        return True
+    if os.path.isabs(path):
+        return True
+    # Check for Windows absolute paths on Windows
+    if os.name == "nt" and len(path) > 1 and path[1] == ":":
+        return True
+    return False
+
+
+def _resolve_cache_and_key(
+    url: str,
+    cache: Optional[Union[str, MutableMapping]],
+    cache_key: Optional[Union[str, Callable]],
+    rootdir: Optional[str] = None,
+) -> tuple[Optional[Union[str, MutableMapping]], str, bool]:
+    """
+    Resolve cache and cache_key, handling conflicts and defaults.
+
+    Returns:
+        tuple: (resolved_cache, resolved_cache_key, is_explicit_filepath)
+    """
+    # Handle backwards compatibility: rootdir vs cache conflict
+    if rootdir is not None and cache is not None:
+        raise ValueError(
+            "Cannot specify both 'rootdir' and 'cache'. "
+            "'rootdir' is deprecated; use 'cache' instead."
+        )
+
+    # Use rootdir if cache not specified (backwards compatibility)
+    if cache is None and rootdir is not None:
+        cache = rootdir
+
+    # Resolve cache_key
+    if cache_key is None:
+        resolved_cache_key = url_to_localpath(url)
+    elif callable(cache_key):
+        resolved_cache_key = cache_key(url)
+    else:
+        resolved_cache_key = cache_key
+
+    # Check if cache_key is a full filepath
+    is_explicit_filepath = _is_full_filepath(resolved_cache_key)
+
+    if is_explicit_filepath and cache is not None:
+        raise ValueError(
+            f"cache_key appears to be a full filepath ({resolved_cache_key}), "
+            f"but 'cache' was also provided ({cache}). This is ambiguous. "
+            f"Either provide cache_key as a full filepath with cache=None, "
+            f"or provide both cache and a relative cache_key."
+        )
+
+    return cache, resolved_cache_key, is_explicit_filepath
+
+
+def _cache_contains(
+    cache: Optional[Union[str, MutableMapping]],
+    cache_key: str,
+    is_explicit_filepath: bool,
+) -> bool:
+    """Check if cache contains the key."""
+    if is_explicit_filepath:
+        expanded_path = os.path.expanduser(cache_key)
+        return os.path.exists(expanded_path)
+
+    if cache is None:
+        return False
+
+    if isinstance(cache, str):
+        # It's a folder path
+        expanded_cache = os.path.expanduser(cache)
+        full_path = os.path.join(expanded_cache, cache_key)
+        return os.path.exists(full_path)
+
+    # It's a MutableMapping
+    try:
+        return cache_key in cache
+    except (TypeError, KeyError):
+        return False
+
+
+def _cache_get(
+    cache: Optional[Union[str, MutableMapping]],
+    cache_key: str,
+    is_explicit_filepath: bool,
+) -> Optional[Contents]:
+    """Get contents from cache."""
+    if is_explicit_filepath:
+        expanded_path = os.path.expanduser(cache_key)
+        if os.path.exists(expanded_path):
+            with open(expanded_path, "rb") as f:
+                return f.read()
+        return None
+
+    if cache is None:
+        return None
+
+    if isinstance(cache, str):
+        # It's a folder path
+        expanded_cache = os.path.expanduser(cache)
+        full_path = os.path.join(expanded_cache, cache_key)
+        if os.path.exists(full_path):
+            with open(full_path, "rb") as f:
+                return f.read()
+        return None
+
+    # It's a MutableMapping
+    try:
+        return cache[cache_key]
+    except (KeyError, TypeError):
+        return None
+
+
+def _cache_set(
+    cache: Optional[Union[str, MutableMapping]],
+    cache_key: str,
+    contents: Contents,
+    is_explicit_filepath: bool,
+):
+    """Store contents in cache."""
+    if is_explicit_filepath:
+        expanded_path = os.path.expanduser(cache_key)
+        os.makedirs(os.path.dirname(expanded_path) or ".", exist_ok=True)
+        with open(expanded_path, "wb") as f:
+            f.write(contents)
+        return
+
+    if cache is None:
+        return
+
+    if isinstance(cache, str):
+        # It's a folder path
+        expanded_cache = os.path.expanduser(cache)
+        full_path = os.path.join(expanded_cache, cache_key)
+        os.makedirs(os.path.dirname(full_path) or expanded_cache, exist_ok=True)
+        with open(full_path, "wb") as f:
+            f.write(contents)
+        return
+
+    # It's a MutableMapping
+    cache[cache_key] = contents
+
+
+def _should_refresh(
+    refresh: Union[bool, Callable],
+    cache: Optional[Union[str, MutableMapping]],
+    cache_key: str,
+    url: str,
+    is_explicit_filepath: bool,
+) -> bool:
+    """Determine if content should be refreshed."""
+    if isinstance(refresh, bool):
+        return refresh
+
+    if callable(refresh):
+        return refresh(cache_key, url)
+
+    raise ValueError(f"refresh must be bool or callable. Got: {type(refresh)}")
+
+
+def _max_age_to_refresh_func(max_age: Union[int, float]) -> Callable:
+    """Convert max_age to a refresh function."""
+
+    def refresh_func(cache_key: str, url: str) -> bool:
+        # For MutableMapping, we can't easily check file age
+        # So we return False (don't refresh) - the old behavior with Graze
+        # Note: This is a limitation, but maintains backwards compatibility
+        # For file-based caches, check the modification time
+        if _is_full_filepath(cache_key):
+            filepath = os.path.expanduser(cache_key)
+        else:
+            # Assume it's in DFLT_GRAZE_DIR if we can't determine
+            filepath = os.path.join(DFLT_GRAZE_DIR, cache_key)
+
+        if not os.path.exists(filepath):
+            return True  # File doesn't exist, so we need to fetch
+
+        age = time.time() - os.stat(filepath).st_mtime
+        return age > max_age
+
+    return refresh_func
+
+
+# End of cache helpers
+# --------------------------------------------------------------------------------------
+
 
 # CONTENT_FILENAME = 'grazed'
 FOLDER_SUFFIX = SUBDIR_SUFFIX  # TODO: Check usage and delete if none
@@ -597,44 +809,173 @@ class GrazeWithDataRefresh(Graze):
 
 def graze(
     url: str,
-    rootdir: str = DFLT_GRAZE_DIR,
-    source=Internet(),
+    cache: Optional[Union[str, MutableMapping]] = None,
     *,
+    cache_key: Optional[Union[str, Callable]] = None,
+    source: Union[Callable, Gettable] = None,
     key_ingress: Callable | None = None,
+    refresh: Union[bool, Callable] = False,
     max_age: int | float | None = None,
-    return_filepaths: bool = False,
+    return_key: bool = False,
+    # Deprecated parameters (kept for backwards compatibility)
+    rootdir: Optional[str] = None,
+    return_filepaths: Optional[bool] = None,
 ):
-    """Get the contents of the url (persisting the results in a local file,
+    """Get the contents of the url (persisting the results in a local file or cache,
     for next time you'll ask for it)
 
-    :param rootdir: Where to store the contents locally.
-    :param source: Where to get the contents from if they're not already stored
-        locally. By default, it's an ``Internet`` instance, but can be a custom
-        object that has a ``__getitem__`` method that takes a url and returns
-        its contents.
-    :param key_ingress: A function to call on the key before getting the contents from
-        ``source``. Typically, this is used to notify the user that the contents
-        are being downloaded. For example, you could use
-        ``key_ingress="The contents of {} are being downloaded".format``.
-    :param max_age: If not None, should be a number specifying the number of
-    seconds a the cached data is considered "fresh". If the cached data is older
-    than this, then it will be re-downloaded from the source.
-    :param on_error: What to do if there's an error when fetching the new data.
-        'raise' raise an error (but keep the cached data)
-        'warn' warn the user of the stale data (but return anyway)
-        'ignore' ignore the error, and return the stale data
+    :param url: The url to download from
+    :param cache: Where to store the contents. Can be:
+        - None: use DFLT_GRAZE_DIR as folder path (unless cache_key is full filepath)
+        - str: folder path for file-based caching
+        - MutableMapping: custom cache object (e.g., Files, dict)
+    :param cache_key: The key to use in the cache. Can be:
+        - None: auto-generate using url_to_localpath
+        - str: explicit cache key (or full filepath if starts with / or ~)
+        - Callable: function to generate cache key from url
+    :param source: Where to get the contents from if not cached. Can be:
+        - None: use default Internet() instance
+        - Callable: function that takes url and returns contents
+        - Gettable: object with __getitem__ method
+    :param key_ingress: Function to call on the url before downloading.
+        Typically used to notify user that download is happening.
+    :param refresh: Whether to re-download even if cached. Can be:
+        - bool: True to always refresh, False to use cache if available
+        - Callable: function(cache_key, url) -> bool to decide dynamically
+    :param max_age: If not None, number of seconds cached data is considered fresh.
+        If cached data is older, it will be re-downloaded. Cannot be used with refresh.
+    :param return_key: If True, return the cache_key instead of contents.
+    :param rootdir: (DEPRECATED) Use 'cache' instead. Folder path for caching.
+    :param return_filepaths: (DEPRECATED) Use 'return_key' instead.
+
+    Examples:
+
+    >>> # Basic usage - caches to default directory
+    >>> content = graze('http://example.com/data.json')  # doctest: +SKIP
+
+    >>> # Cache to specific folder
+    >>> content = graze('http://example.com/data.json', cache='~/my_cache')  # doctest: +SKIP
+
+    >>> # Cache to specific file (cache defaults to None automatically)
+    >>> content = graze('http://example.com/data.json', cache_key='~/data/my_data.json')  # doctest: +SKIP
+
+    >>> # Use custom cache object
+    >>> from dol import Files
+    >>> my_cache = Files('~/cache')
+    >>> content = graze('http://example.com/data.json', cache=my_cache, cache_key='data.json')  # doctest: +SKIP
+
+    >>> # Force refresh
+    >>> content = graze('http://example.com/data.json', refresh=True)  # doctest: +SKIP
+
+    >>> # Conditional refresh based on age
+    >>> content = graze('http://example.com/data.json', max_age=3600)  # doctest: +SKIP
     """
-    _kwargs = dict(
-        rootdir=rootdir,
-        source=source,
-        key_ingress=key_ingress,
-        return_filepaths=return_filepaths,
-    )
-    if max_age is None:
-        g = Graze(**_kwargs)
+    # Handle deprecated parameters
+    if return_filepaths is not None:
+        if return_key:
+            raise ValueError("Cannot specify both 'return_key' and 'return_filepaths'")
+        return_key = return_filepaths
+
+    # Handle max_age and refresh conflict
+    if max_age is not None and refresh != False:
+        if callable(refresh) or refresh is True:
+            raise ValueError(
+                "Cannot specify both 'max_age' and 'refresh'. "
+                "Use either max_age for time-based refresh, or refresh for custom logic."
+            )
+
+    # Convert max_age to refresh function if provided
+    if max_age is not None:
+        refresh = _max_age_to_refresh_func(max_age)
+
+    # Check for rootdir/cache conflict FIRST (before any assignments)
+    if rootdir is not None and cache is not None:
+        raise ValueError(
+            "Cannot specify both 'rootdir' and 'cache'. "
+            "'rootdir' is deprecated; use 'cache' instead."
+        )
+
+    # Resolve cache_key first to know if it's a full filepath
+    if cache_key is None:
+        resolved_cache_key = url_to_localpath(url)
+        is_explicit_filepath = False
+    elif callable(cache_key):
+        resolved_cache_key = cache_key(url)
+        is_explicit_filepath = _is_full_filepath(resolved_cache_key)
     else:
-        g = GrazeWithDataRefresh(**_kwargs)
-    return g[url]
+        resolved_cache_key = cache_key
+        is_explicit_filepath = _is_full_filepath(resolved_cache_key)
+
+    # Handle backwards compatibility and defaults
+    # Only set cache to default if not using explicit filepath
+    if cache is None and rootdir is None and not is_explicit_filepath:
+        cache = DFLT_GRAZE_DIR
+    elif cache is None and rootdir is not None:
+        cache = rootdir
+
+    # Check for explicit filepath conflict (after cache may have been set to default)
+    if is_explicit_filepath and cache is not None:
+        raise ValueError(
+            f"cache_key appears to be a full filepath ({resolved_cache_key}), "
+            f"but 'cache' was also provided ({cache}). This is ambiguous. "
+            f"Either provide cache_key as a full filepath with cache=None, "
+            f"or provide both cache and a relative cache_key."
+        )
+
+    # Set source default
+    if source is None:
+        source = Internet()
+
+    # Convert callable source to Gettable if needed
+    if callable(source) and not hasattr(source, '__getitem__'):
+        # Wrap callable in a simple class with __getitem__
+        class _CallableWrapper:
+            def __init__(self, func):
+                self.func = func
+
+            def __getitem__(self, key):
+                return self.func(key)
+
+        source = _CallableWrapper(source)
+
+    # Determine if we should refresh
+    should_download = _should_refresh(
+        refresh, cache, resolved_cache_key, url, is_explicit_filepath
+    )
+
+    # Try to get from cache if not refreshing
+    if not should_download and _cache_contains(
+        cache, resolved_cache_key, is_explicit_filepath
+    ):
+        contents = _cache_get(cache, resolved_cache_key, is_explicit_filepath)
+        if contents is not None:
+            if return_key:
+                if is_explicit_filepath:
+                    return os.path.expanduser(resolved_cache_key)
+                elif isinstance(cache, str):
+                    return os.path.join(os.path.expanduser(cache), resolved_cache_key)
+                else:
+                    return resolved_cache_key
+            return contents
+
+    # Download fresh content
+    if key_ingress is not None:
+        url = key_ingress(url)
+
+    contents = source[url]
+
+    # Cache the contents
+    _cache_set(cache, resolved_cache_key, contents, is_explicit_filepath)
+
+    if return_key:
+        if is_explicit_filepath:
+            return os.path.expanduser(resolved_cache_key)
+        elif isinstance(cache, str):
+            return os.path.join(os.path.expanduser(cache), resolved_cache_key)
+        else:
+            return resolved_cache_key
+
+    return contents
 
 
 graze.key_ingress_print_downloading_message = key_egress_print_downloading_message

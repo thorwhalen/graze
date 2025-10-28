@@ -3,6 +3,7 @@
 import tempfile
 from typing import Union
 import os
+import time
 from functools import partial
 from pathlib import Path
 from graze.base import url_to_file_download, Contents
@@ -626,3 +627,503 @@ def test_url_egress_in_url_to_file_download():
     # Verify egress was called
     assert test_url_1 in egress_calls
     assert os.path.isfile(filepath)
+
+
+# --------------------------------------------------------------------------------------
+# NEW TESTS FOR NEW FUNCTIONALITY
+
+# --------------------------------------------------------------------------------------
+# Tests for new cache parameter
+# --------------------------------------------------------------------------------------
+
+
+def test_graze_with_cache_parameter():
+    """Test graze with new cache parameter (replaces rootdir)."""
+    from graze.base import graze
+
+    temp_dir = tempfile.mkdtemp()
+
+    # Use cache parameter instead of rootdir
+    contents = graze(test_url_1, cache=temp_dir)
+    _assert_first_line_is(contents, "graze with cache", test_url_contents_1_first_line)
+
+    # Verify file was created in cache directory
+    from graze.base import url_to_localpath
+
+    expected_path = os.path.join(temp_dir, url_to_localpath(test_url_1))
+    assert os.path.isfile(expected_path), f"Expected cached file at {expected_path}"
+
+
+def test_graze_with_mutablemapping_cache():
+    """Test graze with MutableMapping as cache (NEW feature)."""
+    from graze.base import graze
+    from dol import Files
+
+    temp_dir = tempfile.mkdtemp()
+    cache = Files(temp_dir)
+
+    # Use Files (MutableMapping) as cache
+    contents = graze(test_url_1, cache=cache, cache_key="test_data.txt")
+    _assert_first_line_is(
+        contents, "graze with MutableMapping", test_url_contents_1_first_line
+    )
+
+    # Verify data is in the cache
+    assert "test_data.txt" in cache
+    assert cache["test_data.txt"] == contents
+
+
+def test_graze_with_dict_cache():
+    """Test graze with dict as cache (in-memory caching)."""
+    from graze.base import graze
+
+    # Use dict as in-memory cache
+    memory_cache = {}
+
+    # First call downloads
+    contents1 = graze(test_url_1, cache=memory_cache, cache_key="url1")
+    _assert_first_line_is(
+        contents1, "first call with dict cache", test_url_contents_1_first_line
+    )
+
+    # Verify it's in the dict
+    assert "url1" in memory_cache
+    assert memory_cache["url1"] == contents1
+
+    # Second call uses cache (won't actually download)
+    contents2 = graze(test_url_1, cache=memory_cache, cache_key="url1")
+    assert contents2 == contents1
+    assert contents2 is memory_cache["url1"]  # Same object from dict
+
+
+# --------------------------------------------------------------------------------------
+# Tests for new cache_key parameter
+# --------------------------------------------------------------------------------------
+
+
+def test_graze_with_custom_cache_key_string():
+    """Test graze with explicit cache_key."""
+    from graze.base import graze
+    from dol import Files
+
+    temp_dir = tempfile.mkdtemp()
+    cache = Files(temp_dir)
+
+    # Use custom cache key
+    contents = graze(test_url_1, cache=cache, cache_key="my_custom_key.dat")
+    _assert_first_line_is(contents, "custom cache key", test_url_contents_1_first_line)
+
+    # Verify it's stored with our custom key
+    assert "my_custom_key.dat" in cache
+    assert os.path.isfile(os.path.join(temp_dir, "my_custom_key.dat"))
+
+
+def test_graze_with_cache_key_callable():
+    """Test graze with callable cache_key."""
+    from graze.base import graze
+    from hashlib import md5
+
+    temp_dir = tempfile.mkdtemp()
+
+    # Custom cache key function - just use last part of URL
+    def url_to_filename(url):
+        return url.split("/")[-1]
+
+    contents = graze(test_url_1, cache=temp_dir, cache_key=url_to_filename)
+    _assert_first_line_is(
+        contents, "callable cache key", test_url_contents_1_first_line
+    )
+
+    # Verify file exists with the generated name
+    expected_filename = "test_base.py"  # Last part of test_url_1
+    expected_path = os.path.join(temp_dir, expected_filename)
+    assert os.path.isfile(expected_path)
+
+def test_graze_with_full_filepath_cache_key():
+    """Test graze with full filepath as cache_key (cache param ignored)."""
+    from graze.base import graze
+
+    temp_dir = tempfile.mkdtemp()
+    full_filepath = os.path.join(temp_dir, "explicit_file.txt")
+
+    # When cache_key is a full filepath, cache defaults to None automatically
+    contents = graze(test_url_1, cache_key=full_filepath)
+    _assert_first_line_is(
+        contents, "full filepath cache key", test_url_contents_1_first_line
+    )
+
+    # Verify file exists at the explicit path
+    assert os.path.isfile(full_filepath)
+
+
+def test_graze_with_tilde_filepath_cache_key():
+    """Test graze with tilde (~) filepath as cache_key."""
+    from graze.base import graze
+
+    # Use tilde path (will be expanded)
+    tilde_path = os.path.join("~", ".graze_test", "tilde_test.txt")
+
+    # When cache_key starts with ~, it's treated as full filepath
+    contents = graze(test_url_1, cache_key=tilde_path)
+    _assert_first_line_is(contents, "tilde filepath", test_url_contents_1_first_line)
+
+    # Verify file exists at expanded path
+    expanded_path = os.path.expanduser(tilde_path)
+    assert os.path.isfile(expanded_path)
+
+    # Clean up
+    if os.path.isfile(expanded_path):
+        os.remove(expanded_path)
+
+# --------------------------------------------------------------------------------------
+# Tests for new refresh parameter
+# --------------------------------------------------------------------------------------
+
+
+def test_graze_with_refresh_true():
+    """Test graze with refresh=True (always re-download)."""
+    from graze.base import graze
+
+    temp_dir = tempfile.mkdtemp()
+
+    # First download
+    contents1 = graze(test_url_1, cache=temp_dir)
+    _assert_first_line_is(contents1, "first download", test_url_contents_1_first_line)
+
+    # Get the file path and modification time
+    from graze.base import url_to_localpath
+
+    filepath = os.path.join(temp_dir, url_to_localpath(test_url_1))
+    mtime1 = os.path.getmtime(filepath)
+
+    time.sleep(0.1)  # Small delay to ensure different mtime
+
+    # Force refresh
+    contents2 = graze(test_url_1, cache=temp_dir, refresh=True)
+    mtime2 = os.path.getmtime(filepath)
+
+    # File should have been re-downloaded (newer mtime)
+    assert mtime2 > mtime1, "File should have been refreshed"
+    _assert_first_line_is(
+        contents2, "refreshed content", test_url_contents_1_first_line
+    )
+
+
+def test_graze_with_refresh_false():
+    """Test graze with refresh=False (use cache if available)."""
+    from graze.base import graze
+
+    temp_dir = tempfile.mkdtemp()
+
+    # First download
+    contents1 = graze(test_url_1, cache=temp_dir)
+
+    # Get the file path and modification time
+    from graze.base import url_to_localpath
+
+    filepath = os.path.join(temp_dir, url_to_localpath(test_url_1))
+    mtime1 = os.path.getmtime(filepath)
+
+    time.sleep(0.1)
+
+    # Don't refresh (default behavior)
+    contents2 = graze(test_url_1, cache=temp_dir, refresh=False)
+    mtime2 = os.path.getmtime(filepath)
+
+    # File should NOT have been re-downloaded (same mtime)
+    assert mtime2 == mtime1, "File should NOT have been refreshed"
+    assert contents2 == contents1
+
+
+def test_graze_with_refresh_callable():
+    """Test graze with callable refresh function."""
+    from graze.base import graze
+
+    temp_dir = tempfile.mkdtemp()
+    refresh_calls = []
+
+    def conditional_refresh(cache_key, url):
+        """Custom refresh logic - track calls."""
+        refresh_calls.append((cache_key, url))
+        # Only refresh if URL contains "test_base"
+        return "test_base" in url
+
+    # First call - file doesn't exist, will download
+    contents1 = graze(test_url_1, cache=temp_dir, refresh=conditional_refresh)
+    _assert_first_line_is(
+        contents1, "first call with callable refresh", test_url_contents_1_first_line
+    )
+
+    # Second call - refresh function will be called and return True
+    # (because test_url_1 contains "test_base")
+    time.sleep(0.1)
+    contents2 = graze(test_url_1, cache=temp_dir, refresh=conditional_refresh)
+
+    # Verify refresh function was called
+    assert len(refresh_calls) > 0, "Refresh function should have been called"
+
+
+def test_graze_with_max_age():
+    """Test graze with max_age (converted to refresh function internally)."""
+    from graze.base import graze
+
+    temp_dir = tempfile.mkdtemp()
+
+    # First download
+    contents1 = graze(test_url_1, cache=temp_dir)
+    _assert_first_line_is(contents1, "first download", test_url_contents_1_first_line)
+
+    # Immediately try again with very short max_age
+    # Should not refresh yet (file is fresh)
+    contents2 = graze(test_url_1, cache=temp_dir, max_age=1.0)
+    assert contents2 == contents1
+
+    # Wait and try with max_age=0 (file is stale)
+    time.sleep(0.1)
+    # Note: max_age=0 means file is always stale
+    contents3 = graze(test_url_1, cache=temp_dir, max_age=0)
+    _assert_first_line_is(
+        contents3, "after max_age refresh", test_url_contents_1_first_line
+    )
+
+
+# --------------------------------------------------------------------------------------
+# Tests for new return_key parameter
+# --------------------------------------------------------------------------------------
+
+
+def test_graze_with_return_key_true():
+    """Test graze with return_key=True (get cache key instead of contents)."""
+    from graze.base import graze
+
+    temp_dir = tempfile.mkdtemp()
+
+    # Get the cache key (filepath) instead of contents
+    result = graze(test_url_1, cache=temp_dir, return_key=True)
+
+    # Should return a filepath string
+    assert isinstance(result, str)
+    assert os.path.isfile(result)
+
+    # Verify the file contains the expected content
+    with open(result, "rb") as f:
+        contents = f.read()
+    _assert_first_line_is(
+        contents, "file from return_key", test_url_contents_1_first_line
+    )
+
+
+def test_graze_with_return_key_mutablemapping():
+    """Test return_key with MutableMapping cache (returns key, not filepath)."""
+    from graze.base import graze
+    from dol import Files
+
+    temp_dir = tempfile.mkdtemp()
+    cache = Files(temp_dir)
+
+    # Get the cache key
+    cache_key = graze(test_url_1, cache=cache, cache_key="test.dat", return_key=True)
+
+    # Should return the cache key
+    assert cache_key == "test.dat"
+
+
+# --------------------------------------------------------------------------------------
+# Tests for error cases (conflicts)
+# --------------------------------------------------------------------------------------
+
+
+def test_graze_error_both_rootdir_and_cache():
+    """Test that providing both rootdir and cache raises ValueError."""
+    from graze.base import graze
+    import pytest
+
+    temp_dir = tempfile.mkdtemp()
+
+    # Should raise error if both rootdir and cache provided
+    with pytest.raises(ValueError, match="Cannot specify both 'rootdir' and 'cache'"):
+        graze(test_url_1, cache=temp_dir, rootdir=temp_dir)
+
+
+def test_graze_error_filepath_cache_key_with_cache():
+    """Test that full filepath cache_key + cache raises ValueError."""
+    from graze.base import graze
+    import pytest
+
+    temp_dir = tempfile.mkdtemp()
+    full_filepath = os.path.join(temp_dir, "file.txt")
+
+    # Should raise error if cache_key is full filepath but cache is also provided
+    with pytest.raises(ValueError, match="cache_key appears to be a full filepath"):
+        graze(test_url_1, cache=temp_dir, cache_key=full_filepath)
+
+
+def test_graze_error_max_age_and_refresh():
+    """Test that providing both max_age and refresh raises ValueError."""
+    from graze.base import graze
+    import pytest
+
+    temp_dir = tempfile.mkdtemp()
+
+    # Should raise error if both max_age and refresh provided
+    with pytest.raises(ValueError, match="Cannot specify both 'max_age' and 'refresh'"):
+        graze(test_url_1, cache=temp_dir, max_age=3600, refresh=True)
+
+
+def test_graze_error_return_key_and_return_filepaths():
+    """Test that providing both return_key and return_filepaths raises ValueError."""
+    from graze.base import graze
+    import pytest
+
+    temp_dir = tempfile.mkdtemp()
+
+    # Should raise error if both provided
+    with pytest.raises(
+        ValueError, match="Cannot specify both 'return_key' and 'return_filepaths'"
+    ):
+        graze(test_url_1, cache=temp_dir, return_key=True, return_filepaths=True)
+
+
+# --------------------------------------------------------------------------------------
+# Tests for backwards compatibility
+# --------------------------------------------------------------------------------------
+
+
+def test_graze_backwards_compat_rootdir():
+    """Test that old rootdir parameter still works."""
+    from graze.base import graze
+
+    temp_dir = tempfile.mkdtemp()
+
+    # Old API should still work
+    contents = graze(test_url_1, rootdir=temp_dir)
+    _assert_first_line_is(
+        contents, "backwards compat rootdir", test_url_contents_1_first_line
+    )
+
+
+def test_graze_backwards_compat_return_filepaths():
+    """Test that old return_filepaths parameter still works."""
+    from graze.base import graze
+
+    temp_dir = tempfile.mkdtemp()
+
+    # Old API should still work
+    filepath = graze(test_url_1, rootdir=temp_dir, return_filepaths=True)
+
+    assert isinstance(filepath, str)
+    assert os.path.isfile(filepath)
+
+
+def test_graze_backwards_compat_max_age():
+    """Test that max_age still works as before."""
+    from graze.base import graze
+
+    temp_dir = tempfile.mkdtemp()
+
+    # Old max_age API should still work
+    contents = graze(test_url_1, rootdir=temp_dir, max_age=3600)
+    _assert_first_line_is(
+        contents, "backwards compat max_age", test_url_contents_1_first_line
+    )
+
+
+def test_graze_backwards_compat_default_behavior():
+    """Test that default graze() behavior unchanged."""
+    from graze.base import graze
+
+    temp_dir = tempfile.mkdtemp()
+
+    # Basic usage with no new parameters
+    contents = graze(test_url_1, rootdir=temp_dir)
+    _assert_first_line_is(contents, "default behavior", test_url_contents_1_first_line)
+
+    # Should work exactly as before
+    contents2 = graze(test_url_1, rootdir=temp_dir)
+    assert contents2 == contents  # Second call uses cache
+
+
+# --------------------------------------------------------------------------------------
+# Tests for platform-independent filepath detection
+# --------------------------------------------------------------------------------------
+
+
+def test_is_full_filepath_helper():
+    """Test the _is_full_filepath helper function."""
+    from graze.base import _is_full_filepath
+
+    # Unix/Linux absolute paths
+    assert _is_full_filepath("/usr/local/data") is True
+    assert _is_full_filepath("/home/user/file.txt") is True
+
+    # Home directory paths
+    assert _is_full_filepath("~/data/file.txt") is True
+    assert _is_full_filepath("~") is True
+
+    # Relative paths
+    assert _is_full_filepath("relative/path") is False
+    assert _is_full_filepath("file.txt") is False
+
+    # Windows paths (if on Windows)
+    if os.name == "nt":
+        assert _is_full_filepath("C:\\Users\\data") is True
+        assert _is_full_filepath("D:\\path\\file.txt") is True
+
+
+# --------------------------------------------------------------------------------------
+# Integration tests combining multiple features
+# --------------------------------------------------------------------------------------
+
+
+def test_graze_integration_custom_cache_and_key():
+    """Integration test: Custom cache + custom key + refresh."""
+    from graze.base import graze
+    from dol import Files
+
+    temp_dir = tempfile.mkdtemp()
+    cache = Files(temp_dir)
+
+    # First call
+    contents1 = graze(
+        test_url_1, cache=cache, cache_key="integration_test.dat", refresh=False
+    )
+    _assert_first_line_is(contents1, "integration 1", test_url_contents_1_first_line)
+
+    # Verify cached
+    assert "integration_test.dat" in cache
+
+    # Second call with refresh
+    time.sleep(0.1)
+    contents2 = graze(
+        test_url_1, cache=cache, cache_key="integration_test.dat", refresh=True
+    )
+    _assert_first_line_is(contents2, "integration 2", test_url_contents_1_first_line)
+
+    # Should still be same content
+    assert contents2 == contents1
+
+
+def test_graze_integration_source_and_cache():
+    """Integration test: Custom source + cache."""
+    from graze.base import graze, Internet
+
+    temp_dir = tempfile.mkdtemp()
+
+    # Track source calls
+    source_calls = []
+
+    class TrackingInternet(Internet):
+        def __getitem__(self, url):
+            source_calls.append(url)
+            return super().__getitem__(url)
+
+    source = TrackingInternet()
+
+    # First call - will use source
+    contents1 = graze(test_url_1, cache=temp_dir, source=source)
+    assert len(source_calls) == 1
+
+    # Second call - should use cache (source not called again)
+    contents2 = graze(test_url_1, cache=temp_dir, source=source)
+    assert len(source_calls) == 1  # Still 1, not 2
+    assert contents2 == contents1
