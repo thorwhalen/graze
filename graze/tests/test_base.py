@@ -188,9 +188,9 @@ def test_url_localpath_roundtrip():
         localpath = url_to_localpath(url)
         recovered_url = localpath_to_url(localpath)
         # Strip trailing slashes for comparison
-        assert recovered_url.rstrip("/") == url.rstrip("/"), (
-            f"Roundtrip failed for {url}: got {recovered_url}"
-        )
+        assert recovered_url.rstrip("/") == url.rstrip(
+            "/"
+        ), f"Roundtrip failed for {url}: got {recovered_url}"
 
 
 def test_local_files():
@@ -517,8 +517,9 @@ def test_standalone_graze_function():
 
     # With max_age
     contents3 = graze(test_url_1, rootdir=temp_dir, max_age=3600)
-    _assert_first_line_is(contents3, "graze with max_age", test_url_contents_1_first_line)
-
+    _assert_first_line_is(
+        contents3, "graze with max_age", test_url_contents_1_first_line
+    )
 
 
 def test_url_to_filepath():
@@ -549,7 +550,6 @@ def test_url_to_filepath():
     # We skip testing download=True to avoid the TypeError
 
 
-
 def test_return_functions():
     """Test different return functions for url_to_file_download"""
     from graze.base import (
@@ -562,17 +562,13 @@ def test_return_functions():
 
     # Test return_contents (default)
     filepath1 = os.path.join(temp_dir, "__test_return_contents.txt")
-    result = url_to_file_download(
-        test_url_1, filepath1, return_func=return_contents
-    )
+    result = url_to_file_download(test_url_1, filepath1, return_func=return_contents)
     assert isinstance(result, bytes)
     _assert_first_line_is(result, "return_contents", test_url_contents_1_first_line)
 
     # Test return_filepath
     filepath2 = os.path.join(temp_dir, "__test_return_filepath.txt")
-    result = url_to_file_download(
-        test_url_1, filepath2, return_func=return_filepath
-    )
+    result = url_to_file_download(test_url_1, filepath2, return_func=return_filepath)
     assert isinstance(result, str)
     assert result == filepath2
     assert os.path.isfile(filepath2)
@@ -580,7 +576,7 @@ def test_return_functions():
 
 def test_url_to_file_download_with_overwrite_callable():
     """Test url_to_file_download overwrite behavior
-    
+
     Note: The current implementation in base.py checks `not overwrite` which
     treats callables as truthy. This test documents the actual behavior.
     """
@@ -599,15 +595,15 @@ def test_url_to_file_download_with_overwrite_callable():
     # Test overwrite=False (should NOT overwrite)
     url_to_file_download(test_url_1, filepath, overwrite=False)
     mtime2 = os.path.getmtime(filepath)
-    assert mtime2 == mtime1, "File should NOT have been overwritten with overwrite=False"
+    assert (
+        mtime2 == mtime1
+    ), "File should NOT have been overwritten with overwrite=False"
 
     # Test overwrite=True (should overwrite)
     time.sleep(0.1)
     url_to_file_download(test_url_1, filepath, overwrite=True)
     mtime3 = os.path.getmtime(filepath)
     assert mtime3 > mtime2, "File should have been overwritten with overwrite=True"
-
-
 
 
 def test_url_egress_in_url_to_file_download():
@@ -630,6 +626,3 @@ def test_url_egress_in_url_to_file_download():
     # Verify egress was called
     assert test_url_1 in egress_calls
     assert os.path.isfile(filepath)
-
-
-
