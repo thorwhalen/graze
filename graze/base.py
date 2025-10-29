@@ -245,7 +245,7 @@ def _cache_set(
     # Try to create dirs for the key (gracefully handle if cache doesn't support it)
     try:
         # For Files and similar stores, we need to ensure parent dirs exist
-        if hasattr(cache, 'rootdir'):
+        if hasattr(cache, "rootdir"):
             # It's likely a file-based store like Files
             full_path = os.path.join(cache.rootdir, cache_key)
             os.makedirs(os.path.dirname(full_path), exist_ok=True)
@@ -880,7 +880,7 @@ class Graze(GrazeBase):
             return os.path.join(expanded_cache, cache_key)
         else:
             # For MutableMapping, if it has a rootdir, use that
-            if hasattr(self.cache, 'rootdir'):
+            if hasattr(self.cache, "rootdir"):
                 return os.path.join(self.cache.rootdir, cache_key)
             # Otherwise, just return the cache_key (which may not be a filepath)
             return cache_key
@@ -999,7 +999,7 @@ class GrazeWithDataRefresh(Graze):
                 filepath = os.path.join(expanded_cache, cache_key)
             else:
                 # For MutableMapping with rootdir
-                if hasattr(self.cache, 'rootdir'):
+                if hasattr(self.cache, "rootdir"):
                     filepath = os.path.join(self.cache.rootdir, cache_key)
                 else:
                     # Can't determine age for non-file-based caches
@@ -1073,7 +1073,7 @@ class GrazeWithDataRefresh(Graze):
                 if self.return_filepaths:
                     return filepath
                 else:
-                    with open(filepath, 'rb') as f:
+                    with open(filepath, "rb") as f:
                         return f.read()
 
         # Get data normally (from cache or download)
