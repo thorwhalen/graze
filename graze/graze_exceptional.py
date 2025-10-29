@@ -55,7 +55,7 @@ def _load_exceptions_from_path(path: Union[str, Path]) -> Dict[str, str]:
     if not path.exists():
         return {}
 
-    with open(path, 'r') as f:
+    with open(path, "r") as f:
         content = f.read().strip()
         if not content:
             return {}
@@ -71,13 +71,13 @@ def _discover_exceptions(cache) -> Dict[str, str]:
     """
     # Try both _rootdir and rootdir attributes (Files uses rootdir, others may use _rootdir)
     rootdir = None
-    if hasattr(cache, '_rootdir'):
+    if hasattr(cache, "_rootdir"):
         rootdir = cache._rootdir
-    elif hasattr(cache, 'rootdir'):
+    elif hasattr(cache, "rootdir"):
         rootdir = cache.rootdir
 
     if rootdir:
-        exceptions_path = Path(rootdir) / '_exceptions.json'
+        exceptions_path = Path(rootdir) / "_exceptions.json"
         return _load_exceptions_from_path(exceptions_path)
     return {}
 
@@ -112,7 +112,7 @@ def _make_exception_getter(exceptions: Dict[str, str], original_getitem: Callabl
         """Check exceptions first, then fall back to original."""
         if key in valid_exceptions:
             filepath = valid_exceptions[key]
-            with open(Path(filepath).expanduser(), 'rb') as f:
+            with open(Path(filepath).expanduser(), "rb") as f:
                 return f.read()
         return original_getitem(key)
 
@@ -147,9 +147,9 @@ def _wrap_with_exceptions(
             self._cache = cache
             self._getter = _make_exception_getter(exceptions, cache.__getitem__)
             # Preserve important attributes from the wrapped cache
-            if hasattr(cache, '_rootdir'):
+            if hasattr(cache, "_rootdir"):
                 self._rootdir = cache._rootdir
-            if hasattr(cache, 'rootdir'):
+            if hasattr(cache, "rootdir"):
                 self.rootdir = cache.rootdir
 
         def __getitem__(self, key):
@@ -242,7 +242,7 @@ def add_exception(
     url: str,
     filepath: str,
     *,
-    exceptions_filename: str = '_exceptions.json',
+    exceptions_filename: str = "_exceptions.json",
 ):
     """
     Add an exceptional URL to the cache's exceptions file.
@@ -277,7 +277,7 @@ def add_exception(
     # Get rootdir
     if isinstance(cache_or_rootdir, str):
         rootdir = Path(cache_or_rootdir).expanduser().resolve()
-    elif hasattr(cache_or_rootdir, '_rootdir'):
+    elif hasattr(cache_or_rootdir, "_rootdir"):
         rootdir = Path(cache_or_rootdir._rootdir)
     else:
         raise ValueError(
@@ -307,7 +307,7 @@ def add_exception(
 def list_exceptions(
     cache_or_rootdir: Union[MutableMapping, str],
     *,
-    exceptions_filename: str = '_exceptions.json',
+    exceptions_filename: str = "_exceptions.json",
     show_paths: bool = False,
 ):
     """
@@ -344,7 +344,7 @@ def list_exceptions(
     # Get rootdir
     if isinstance(cache_or_rootdir, str):
         rootdir = Path(cache_or_rootdir).expanduser().resolve()
-    elif hasattr(cache_or_rootdir, '_rootdir'):
+    elif hasattr(cache_or_rootdir, "_rootdir"):
         rootdir = Path(cache_or_rootdir._rootdir)
     else:
         return [] if not show_paths else []
@@ -362,7 +362,7 @@ def list_exceptions(
 
 
 __all__ = [
-    'graze_cache',
-    'add_exception',
-    'list_exceptions',
+    "graze_cache",
+    "add_exception",
+    "list_exceptions",
 ]

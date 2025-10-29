@@ -25,8 +25,8 @@ def demo_exceptional_urls():
 
     # Create a file with some "precious" data we don't want to re-download
     precious_data = b"This data took hours to download! Don't download it again!"
-    fd, precious_file = tempfile.mkstemp(suffix='.dat')
-    with os.fdopen(fd, 'wb') as f:
+    fd, precious_file = tempfile.mkstemp(suffix=".dat")
+    with os.fdopen(fd, "wb") as f:
         f.write(precious_data)
     print(f"   Precious file: {precious_file}")
     print()
@@ -43,7 +43,7 @@ def demo_exceptional_urls():
 
     # Step 3: Show the exceptions file
     print("📋 Exceptions file created:")
-    exceptions_file = Path(cache_dir) / '_exceptions.json'
+    exceptions_file = Path(cache_dir) / "_exceptions.json"
     print(f"   {exceptions_file}")
     print(f"   Content: {exceptions_file.read_text()[:100]}...")
     print()
