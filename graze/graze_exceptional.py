@@ -6,7 +6,7 @@ in cache directory to map URLs to existing files.
 
 Quick start:
 
-    >>> from graze_exceptional import graze_cache, add_exception
+    >>> from graze.graze_exceptional import graze_cache, add_exception
     >>>
     >>> # Add an exception
     >>> add_exception('~/graze', 'http://example.com/data', '/local/data.txt')  # doctest: +SKIP
@@ -69,8 +69,15 @@ def _discover_exceptions(cache) -> Dict[str, str]:
     For file-based caches, looks for {rootdir}/_exceptions.json
     For other caches, returns empty dict.
     """
+    # Try both _rootdir and rootdir attributes (Files uses rootdir, others may use _rootdir)
+    rootdir = None
     if hasattr(cache, '_rootdir'):
-        exceptions_path = Path(cache._rootdir) / '_exceptions.json'
+        rootdir = cache._rootdir
+    elif hasattr(cache, 'rootdir'):
+        rootdir = cache.rootdir
+
+    if rootdir:
+        exceptions_path = Path(rootdir) / '_exceptions.json'
         return _load_exceptions_from_path(exceptions_path)
     return {}
 
@@ -134,45 +141,40 @@ def _wrap_with_exceptions(
     if not exceptions:
         return cache
 
-    # Try to use dol's wrap_kvs for cleaner wrapping
-    try:
-        from dol import wrap_kvs
+    # Simple wrapper class that checks exceptions first
+    class CacheWithExceptions(MutableMapping):
+        def __init__(self, cache, exceptions):
+            self._cache = cache
+            self._getter = _make_exception_getter(exceptions, cache.__getitem__)
+            # Preserve important attributes from the wrapped cache
+            if hasattr(cache, '_rootdir'):
+                self._rootdir = cache._rootdir
+            if hasattr(cache, 'rootdir'):
+                self.rootdir = cache.rootdir
 
-        original_getitem = cache.__getitem__
-        getter = _make_exception_getter(exceptions, original_getitem)
+        def __getitem__(self, key):
+            return self._getter(key)
 
-        # Use wrap_kvs with obj_of_data to intercept reads
-        return wrap_kvs(cache, obj_of_data=lambda data: getter)
+        def __setitem__(self, key, value):
+            self._cache[key] = value
 
-    except (ImportError, TypeError):
-        # Fallback: simple wrapper class
-        class CacheWithExceptions(MutableMapping):
-            def __init__(self, cache, exceptions):
-                self._cache = cache
-                self._getter = _make_exception_getter(exceptions, cache.__getitem__)
+        def __delitem__(self, key):
+            del self._cache[key]
 
-            def __getitem__(self, key):
-                return self._getter(key)
+        def __iter__(self):
+            return iter(self._cache)
 
-            def __setitem__(self, key, value):
-                self._cache[key] = value
+        def __len__(self):
+            return len(self._cache)
 
-            def __delitem__(self, key):
-                del self._cache[key]
-
-            def __iter__(self):
-                return iter(self._cache)
-
-            def __len__(self):
-                return len(self._cache)
-
-        return CacheWithExceptions(cache, exceptions)
+    return CacheWithExceptions(cache, exceptions)
 
 
 def graze_cache(
     cache_or_rootdir: Union[MutableMapping, str],
     *,
     exceptions: Union[None, str, Dict[str, str]] = None,
+    url_to_cache_key: Callable[[str], str] = None,
 ) -> MutableMapping:
     """
     Create or wrap a cache with exceptional URL support.
@@ -183,6 +185,8 @@ def graze_cache(
             - None (default): auto-discover from {rootdir}/_exceptions.json
             - str: path to exceptions JSON file
             - dict: explicit URL -> filepath mapping
+        url_to_cache_key: Function to convert URLs to cache keys.
+            Only needed if exceptions use URLs and cache uses transformed keys.
 
     Returns:
         Cache with exceptional URL support
@@ -220,6 +224,12 @@ def graze_cache(
         exceptions = _load_exceptions_from_path(exceptions)
     # else: use dict as-is
 
+    # Transform URL-based exceptions to cache_key-based exceptions if needed
+    if exceptions and url_to_cache_key is not None:
+        exceptions = {
+            url_to_cache_key(url): filepath for url, filepath in exceptions.items()
+        }
+
     # Wrap if we have exceptions
     if exceptions:
         return _wrap_with_exceptions(cache, exceptions)
@@ -254,7 +264,9 @@ def add_exception(
         >>> # Verify
         >>> exceptions_path = Path(cache_dir) / '_exceptions.json'
         >>> exceptions = json.loads(exceptions_path.read_text())
-        >>> exceptions['http://example.com/data'] == data_path
+        >>> # The stored path should be the resolved absolute path
+        >>> stored_path = exceptions['http://example.com/data']
+        >>> Path(stored_path).resolve() == Path(data_path).resolve()
         True
         >>>
         >>> # Cleanup

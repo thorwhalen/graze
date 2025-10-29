@@ -840,9 +840,14 @@ class Graze(GrazeBase):
         if key_ingress is True:
             key_ingress = key_egress_print_downloading_message
 
+        # Wrap cache with exceptional URLs support (auto-discovers _exceptions.json)
+        from graze.graze_exceptional import graze_cache
+
+        wrapped_cache = graze_cache(rootdir, url_to_cache_key=url_to_localpath)
+
         # Initialize GrazeBase with mapped parameters
         super().__init__(
-            cache=rootdir,
+            cache=wrapped_cache,
             source=source,
             key_ingress=key_ingress,
         )
@@ -1227,6 +1232,9 @@ def graze(
                     return os.path.expanduser(resolved_cache_key)
                 elif isinstance(cache, str):
                     return os.path.join(os.path.expanduser(cache), resolved_cache_key)
+                elif hasattr(cache, 'rootdir'):
+                    # For MutableMapping with rootdir (like Files)
+                    return os.path.join(cache.rootdir, resolved_cache_key)
                 else:
                     return resolved_cache_key
             return contents
@@ -1245,6 +1253,9 @@ def graze(
             return os.path.expanduser(resolved_cache_key)
         elif isinstance(cache, str):
             return os.path.join(os.path.expanduser(cache), resolved_cache_key)
+        elif hasattr(cache, 'rootdir'):
+            # For MutableMapping with rootdir (like Files)
+            return os.path.join(cache.rootdir, resolved_cache_key)
         else:
             return resolved_cache_key
 

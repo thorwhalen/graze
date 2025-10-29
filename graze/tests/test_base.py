@@ -916,18 +916,21 @@ def test_graze_with_return_key_true():
 
 
 def test_graze_with_return_key_mutablemapping():
-    """Test return_key with MutableMapping cache (returns key, not filepath)."""
+    """Test return_key with MutableMapping cache that has rootdir (like Files)."""
     from graze.base import graze
     from dol import Files
 
     temp_dir = tempfile.mkdtemp()
     cache = Files(temp_dir)
 
-    # Get the cache key
-    cache_key = graze(test_url_1, cache=cache, cache_key="test.dat", return_key=True)
+    # Get the cache key (should be full filepath since Files has rootdir)
+    result = graze(test_url_1, cache=cache, cache_key="test.dat", return_key=True)
 
-    # Should return the cache key
-    assert cache_key == "test.dat"
+    # Should return the full filepath for Files cache
+    assert isinstance(result, str)
+    assert os.path.isfile(result)
+    assert result.endswith("test.dat")
+    assert temp_dir in result
 
 
 # --------------------------------------------------------------------------------------
