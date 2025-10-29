@@ -61,7 +61,7 @@ def tiny_url(long_url):
 
     try:
         # The TinyURL API accepts the long URL as a query parameter
-        response = requests.get(TINYURL_API_ENDPOINT, params={'url': long_url})
+        response = requests.get(TINYURL_API_ENDPOINT, params={"url": long_url})
 
         # The API returns the short URL as plain text in the response body (200 OK)
         if response.status_code == 200:
