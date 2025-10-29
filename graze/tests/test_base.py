@@ -739,6 +739,7 @@ def test_graze_with_cache_key_callable():
     expected_path = os.path.join(temp_dir, expected_filename)
     assert os.path.isfile(expected_path)
 
+
 def test_graze_with_full_filepath_cache_key():
     """Test graze with full filepath as cache_key (cache param ignored)."""
     from graze.base import graze
@@ -774,6 +775,7 @@ def test_graze_with_tilde_filepath_cache_key():
     # Clean up
     if os.path.isfile(expanded_path):
         os.remove(expanded_path)
+
 
 # --------------------------------------------------------------------------------------
 # Tests for new refresh parameter
