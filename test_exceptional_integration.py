@@ -23,7 +23,7 @@ def test_exceptional_urls_with_graze():
     # Create a temp file with some test data (simulating pre-existing data)
     test_data = b"This is pre-existing data that we don't want to re-download"
     fd, existing_file = tempfile.mkstemp()
-    with os.fdopen(fd, 'wb') as f:
+    with os.fdopen(fd, "wb") as f:
         f.write(test_data)
     print(f"✓ Created test file: {existing_file}")
 
@@ -33,7 +33,7 @@ def test_exceptional_urls_with_graze():
     print(f"✓ Added exception: {test_url} -> {existing_file}")
 
     # Verify the _exceptions.json file was created
-    exceptions_file = Path(cache_dir) / '_exceptions.json'
+    exceptions_file = Path(cache_dir) / "_exceptions.json"
     assert exceptions_file.exists(), "Exceptions file should exist"
     print(f"✓ Exceptions file created: {exceptions_file}")
 
@@ -68,7 +68,7 @@ def test_exceptional_urls_with_multiple_sources():
     for i in range(3):
         data = f"Test data {i}".encode()
         fd, filepath = tempfile.mkstemp()
-        with os.fdopen(fd, 'wb') as f:
+        with os.fdopen(fd, "wb") as f:
             f.write(data)
         url = f"http://example.com/data-{i}.txt"
         test_files[url] = (filepath, data)
@@ -90,7 +90,7 @@ def test_exceptional_urls_with_multiple_sources():
     # Clean up
     for url, (filepath, _) in test_files.items():
         os.unlink(filepath)
-    os.unlink(Path(cache_dir) / '_exceptions.json')
+    os.unlink(Path(cache_dir) / "_exceptions.json")
     os.rmdir(cache_dir)
     print(f"✓ Cleaned up test files")
 
@@ -108,7 +108,7 @@ def test_exceptional_urls_mixed_with_normal_downloads():
     # Create an exceptional URL
     test_data = b"Exceptional data"
     fd, existing_file = tempfile.mkstemp()
-    with os.fdopen(fd, 'wb') as f:
+    with os.fdopen(fd, "wb") as f:
         f.write(test_data)
     exceptional_url = "http://example.com/exceptional.txt"
     add_exception(cache_dir, exceptional_url, existing_file)
@@ -135,7 +135,7 @@ def test_exceptional_urls_mixed_with_normal_downloads():
 
     # Clean up
     os.unlink(existing_file)
-    os.unlink(Path(cache_dir) / '_exceptions.json')
+    os.unlink(Path(cache_dir) / "_exceptions.json")
     # Don't delete cache_dir as it has downloaded files
     print(f"✓ Cleaned up exceptional file")
 

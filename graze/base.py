@@ -1232,7 +1232,7 @@ def graze(
                     return os.path.expanduser(resolved_cache_key)
                 elif isinstance(cache, str):
                     return os.path.join(os.path.expanduser(cache), resolved_cache_key)
-                elif hasattr(cache, 'rootdir'):
+                elif hasattr(cache, "rootdir"):
                     # For MutableMapping with rootdir (like Files)
                     return os.path.join(cache.rootdir, resolved_cache_key)
                 else:
@@ -1253,7 +1253,7 @@ def graze(
             return os.path.expanduser(resolved_cache_key)
         elif isinstance(cache, str):
             return os.path.join(os.path.expanduser(cache), resolved_cache_key)
-        elif hasattr(cache, 'rootdir'):
+        elif hasattr(cache, "rootdir"):
             # For MutableMapping with rootdir (like Files)
             return os.path.join(cache.rootdir, resolved_cache_key)
         else:
