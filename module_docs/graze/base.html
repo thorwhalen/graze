@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.base &mdash; graze 0.1.32 documentation</title>
+  <title>graze.base &mdash; graze 0.1.33 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=e0e570cb"></script>
+      <script src="../../_static/documentation_options.js?v=449df4d2"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -53,9 +53,11 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">graze.base</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.Gettable"><code class="docutils literal notranslate"><span class="pre">Gettable</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.Graze"><code class="docutils literal notranslate"><span class="pre">Graze</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#graze.base.Graze.filepath_of"><code class="docutils literal notranslate"><span class="pre">Graze.filepath_of()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#graze.base.Graze.filepath_of_url_downloading_if_necessary"><code class="docutils literal notranslate"><span class="pre">Graze.filepath_of_url_downloading_if_necessary()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.GrazeBase"><code class="docutils literal notranslate"><span class="pre">GrazeBase</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.GrazeWithDataRefresh"><code class="docutils literal notranslate"><span class="pre">GrazeWithDataRefresh</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.LocalFiles"><code class="docutils literal notranslate"><span class="pre">LocalFiles</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.LocalGrazed"><code class="docutils literal notranslate"><span class="pre">LocalGrazed</span></code></a></li>
@@ -124,6 +126,13 @@ When you get a value, you’ll get the contents of the url (in bytes).
 <code class="docutils literal notranslate"><span class="pre">Graze</span></code> will first look if the contents are stored locally, and return that,
 if not it will get the contents from the internet and store it locally,
 then return those bytes.</p>
+<p>This class now extends GrazeBase and delegates most work to the graze() function.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graze.base.Graze.filepath_of">
+<span class="sig-name descname"><span class="pre">filepath_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/graze/base.html#Graze.filepath_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.Graze.filepath_of" title="Link to this definition"></a></dt>
+<dd><p>Get the filepath of where graze stored (or would store) the contents for a url locally.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="graze.base.Graze.filepath_of_url_downloading_if_necessary">
 <span class="sig-name descname"><span class="pre">filepath_of_url_downloading_if_necessary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#Graze.filepath_of_url_downloading_if_necessary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.Graze.filepath_of_url_downloading_if_necessary" title="Link to this definition"></a></dt>
@@ -137,6 +146,49 @@ Use <cite>filepath_of_url_downloading_if_necessary</cite> to get that local file
 ensuring that the data is there before hand.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graze.base.GrazeBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">GrazeBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cache:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~collections.abc.MutableMapping</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">*,</span> <span class="pre">source:</span> <span class="pre">~collections.abc.Callable</span> <span class="pre">|</span> <span class="pre">~graze.base.Gettable</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">key_ingress:</span> <span class="pre">~collections.abc.Callable</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">url_to_cache_key:</span> <span class="pre">~collections.abc.Callable[[str],</span> <span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">url_to_localpath&gt;,</span> <span class="pre">cache_key_to_url:</span> <span class="pre">~collections.abc.Callable[[str],</span> <span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">localpath_to_url&gt;,</span> <span class="pre">refresh:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">~collections.abc.Callable</span> <span class="pre">=</span> <span class="pre">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#GrazeBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.GrazeBase" title="Link to this definition"></a></dt>
+<dd><p>Base class for Graze that wraps the graze() function.</p>
+<p>This class provides a MutableMapping interface (dict-like) where:
+- Keys are URLs
+- Values are the contents of those URLs (bytes)
+- Items are cached locally (in folder, Files, or dict)</p>
+<p>The key design principle: All actual work is delegated to the graze() function.
+This class just provides the Mapping interface and state management.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cache</strong> – Where to cache contents. Can be:
+- str: folder path for file-based caching
+- MutableMapping: custom cache (e.g., Files, dict)
+- None: uses DFLT_GRAZE_DIR</p></li>
+<li><p><strong>source</strong> – Where to get contents if not cached. Defaults to Internet().</p></li>
+<li><p><strong>key_ingress</strong> – Function to call on URL before downloading.</p></li>
+<li><p><strong>url_to_cache_key</strong> – Function to convert URL to cache key.
+Defaults to url_to_localpath.</p></li>
+<li><p><strong>cache_key_to_url</strong> – Function to convert cache key back to URL.
+Defaults to localpath_to_url.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># With folder cache (default)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">GrazeBase</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="s1">&#39;~/my_cache&#39;</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">content</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;http://example.com/data.json&#39;</span><span class="p">]</span>  
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># With Files cache</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">dol</span><span class="w"> </span><span class="kn">import</span> <span class="n">Files</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">GrazeBase</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="n">Files</span><span class="p">(</span><span class="s1">&#39;~/cache&#39;</span><span class="p">))</span>  
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># With dict cache (in-memory)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">GrazeBase</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="p">{})</span>  
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py class">
