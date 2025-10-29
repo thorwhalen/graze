@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.base &mdash; graze 0.1.30 documentation</title>
+  <title>graze.base &mdash; graze 0.1.32 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=73657eb8"></script>
+      <script src="../../_static/documentation_options.js?v=e0e570cb"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -51,6 +51,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../graze.html">graze</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">graze.base</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#graze.base.Gettable"><code class="docutils literal notranslate"><span class="pre">Gettable</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.base.Graze"><code class="docutils literal notranslate"><span class="pre">Graze</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#graze.base.Graze.filepath_of_url_downloading_if_necessary"><code class="docutils literal notranslate"><span class="pre">Graze.filepath_of_url_downloading_if_necessary()</span></code></a></li>
 </ul>
@@ -106,6 +107,12 @@
 <span id="graze-base"></span><h1>graze.base<a class="headerlink" href="#module-graze.base" title="Link to this heading"></a></h1>
 <p>Base functionality</p>
 <dl class="py class">
+<dt class="sig sig-object py" id="graze.base.Gettable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">Gettable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#Gettable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.Gettable" title="Link to this definition"></a></dt>
+<dd><p>Protocol for objects with __getitem__ method.</p>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="graze.base.Graze">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">Graze</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootdir='/home/runner/graze'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source=&lt;graze.base.Internet</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_ingress:</span> <span class="pre">~collections.abc.Callable</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_filepaths:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#Graze"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.Graze" title="Link to this definition"></a></dt>
 <dd><p>A data access object that will get data from the internet if it’s not
@@ -157,33 +164,65 @@ ensuring that the data is there before hand.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graze.base.graze">
-<span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">graze</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootdir:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'/home/runner/graze'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source=&lt;graze.base.Internet</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_ingress:</span> <span class="pre">~collections.abc.Callable</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_age:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_filepaths:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#graze"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.graze" title="Link to this definition"></a></dt>
-<dd><p>Get the contents of the url (persisting the results in a local file,
+<span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">graze</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">MutableMapping</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#graze.base.Gettable" title="graze.base.Gettable"><span class="pre">Gettable</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_ingress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_age</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_filepaths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/base.html#graze"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.graze" title="Link to this definition"></a></dt>
+<dd><p>Get the contents of the url (persisting the results in a local file or cache,
 for next time you’ll ask for it)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rootdir</strong> – Where to store the contents locally.</p></li>
-<li><p><strong>source</strong> – Where to get the contents from if they’re not already stored
-locally. By default, it’s an <code class="docutils literal notranslate"><span class="pre">Internet</span></code> instance, but can be a custom
-object that has a <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> method that takes a url and returns
-its contents.</p></li>
-<li><p><strong>key_ingress</strong> – A function to call on the key before getting the contents from
-<code class="docutils literal notranslate"><span class="pre">source</span></code>. Typically, this is used to notify the user that the contents
-are being downloaded. For example, you could use
-<code class="docutils literal notranslate"><span class="pre">key_ingress=&quot;The</span> <span class="pre">contents</span> <span class="pre">of</span> <span class="pre">{}</span> <span class="pre">are</span> <span class="pre">being</span> <span class="pre">downloaded&quot;.format</span></code>.</p></li>
-<li><p><strong>max_age</strong> – If not None, should be a number specifying the number of</p></li>
+<li><p><strong>url</strong> – The url to download from</p></li>
+<li><p><strong>cache</strong> – Where to store the contents. Can be:
+- None: use DFLT_GRAZE_DIR as folder path (unless cache_key is full filepath)
+- str: folder path for file-based caching
+- MutableMapping: custom cache object (e.g., Files, dict)</p></li>
+<li><p><strong>cache_key</strong> – The key to use in the cache. Can be:
+- None: auto-generate using url_to_localpath
+- str: explicit cache key (or full filepath if starts with / or ~)
+- Callable: function to generate cache key from url</p></li>
+<li><p><strong>source</strong> – Where to get the contents from if not cached. Can be:
+- None: use default Internet() instance
+- Callable: function that takes url and returns contents
+- Gettable: object with __getitem__ method</p></li>
+<li><p><strong>key_ingress</strong> – Function to call on the url before downloading.
+Typically used to notify user that download is happening.</p></li>
+<li><p><strong>refresh</strong> – Whether to re-download even if cached. Can be:
+- bool: True to always refresh, False to use cache if available
+- Callable: function(cache_key, url) -&gt; bool to decide dynamically</p></li>
+<li><p><strong>max_age</strong> – If not None, number of seconds cached data is considered fresh.
+If cached data is older, it will be re-downloaded. Cannot be used with refresh.</p></li>
+<li><p><strong>return_key</strong> – If True, return the cache_key instead of contents.</p></li>
+<li><p><strong>rootdir</strong> – (DEPRECATED) Use ‘cache’ instead. Folder path for caching.</p></li>
+<li><p><strong>return_filepaths</strong> – (DEPRECATED) Use ‘return_key’ instead.</p></li>
 </ul>
 </dd>
 </dl>
-<p>seconds a the cached data is considered “fresh”. If the cached data is older
-than this, then it will be re-downloaded from the source.
-:param on_error: What to do if there’s an error when fetching the new data.</p>
-<blockquote>
-<div><p>‘raise’ raise an error (but keep the cached data)
-‘warn’ warn the user of the stale data (but return anyway)
-‘ignore’ ignore the error, and return the stale data</p>
-</div></blockquote>
+<p>Examples:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Basic usage - caches to default directory</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="s1">&#39;http://example.com/data.json&#39;</span><span class="p">)</span>  
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Cache to specific folder</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="s1">&#39;http://example.com/data.json&#39;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="s1">&#39;~/my_cache&#39;</span><span class="p">)</span>  
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Cache to specific file (cache defaults to None automatically)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="s1">&#39;http://example.com/data.json&#39;</span><span class="p">,</span> <span class="n">cache_key</span><span class="o">=</span><span class="s1">&#39;~/data/my_data.json&#39;</span><span class="p">)</span>  
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Use custom cache object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">dol</span><span class="w"> </span><span class="kn">import</span> <span class="n">Files</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_cache</span> <span class="o">=</span> <span class="n">Files</span><span class="p">(</span><span class="s1">&#39;~/cache&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="s1">&#39;http://example.com/data.json&#39;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">my_cache</span><span class="p">,</span> <span class="n">cache_key</span><span class="o">=</span><span class="s1">&#39;data.json&#39;</span><span class="p">)</span>  
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Force refresh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="s1">&#39;http://example.com/data.json&#39;</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Conditional refresh based on age</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="s1">&#39;http://example.com/data.json&#39;</span><span class="p">,</span> <span class="n">max_age</span><span class="o">=</span><span class="mi">3600</span><span class="p">)</span>  
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">

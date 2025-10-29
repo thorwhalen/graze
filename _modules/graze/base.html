@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.base &mdash; graze 0.1.30 documentation</title>
+  <title>graze.base &mdash; graze 0.1.32 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=73657eb8"></script>
+      <script src="../../_static/documentation_options.js?v=e0e570cb"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -79,8 +79,8 @@
   <h1>Source code for graze.base</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Base functionality&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Protocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">MutableMapping</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
@@ -110,6 +110,16 @@
 <span class="n">Url</span> <span class="o">=</span> <span class="nb">str</span>
 <span class="n">LocalPath</span> <span class="o">=</span> <span class="nb">str</span>
 <span class="n">Contents</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="Gettable">
+<a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.Gettable">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Gettable</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Protocol for objects with __getitem__ method.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Contents</span><span class="p">:</span> <span class="o">...</span></div>
+
+
 
 <span class="c1"># TODO: handle configuration and existence of root</span>
 <span class="n">pjoin</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span>
@@ -161,6 +171,211 @@
 
 <span class="n">_url_to_localpath</span> <span class="o">=</span> <span class="n">url_to_localpath</span>  <span class="c1"># backward compatibility</span>
 <span class="n">_localpath_to_url</span> <span class="o">=</span> <span class="n">localpath_to_url</span>  <span class="c1"># backward compatibility</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+<span class="c1"># Cache helpers for flexible caching backends</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_full_filepath</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if path is a full filepath (platform-independent).</span>
+
+<span class="sd">    &gt;&gt;&gt; _is_full_filepath(&#39;/usr/local/data&#39;)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _is_full_filepath(&#39;~/data&#39;)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _is_full_filepath(&#39;relative/path&#39;)</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; _is_full_filepath(&#39;C:\\\\Users\\\\data&#39;)  # doctest: +SKIP</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="c1"># Check for Windows absolute paths on Windows</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;:&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_cache_and_key</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">]],</span>
+    <span class="n">cache_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]],</span>
+    <span class="n">rootdir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">]],</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve cache and cache_key, handling conflicts and defaults.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (resolved_cache, resolved_cache_key, is_explicit_filepath)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Handle backwards compatibility: rootdir vs cache conflict</span>
+    <span class="k">if</span> <span class="n">rootdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Cannot specify both &#39;rootdir&#39; and &#39;cache&#39;. &quot;</span>
+            <span class="s2">&quot;&#39;rootdir&#39; is deprecated; use &#39;cache&#39; instead.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Use rootdir if cache not specified (backwards compatibility)</span>
+    <span class="k">if</span> <span class="n">cache</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rootdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="n">rootdir</span>
+
+    <span class="c1"># Resolve cache_key</span>
+    <span class="k">if</span> <span class="n">cache_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">resolved_cache_key</span> <span class="o">=</span> <span class="n">url_to_localpath</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">cache_key</span><span class="p">):</span>
+        <span class="n">resolved_cache_key</span> <span class="o">=</span> <span class="n">cache_key</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">resolved_cache_key</span> <span class="o">=</span> <span class="n">cache_key</span>
+
+    <span class="c1"># Check if cache_key is a full filepath</span>
+    <span class="n">is_explicit_filepath</span> <span class="o">=</span> <span class="n">_is_full_filepath</span><span class="p">(</span><span class="n">resolved_cache_key</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_explicit_filepath</span> <span class="ow">and</span> <span class="n">cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;cache_key appears to be a full filepath (</span><span class="si">{</span><span class="n">resolved_cache_key</span><span class="si">}</span><span class="s2">), &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;but &#39;cache&#39; was also provided (</span><span class="si">{</span><span class="n">cache</span><span class="si">}</span><span class="s2">). This is ambiguous. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Either provide cache_key as a full filepath with cache=None, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;or provide both cache and a relative cache_key.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cache</span><span class="p">,</span> <span class="n">resolved_cache_key</span><span class="p">,</span> <span class="n">is_explicit_filepath</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cache_contains</span><span class="p">(</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">]],</span>
+    <span class="n">cache_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">is_explicit_filepath</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if cache contains the key.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">is_explicit_filepath</span><span class="p">:</span>
+        <span class="n">expanded_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">cache_key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">expanded_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># It&#39;s a folder path</span>
+        <span class="n">expanded_cache</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span>
+        <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expanded_cache</span><span class="p">,</span> <span class="n">cache_key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+
+    <span class="c1"># It&#39;s a MutableMapping</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cache_key</span> <span class="ow">in</span> <span class="n">cache</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cache_get</span><span class="p">(</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">]],</span>
+    <span class="n">cache_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">is_explicit_filepath</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Contents</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get contents from cache.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">is_explicit_filepath</span><span class="p">:</span>
+        <span class="n">expanded_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">cache_key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">expanded_path</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">expanded_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># It&#39;s a folder path</span>
+        <span class="n">expanded_cache</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span>
+        <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expanded_cache</span><span class="p">,</span> <span class="n">cache_key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">full_path</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># It&#39;s a MutableMapping</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="n">cache_key</span><span class="p">]</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cache_set</span><span class="p">(</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">]],</span>
+    <span class="n">cache_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">contents</span><span class="p">:</span> <span class="n">Contents</span><span class="p">,</span>
+    <span class="n">is_explicit_filepath</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store contents in cache.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">is_explicit_filepath</span><span class="p">:</span>
+        <span class="n">expanded_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">cache_key</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">expanded_path</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">expanded_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">if</span> <span class="n">cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># It&#39;s a folder path</span>
+        <span class="n">expanded_cache</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span>
+        <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expanded_cache</span><span class="p">,</span> <span class="n">cache_key</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span> <span class="ow">or</span> <span class="n">expanded_cache</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1"># It&#39;s a MutableMapping</span>
+    <span class="n">cache</span><span class="p">[</span><span class="n">cache_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">contents</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_should_refresh</span><span class="p">(</span>
+    <span class="n">refresh</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Callable</span><span class="p">],</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">]],</span>
+    <span class="n">cache_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">is_explicit_filepath</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine if content should be refreshed.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">refresh</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">refresh</span>
+
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">refresh</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">refresh</span><span class="p">(</span><span class="n">cache_key</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;refresh must be bool or callable. Got: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">refresh</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_max_age_to_refresh_func</span><span class="p">(</span><span class="n">max_age</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert max_age to a refresh function.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">refresh_func</span><span class="p">(</span><span class="n">cache_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># For MutableMapping, we can&#39;t easily check file age</span>
+        <span class="c1"># So we return False (don&#39;t refresh) - the old behavior with Graze</span>
+        <span class="c1"># Note: This is a limitation, but maintains backwards compatibility</span>
+        <span class="c1"># For file-based caches, check the modification time</span>
+        <span class="k">if</span> <span class="n">_is_full_filepath</span><span class="p">(</span><span class="n">cache_key</span><span class="p">):</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">cache_key</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Assume it&#39;s in DFLT_GRAZE_DIR if we can&#39;t determine</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span> <span class="n">cache_key</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># File doesn&#39;t exist, so we need to fetch</span>
+
+        <span class="n">age</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span>
+        <span class="k">return</span> <span class="n">age</span> <span class="o">&gt;</span> <span class="n">max_age</span>
+
+    <span class="k">return</span> <span class="n">refresh_func</span>
+
+
+<span class="c1"># End of cache helpers</span>
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+
 
 <span class="c1"># CONTENT_FILENAME = &#39;grazed&#39;</span>
 <span class="n">FOLDER_SUFFIX</span> <span class="o">=</span> <span class="n">SUBDIR_SUFFIX</span>  <span class="c1"># TODO: Check usage and delete if none</span>
@@ -711,44 +926,173 @@
 <a class="viewcode-back" href="../../module_docs/graze/base.html#graze.base.graze">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">graze</span><span class="p">(</span>
     <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">rootdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span>
-    <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">(),</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
+    <span class="n">cache_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Gettable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">key_ingress</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">refresh</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">max_age</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">return_filepaths</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">return_key</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="c1"># Deprecated parameters (kept for backwards compatibility)</span>
+    <span class="n">rootdir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_filepaths</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the contents of the url (persisting the results in a local file,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the contents of the url (persisting the results in a local file or cache,</span>
 <span class="sd">    for next time you&#39;ll ask for it)</span>
 
-<span class="sd">    :param rootdir: Where to store the contents locally.</span>
-<span class="sd">    :param source: Where to get the contents from if they&#39;re not already stored</span>
-<span class="sd">        locally. By default, it&#39;s an ``Internet`` instance, but can be a custom</span>
-<span class="sd">        object that has a ``__getitem__`` method that takes a url and returns</span>
-<span class="sd">        its contents.</span>
-<span class="sd">    :param key_ingress: A function to call on the key before getting the contents from</span>
-<span class="sd">        ``source``. Typically, this is used to notify the user that the contents</span>
-<span class="sd">        are being downloaded. For example, you could use</span>
-<span class="sd">        ``key_ingress=&quot;The contents of {} are being downloaded&quot;.format``.</span>
-<span class="sd">    :param max_age: If not None, should be a number specifying the number of</span>
-<span class="sd">    seconds a the cached data is considered &quot;fresh&quot;. If the cached data is older</span>
-<span class="sd">    than this, then it will be re-downloaded from the source.</span>
-<span class="sd">    :param on_error: What to do if there&#39;s an error when fetching the new data.</span>
-<span class="sd">        &#39;raise&#39; raise an error (but keep the cached data)</span>
-<span class="sd">        &#39;warn&#39; warn the user of the stale data (but return anyway)</span>
-<span class="sd">        &#39;ignore&#39; ignore the error, and return the stale data</span>
+<span class="sd">    :param url: The url to download from</span>
+<span class="sd">    :param cache: Where to store the contents. Can be:</span>
+<span class="sd">        - None: use DFLT_GRAZE_DIR as folder path (unless cache_key is full filepath)</span>
+<span class="sd">        - str: folder path for file-based caching</span>
+<span class="sd">        - MutableMapping: custom cache object (e.g., Files, dict)</span>
+<span class="sd">    :param cache_key: The key to use in the cache. Can be:</span>
+<span class="sd">        - None: auto-generate using url_to_localpath</span>
+<span class="sd">        - str: explicit cache key (or full filepath if starts with / or ~)</span>
+<span class="sd">        - Callable: function to generate cache key from url</span>
+<span class="sd">    :param source: Where to get the contents from if not cached. Can be:</span>
+<span class="sd">        - None: use default Internet() instance</span>
+<span class="sd">        - Callable: function that takes url and returns contents</span>
+<span class="sd">        - Gettable: object with __getitem__ method</span>
+<span class="sd">    :param key_ingress: Function to call on the url before downloading.</span>
+<span class="sd">        Typically used to notify user that download is happening.</span>
+<span class="sd">    :param refresh: Whether to re-download even if cached. Can be:</span>
+<span class="sd">        - bool: True to always refresh, False to use cache if available</span>
+<span class="sd">        - Callable: function(cache_key, url) -&gt; bool to decide dynamically</span>
+<span class="sd">    :param max_age: If not None, number of seconds cached data is considered fresh.</span>
+<span class="sd">        If cached data is older, it will be re-downloaded. Cannot be used with refresh.</span>
+<span class="sd">    :param return_key: If True, return the cache_key instead of contents.</span>
+<span class="sd">    :param rootdir: (DEPRECATED) Use &#39;cache&#39; instead. Folder path for caching.</span>
+<span class="sd">    :param return_filepaths: (DEPRECATED) Use &#39;return_key&#39; instead.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    &gt;&gt;&gt; # Basic usage - caches to default directory</span>
+<span class="sd">    &gt;&gt;&gt; content = graze(&#39;http://example.com/data.json&#39;)  # doctest: +SKIP</span>
+
+<span class="sd">    &gt;&gt;&gt; # Cache to specific folder</span>
+<span class="sd">    &gt;&gt;&gt; content = graze(&#39;http://example.com/data.json&#39;, cache=&#39;~/my_cache&#39;)  # doctest: +SKIP</span>
+
+<span class="sd">    &gt;&gt;&gt; # Cache to specific file (cache defaults to None automatically)</span>
+<span class="sd">    &gt;&gt;&gt; content = graze(&#39;http://example.com/data.json&#39;, cache_key=&#39;~/data/my_data.json&#39;)  # doctest: +SKIP</span>
+
+<span class="sd">    &gt;&gt;&gt; # Use custom cache object</span>
+<span class="sd">    &gt;&gt;&gt; from dol import Files</span>
+<span class="sd">    &gt;&gt;&gt; my_cache = Files(&#39;~/cache&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; content = graze(&#39;http://example.com/data.json&#39;, cache=my_cache, cache_key=&#39;data.json&#39;)  # doctest: +SKIP</span>
+
+<span class="sd">    &gt;&gt;&gt; # Force refresh</span>
+<span class="sd">    &gt;&gt;&gt; content = graze(&#39;http://example.com/data.json&#39;, refresh=True)  # doctest: +SKIP</span>
+
+<span class="sd">    &gt;&gt;&gt; # Conditional refresh based on age</span>
+<span class="sd">    &gt;&gt;&gt; content = graze(&#39;http://example.com/data.json&#39;, max_age=3600)  # doctest: +SKIP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">rootdir</span><span class="o">=</span><span class="n">rootdir</span><span class="p">,</span>
-        <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
-        <span class="n">key_ingress</span><span class="o">=</span><span class="n">key_ingress</span><span class="p">,</span>
-        <span class="n">return_filepaths</span><span class="o">=</span><span class="n">return_filepaths</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">if</span> <span class="n">max_age</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">g</span> <span class="o">=</span> <span class="n">Graze</span><span class="p">(</span><span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+    <span class="c1"># Handle deprecated parameters</span>
+    <span class="k">if</span> <span class="n">return_filepaths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">return_key</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot specify both &#39;return_key&#39; and &#39;return_filepaths&#39;&quot;</span><span class="p">)</span>
+        <span class="n">return_key</span> <span class="o">=</span> <span class="n">return_filepaths</span>
+
+    <span class="c1"># Handle max_age and refresh conflict</span>
+    <span class="k">if</span> <span class="n">max_age</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">refresh</span> <span class="o">!=</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">refresh</span><span class="p">)</span> <span class="ow">or</span> <span class="n">refresh</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot specify both &#39;max_age&#39; and &#39;refresh&#39;. &quot;</span>
+                <span class="s2">&quot;Use either max_age for time-based refresh, or refresh for custom logic.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Convert max_age to refresh function if provided</span>
+    <span class="k">if</span> <span class="n">max_age</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">refresh</span> <span class="o">=</span> <span class="n">_max_age_to_refresh_func</span><span class="p">(</span><span class="n">max_age</span><span class="p">)</span>
+
+    <span class="c1"># Check for rootdir/cache conflict FIRST (before any assignments)</span>
+    <span class="k">if</span> <span class="n">rootdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Cannot specify both &#39;rootdir&#39; and &#39;cache&#39;. &quot;</span>
+            <span class="s2">&quot;&#39;rootdir&#39; is deprecated; use &#39;cache&#39; instead.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Resolve cache_key first to know if it&#39;s a full filepath</span>
+    <span class="k">if</span> <span class="n">cache_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">resolved_cache_key</span> <span class="o">=</span> <span class="n">url_to_localpath</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">is_explicit_filepath</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">cache_key</span><span class="p">):</span>
+        <span class="n">resolved_cache_key</span> <span class="o">=</span> <span class="n">cache_key</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">is_explicit_filepath</span> <span class="o">=</span> <span class="n">_is_full_filepath</span><span class="p">(</span><span class="n">resolved_cache_key</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">g</span> <span class="o">=</span> <span class="n">GrazeWithDataRefresh</span><span class="p">(</span><span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">g</span><span class="p">[</span><span class="n">url</span><span class="p">]</span></div>
+        <span class="n">resolved_cache_key</span> <span class="o">=</span> <span class="n">cache_key</span>
+        <span class="n">is_explicit_filepath</span> <span class="o">=</span> <span class="n">_is_full_filepath</span><span class="p">(</span><span class="n">resolved_cache_key</span><span class="p">)</span>
+
+    <span class="c1"># Handle backwards compatibility and defaults</span>
+    <span class="c1"># Only set cache to default if not using explicit filepath</span>
+    <span class="k">if</span> <span class="n">cache</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rootdir</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_explicit_filepath</span><span class="p">:</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="n">DFLT_GRAZE_DIR</span>
+    <span class="k">elif</span> <span class="n">cache</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rootdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="n">rootdir</span>
+
+    <span class="c1"># Check for explicit filepath conflict (after cache may have been set to default)</span>
+    <span class="k">if</span> <span class="n">is_explicit_filepath</span> <span class="ow">and</span> <span class="n">cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;cache_key appears to be a full filepath (</span><span class="si">{</span><span class="n">resolved_cache_key</span><span class="si">}</span><span class="s2">), &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;but &#39;cache&#39; was also provided (</span><span class="si">{</span><span class="n">cache</span><span class="si">}</span><span class="s2">). This is ambiguous. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Either provide cache_key as a full filepath with cache=None, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;or provide both cache and a relative cache_key.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Set source default</span>
+    <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">Internet</span><span class="p">()</span>
+
+    <span class="c1"># Convert callable source to Gettable if needed</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s1">&#39;__getitem__&#39;</span><span class="p">):</span>
+        <span class="c1"># Wrap callable in a simple class with __getitem__</span>
+        <span class="k">class</span><span class="w"> </span><span class="nc">_CallableWrapper</span><span class="p">:</span>
+            <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="n">source</span> <span class="o">=</span> <span class="n">_CallableWrapper</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="c1"># Determine if we should refresh</span>
+    <span class="n">should_download</span> <span class="o">=</span> <span class="n">_should_refresh</span><span class="p">(</span>
+        <span class="n">refresh</span><span class="p">,</span> <span class="n">cache</span><span class="p">,</span> <span class="n">resolved_cache_key</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">is_explicit_filepath</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Try to get from cache if not refreshing</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">should_download</span> <span class="ow">and</span> <span class="n">_cache_contains</span><span class="p">(</span>
+        <span class="n">cache</span><span class="p">,</span> <span class="n">resolved_cache_key</span><span class="p">,</span> <span class="n">is_explicit_filepath</span>
+    <span class="p">):</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">_cache_get</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="n">resolved_cache_key</span><span class="p">,</span> <span class="n">is_explicit_filepath</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">contents</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">return_key</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">is_explicit_filepath</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">resolved_cache_key</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">cache</span><span class="p">),</span> <span class="n">resolved_cache_key</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">resolved_cache_key</span>
+            <span class="k">return</span> <span class="n">contents</span>
+
+    <span class="c1"># Download fresh content</span>
+    <span class="k">if</span> <span class="n">key_ingress</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">key_ingress</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+    <span class="n">contents</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
+
+    <span class="c1"># Cache the contents</span>
+    <span class="n">_cache_set</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="n">resolved_cache_key</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">is_explicit_filepath</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_key</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_explicit_filepath</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">resolved_cache_key</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">cache</span><span class="p">),</span> <span class="n">resolved_cache_key</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">resolved_cache_key</span>
+
+    <span class="k">return</span> <span class="n">contents</span></div>
 
 
 
