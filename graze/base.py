@@ -1200,7 +1200,7 @@ def graze(
         source = Internet()
 
     # Convert callable source to Gettable if needed
-    if callable(source) and not hasattr(source, '__getitem__'):
+    if callable(source) and not hasattr(source, "__getitem__"):
         # Wrap callable in a simple class with __getitem__
         class _CallableWrapper:
             def __init__(self, func):
