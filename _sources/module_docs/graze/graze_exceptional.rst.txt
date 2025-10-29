@@ -1,0 +1,4 @@
+graze.graze_exceptional
+=======================
+.. automodule:: graze.graze_exceptional
+   :members:

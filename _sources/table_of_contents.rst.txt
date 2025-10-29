@@ -3,6 +3,7 @@
    :caption: Contents:
 
    module_docs/graze
+   module_docs/graze/_migration_tools
    module_docs/graze/base
-   module_docs/graze/migration_tools
+   module_docs/graze/graze_exceptional
    module_docs/graze/util

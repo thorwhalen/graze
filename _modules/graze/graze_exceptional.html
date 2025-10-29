@@ -1,0 +1,487 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graze.graze_exceptional &mdash; graze 0.1.34 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8f14641f"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            graze
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze.html">graze</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/_migration_tools.html">graze._migration_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/base.html">graze.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/graze_exceptional.html">graze.graze_exceptional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/util.html">graze.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">graze</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">graze.graze_exceptional</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graze.graze_exceptional</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Exceptional URLs for Graze</span>
+
+<span class="sd">Lightweight support for pre-existing cached data. Uses `_exceptions.json` convention</span>
+<span class="sd">in cache directory to map URLs to existing files.</span>
+
+<span class="sd">Quick start:</span>
+
+<span class="sd">    &gt;&gt;&gt; from graze.graze_exceptional import graze_cache, add_exception</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Add an exception</span>
+<span class="sd">    &gt;&gt;&gt; add_exception(&#39;~/graze&#39;, &#39;http://example.com/data&#39;, &#39;/local/data.txt&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Use cache (auto-discovers _exceptions.json)</span>
+<span class="sd">    &gt;&gt;&gt; cache = graze_cache(&#39;~/graze&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; data = cache[&#39;http://example.com/data&#39;]  # Uses /local/data.txt  # doctest: +SKIP</span>
+
+<span class="sd">Module Contents:</span>
+
+<span class="sd">graze_exceptional.py</span>
+<span class="sd">├── _load_exceptions_from_path()      # Load JSON</span>
+<span class="sd">├── _discover_exceptions()            # Auto-discover for Files</span>
+<span class="sd">├── _make_exception_getter()          # Create wrapper function</span>
+<span class="sd">├── _wrap_with_exceptions()           # Wrap cache</span>
+<span class="sd">├── graze_cache()                     # Main API</span>
+<span class="sd">├── add_exception()                   # Management</span>
+<span class="sd">└── list_exceptions()                 # Management</span>
+
+<span class="sd">For more info on design and implementation, see:</span>
+<span class="sd">https://github.com/thorwhalen/graze/issues/8</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">MutableMapping</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_exceptions_from_path</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load exceptions from a JSON file.</span>
+
+<span class="sd">    &gt;&gt;&gt; import tempfile</span>
+<span class="sd">    &gt;&gt;&gt; fd, path = tempfile.mkstemp(suffix=&#39;.json&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; with os.fdopen(fd, &#39;w&#39;) as f:</span>
+<span class="sd">    ...     json.dump({&#39;http://example.com/data&#39;: &#39;/tmp/data.txt&#39;}, f)</span>
+<span class="sd">    &gt;&gt;&gt; exceptions = _load_exceptions_from_path(path)</span>
+<span class="sd">    &gt;&gt;&gt; exceptions[&#39;http://example.com/data&#39;]</span>
+<span class="sd">    &#39;/tmp/data.txt&#39;</span>
+<span class="sd">    &gt;&gt;&gt; os.unlink(path)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">content</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_discover_exceptions</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Auto-discover exceptions from cache directory.</span>
+
+<span class="sd">    For file-based caches, looks for {rootdir}/_exceptions.json</span>
+<span class="sd">    For other caches, returns empty dict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Try both _rootdir and rootdir attributes (Files uses rootdir, others may use _rootdir)</span>
+    <span class="n">rootdir</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="s1">&#39;_rootdir&#39;</span><span class="p">):</span>
+        <span class="n">rootdir</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">_rootdir</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="s1">&#39;rootdir&#39;</span><span class="p">):</span>
+        <span class="n">rootdir</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">rootdir</span>
+
+    <span class="k">if</span> <span class="n">rootdir</span><span class="p">:</span>
+        <span class="n">exceptions_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span> <span class="o">/</span> <span class="s1">&#39;_exceptions.json&#39;</span>
+        <span class="k">return</span> <span class="n">_load_exceptions_from_path</span><span class="p">(</span><span class="n">exceptions_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_exception_getter</span><span class="p">(</span><span class="n">exceptions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">original_getitem</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a __getitem__ wrapper that checks exceptions first.</span>
+
+<span class="sd">    &gt;&gt;&gt; exceptions = {&#39;url1&#39;: &#39;/tmp/does_not_exist.txt&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; original = {&#39;url2&#39;: b&#39;original data&#39;}.__getitem__</span>
+<span class="sd">    &gt;&gt;&gt; getter = _make_exception_getter({}, original)</span>
+<span class="sd">    &gt;&gt;&gt; getter(&#39;url2&#39;)</span>
+<span class="sd">    b&#39;original data&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Filter to only include files that exist</span>
+    <span class="n">valid_exceptions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">url</span><span class="p">:</span> <span class="n">filepath</span>
+        <span class="k">for</span> <span class="n">url</span><span class="p">,</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Warn about missing files</span>
+    <span class="n">missing</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">exceptions</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">valid_exceptions</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Excluded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2"> exceptional URLs with missing files: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_with_exceptions</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check exceptions first, then fall back to original.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">valid_exceptions</span><span class="p">:</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">valid_exceptions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(),</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">original_getitem</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">get_with_exceptions</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_wrap_with_exceptions</span><span class="p">(</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">exceptions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MutableMapping</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrap a cache to check exceptions before normal lookup.</span>
+
+<span class="sd">    &gt;&gt;&gt; cache = {&#39;url1&#39;: b&#39;cached data&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; import tempfile</span>
+<span class="sd">    &gt;&gt;&gt; fd, path = tempfile.mkstemp()</span>
+<span class="sd">    &gt;&gt;&gt; with os.fdopen(fd, &#39;w&#39;) as f:</span>
+<span class="sd">    ...     _ = f.write(&#39;exceptional data&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; exceptions = {&#39;url2&#39;: path}</span>
+<span class="sd">    &gt;&gt;&gt; wrapped = _wrap_with_exceptions(cache, exceptions)</span>
+<span class="sd">    &gt;&gt;&gt; wrapped[&#39;url1&#39;]</span>
+<span class="sd">    b&#39;cached data&#39;</span>
+<span class="sd">    &gt;&gt;&gt; wrapped[&#39;url2&#39;]</span>
+<span class="sd">    b&#39;exceptional data&#39;</span>
+<span class="sd">    &gt;&gt;&gt; os.unlink(path)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exceptions</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cache</span>
+
+    <span class="c1"># Simple wrapper class that checks exceptions first</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">CacheWithExceptions</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cache</span><span class="p">,</span> <span class="n">exceptions</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="n">cache</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_getter</span> <span class="o">=</span> <span class="n">_make_exception_getter</span><span class="p">(</span><span class="n">exceptions</span><span class="p">,</span> <span class="n">cache</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">)</span>
+            <span class="c1"># Preserve important attributes from the wrapped cache</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="s1">&#39;_rootdir&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_rootdir</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">_rootdir</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="s1">&#39;rootdir&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rootdir</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">rootdir</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getter</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">CacheWithExceptions</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="n">exceptions</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="graze_cache">
+<a class="viewcode-back" href="../../module_docs/graze/graze_exceptional.html#graze.graze_exceptional.graze_cache">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">graze_cache</span><span class="p">(</span>
+    <span class="n">cache_or_rootdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MutableMapping</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exceptions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">url_to_cache_key</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MutableMapping</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create or wrap a cache with exceptional URL support.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cache_or_rootdir: Either a cache (MutableMapping) to wrap, or a rootdir string for Files</span>
+<span class="sd">        exceptions:</span>
+<span class="sd">            - None (default): auto-discover from {rootdir}/_exceptions.json</span>
+<span class="sd">            - str: path to exceptions JSON file</span>
+<span class="sd">            - dict: explicit URL -&gt; filepath mapping</span>
+<span class="sd">        url_to_cache_key: Function to convert URLs to cache keys.</span>
+<span class="sd">            Only needed if exceptions use URLs and cache uses transformed keys.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Cache with exceptional URL support</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; # Auto-discover exceptions</span>
+<span class="sd">        &gt;&gt;&gt; cache = graze_cache(&#39;~/graze&#39;)  # doctest: +SKIP</span>
+
+<span class="sd">        &gt;&gt;&gt; # Explicit exceptions</span>
+<span class="sd">        &gt;&gt;&gt; cache = graze_cache(&#39;~/graze&#39;, exceptions={&#39;http://example.com/data&#39;: &#39;/local.txt&#39;})  # doctest: +SKIP</span>
+
+<span class="sd">        &gt;&gt;&gt; # Wrap existing cache</span>
+<span class="sd">        &gt;&gt;&gt; from dol import Files  # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; cache = graze_cache(Files(&#39;~/graze&#39;))  # doctest: +SKIP</span>
+
+<span class="sd">        &gt;&gt;&gt; # Custom cache (dict example)</span>
+<span class="sd">        &gt;&gt;&gt; my_cache = {&#39;url1&#39;: b&#39;data&#39;}</span>
+<span class="sd">        &gt;&gt;&gt; exceptions = {&#39;url2&#39;: &#39;/path/to/file.txt&#39;}</span>
+<span class="sd">        &gt;&gt;&gt; cache = graze_cache(my_cache, exceptions=exceptions)  # doctest: +SKIP</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create cache from rootdir if string provided</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cache_or_rootdir</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">dol</span><span class="w"> </span><span class="kn">import</span> <span class="n">Files</span>
+
+        <span class="n">cache</span> <span class="o">=</span> <span class="n">Files</span><span class="p">(</span><span class="n">cache_or_rootdir</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="n">cache_or_rootdir</span>
+
+    <span class="c1"># Load exceptions</span>
+    <span class="k">if</span> <span class="n">exceptions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Auto-discover</span>
+        <span class="n">exceptions</span> <span class="o">=</span> <span class="n">_discover_exceptions</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exceptions</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># Load from file path</span>
+        <span class="n">exceptions</span> <span class="o">=</span> <span class="n">_load_exceptions_from_path</span><span class="p">(</span><span class="n">exceptions</span><span class="p">)</span>
+    <span class="c1"># else: use dict as-is</span>
+
+    <span class="c1"># Transform URL-based exceptions to cache_key-based exceptions if needed</span>
+    <span class="k">if</span> <span class="n">exceptions</span> <span class="ow">and</span> <span class="n">url_to_cache_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">exceptions</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">url_to_cache_key</span><span class="p">(</span><span class="n">url</span><span class="p">):</span> <span class="n">filepath</span> <span class="k">for</span> <span class="n">url</span><span class="p">,</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+    <span class="c1"># Wrap if we have exceptions</span>
+    <span class="k">if</span> <span class="n">exceptions</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_wrap_with_exceptions</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="n">exceptions</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cache</span></div>
+
+
+
+<div class="viewcode-block" id="add_exception">
+<a class="viewcode-back" href="../../module_docs/graze/graze_exceptional.html#graze.graze_exceptional.add_exception">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_exception</span><span class="p">(</span>
+    <span class="n">cache_or_rootdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MutableMapping</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exceptions_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;_exceptions.json&#39;</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add an exceptional URL to the cache&#39;s exceptions file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cache_or_rootdir: Cache or rootdir string</span>
+<span class="sd">        url: URL to map</span>
+<span class="sd">        filepath: Path to existing file</span>
+<span class="sd">        exceptions_filename: Name of exceptions file in cache directory</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import tempfile</span>
+<span class="sd">        &gt;&gt;&gt; cache_dir = tempfile.mkdtemp()</span>
+<span class="sd">        &gt;&gt;&gt; data_fd, data_path = tempfile.mkstemp()</span>
+<span class="sd">        &gt;&gt;&gt; os.close(data_fd)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; add_exception(cache_dir, &#39;http://example.com/data&#39;, data_path)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Verify</span>
+<span class="sd">        &gt;&gt;&gt; exceptions_path = Path(cache_dir) / &#39;_exceptions.json&#39;</span>
+<span class="sd">        &gt;&gt;&gt; exceptions = json.loads(exceptions_path.read_text())</span>
+<span class="sd">        &gt;&gt;&gt; # The stored path should be the resolved absolute path</span>
+<span class="sd">        &gt;&gt;&gt; stored_path = exceptions[&#39;http://example.com/data&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; Path(stored_path).resolve() == Path(data_path).resolve()</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Cleanup</span>
+<span class="sd">        &gt;&gt;&gt; os.unlink(exceptions_path)</span>
+<span class="sd">        &gt;&gt;&gt; os.unlink(data_path)</span>
+<span class="sd">        &gt;&gt;&gt; os.rmdir(cache_dir)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get rootdir</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cache_or_rootdir</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">rootdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">cache_or_rootdir</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cache_or_rootdir</span><span class="p">,</span> <span class="s1">&#39;_rootdir&#39;</span><span class="p">):</span>
+        <span class="n">rootdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">cache_or_rootdir</span><span class="o">.</span><span class="n">_rootdir</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Cannot determine rootdir. Pass a string path or cache with _rootdir attribute.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Validate file exists</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File does not exist: </span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Load existing exceptions</span>
+    <span class="n">exceptions_path</span> <span class="o">=</span> <span class="n">rootdir</span> <span class="o">/</span> <span class="n">exceptions_filename</span>
+    <span class="k">if</span> <span class="n">exceptions_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">exceptions</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">exceptions_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">exceptions</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Add new exception</span>
+    <span class="n">exceptions</span><span class="p">[</span><span class="n">url</span><span class="p">]</span> <span class="o">=</span> <span class="n">filepath</span>
+
+    <span class="c1"># Save</span>
+    <span class="n">rootdir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">exceptions_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">exceptions</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="list_exceptions">
+<a class="viewcode-back" href="../../module_docs/graze/graze_exceptional.html#graze.graze_exceptional.list_exceptions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_exceptions</span><span class="p">(</span>
+    <span class="n">cache_or_rootdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MutableMapping</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exceptions_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;_exceptions.json&#39;</span><span class="p">,</span>
+    <span class="n">show_paths</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List exceptional URLs in a cache.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cache_or_rootdir: Cache or rootdir string</span>
+<span class="sd">        exceptions_filename: Name of exceptions file</span>
+<span class="sd">        show_paths: If True, return (url, filepath) tuples</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of URLs or list of (url, filepath) tuples</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import tempfile</span>
+<span class="sd">        &gt;&gt;&gt; cache_dir = tempfile.mkdtemp()</span>
+<span class="sd">        &gt;&gt;&gt; data_fd, data_path = tempfile.mkstemp()</span>
+<span class="sd">        &gt;&gt;&gt; os.close(data_fd)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; add_exception(cache_dir, &#39;http://example.com/data&#39;, data_path)</span>
+<span class="sd">        &gt;&gt;&gt; urls = list_exceptions(cache_dir)</span>
+<span class="sd">        &gt;&gt;&gt; urls</span>
+<span class="sd">        [&#39;http://example.com/data&#39;]</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; urls_with_paths = list_exceptions(cache_dir, show_paths=True)</span>
+<span class="sd">        &gt;&gt;&gt; len(urls_with_paths)</span>
+<span class="sd">        1</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Cleanup</span>
+<span class="sd">        &gt;&gt;&gt; os.unlink(Path(cache_dir) / &#39;_exceptions.json&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; os.unlink(data_path)</span>
+<span class="sd">        &gt;&gt;&gt; os.rmdir(cache_dir)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get rootdir</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cache_or_rootdir</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">rootdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">cache_or_rootdir</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cache_or_rootdir</span><span class="p">,</span> <span class="s1">&#39;_rootdir&#39;</span><span class="p">):</span>
+        <span class="n">rootdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">cache_or_rootdir</span><span class="o">.</span><span class="n">_rootdir</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">show_paths</span> <span class="k">else</span> <span class="p">[]</span>
+
+    <span class="c1"># Load exceptions</span>
+    <span class="n">exceptions_path</span> <span class="o">=</span> <span class="n">rootdir</span> <span class="o">/</span> <span class="n">exceptions_filename</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exceptions_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">show_paths</span> <span class="k">else</span> <span class="p">[]</span>
+
+    <span class="n">exceptions</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">exceptions_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">show_paths</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">exceptions</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">exceptions</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;graze_cache&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;add_exception&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;list_exceptions&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
