@@ -14,7 +14,7 @@ from graze.base import (
     url_to_contents,
     key_egress_print_downloading_message,
 )
-from graze.util import handle_missing_dir
+from graze.util import handle_missing_dir, tiny_url
 from graze.graze_exceptional import (
     graze_cache,
     add_exception,

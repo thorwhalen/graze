@@ -45,6 +45,64 @@ inner_most_key = partial(inner_most, method="_id_of_key")
 # --------------------- General ---------------------
 
 
+def tiny_url(long_url):
+    """
+    Shortens a long URL by directly calling the TinyURL API endpoint.
+
+    Args:
+        long_url (str): The URL to be shortened.
+
+    Returns:
+        str: The shortened TinyURL, or an error message.
+    """
+    import requests
+
+    TINYURL_API_ENDPOINT = "http://tinyurl.com/api-create.php"
+
+    try:
+        # The TinyURL API accepts the long URL as a query parameter
+        response = requests.get(TINYURL_API_ENDPOINT, params={'url': long_url})
+
+        # The API returns the short URL as plain text in the response body (200 OK)
+        if response.status_code == 200:
+            return response.text
+        else:
+            return f"API request failed with status code: {response.status_code}"
+
+    except requests.exceptions.RequestException as e:
+        # Handle network or request errors
+        return f"Network or request error: {e}"
+
+
+def original_url_of_tiny_url(tiny_url):
+    """
+    Expands a short URL by making a HEAD request and following the redirection.
+
+    Args:
+        tiny_url (str): The shortened TinyURL.
+
+    Returns:
+        str: The original long URL, or an error message if expansion fails.
+    """
+    import requests
+
+    try:
+        # Use a HEAD request, which is faster as it only asks for the headers,
+        # not the entire page content. Allow redirects (allow_redirects=True).
+        response = requests.head(tiny_url, allow_redirects=True, timeout=10)
+
+        # The URL that the request finally lands on after all redirects
+        # is stored in response.url
+        return response.url
+
+    except requests.exceptions.RequestException as e:
+        return f"Error expanding URL: {e}"
+
+
+tiny_url.encode = tiny_url
+tiny_url.decode = original_url_of_tiny_url
+
+
 def _ensure_dirs_of_file_exists(filepath: str):
     """Recursively ensure all dirs necessary for filepath exist.
     Return filepath (useful for pipelines)"""

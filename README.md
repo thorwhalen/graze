@@ -443,8 +443,41 @@ def filebytes_of_dropbox_url(dropbox_url: str, assert_only_one_file=True):
     return zip_store[first_filepath]
 ```
 
+## How do I use tiny_url?
 
-# Notes
+`tiny_url` is a convenience utility that shortens long URLs, making them easier to work with in demos, notebooks, and testing. It's especially useful when you're working with GitHub raw content URLs or other lengthy URLs.
+
+**Basic usage:**
+
+```python
+from graze import tiny_url
+
+url = 'https://raw.githubusercontent.com/thorwhalen/graze/refs/heads/master/README.md'
+short_url = tiny_url(url)
+print(short_url)  # Much shorter!
+```
+
+**Encoding and decoding:**
+
+`tiny_url` works like a codec with `encode` and `decode` methods:
+
+```python
+# Encoding (shortening)
+encoded_url = tiny_url.encode(url)  # Same as tiny_url(url)
+
+# Decoding (getting original URL back)
+original_url = tiny_url.decode(encoded_url)
+assert original_url == url
+```
+
+This is particularly useful when:
+- Working in Jupyter notebooks with long URLs
+- Creating cleaner demos and examples
+- Testing with URLs that would clutter your code
+- Sharing code snippets where URL readability matters
+
+
+# Further Notes
 
 ## New url-to-path mapping 
 
