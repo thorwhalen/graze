@@ -2,14 +2,14 @@
 
 Cache (a tiny part of) the internet.
 
-(For the technically inclined, graze is meant to enable the separation of the concerns 
-of getting and caching data from the internet.)
+(For the technically inclined, `graze` is meant to ease the separation of the concerns of getting and caching/persisting data from the internet.)
 
 ## install
 
 ```pip install graze```
 
-# Example
+
+# Quick example
 
 ```python
 from graze import Graze
@@ -33,7 +33,8 @@ content = g[url]
 type(content), len(content)
 ```
 
-Before I grew up, I had only 46 petty bytes:
+Before I grew up, I had only 46 petty bytes (I have a lot more now):
+
 ```
 (bytes, 46)
 ```
@@ -45,10 +46,9 @@ print(content.decode())
 ```
 
 ```
-
 # graze
 
-Cache (a tiny part of) the internet
+Cache (a tiny part of) the internet.
 ```
 
 But now, here's the deal. List your ``g`` keys now. Go ahead, don't be shy!
@@ -85,6 +85,237 @@ The same way you would delete a key from a dict:
 ```python
 del g[url]
 ```
+
+
+# Understanding graze: Function and Class
+
+Now that you've seen `graze` in action, let's dive deeper into how it works and what options you have to tailor it to your needs.
+
+## The `graze()` function: Your core workhorse
+
+At the heart of the package is the `graze()` function. It's simple: give it a URL, and it gives you back the contents as bytes. But here's the clever bit—it caches those bytes locally so the next time you ask for the same URL, you get instant access without hitting the network again.
+
+```python
+from graze import graze
+
+# First call downloads and caches
+content = graze('https://example.com/data.json')
+
+# Second call uses cached version - blazing fast!
+content_again = graze('https://example.com/data.json')
+```
+
+### Where does it cache?
+
+By default, `graze()` stores files in `~/graze`, but you have full control over this through the `cache` parameter:
+
+```python
+# Cache to a specific folder
+content = graze(url, cache='~/my_project/cache')
+
+# Or use a specific filepath (cache defaults to None automatically)
+content = graze(url, cache_key='~/data/specific_file.json')
+
+# Or even use a dict for in-memory caching!
+my_cache = {}
+content = graze(url, cache=my_cache, cache_key='data.json')
+```
+
+The `cache` parameter accepts:
+- `None` (default): Uses `~/graze` as the cache folder
+- A string path: Any folder where you want files cached
+- A `MutableMapping` (like dict or `dol.Files`): Custom storage backend
+
+### Controlling the cache key
+
+The `cache_key` parameter determines what key is used in your cache. By default, URLs are converted to safe filesystem paths, but you can customize this:
+
+```python
+# Auto-generated key (default)
+content = graze('https://example.com/data.json')
+
+# Explicit cache key
+content = graze('https://example.com/data.json', cache_key='my_data.json')
+
+# Use a function to generate keys
+def url_to_key(url):
+    return url.split('/')[-1]  # Just use filename
+content = graze('https://example.com/data/file.json', cache_key=url_to_key)
+
+# Or provide a full filepath (makes cache default to None)
+content = graze('https://example.com/data.json', cache_key='~/my_data/important.json')
+```
+
+### Keeping data fresh
+
+What if the data at your URL changes? `graze` offers two powerful refresh strategies:
+
+**Time-based refresh with `max_age`:**
+
+```python
+# Re-download if cached data is older than 1 hour (3600 seconds)
+content = graze(url, max_age=3600)
+
+# Or for a whole day
+content = graze(url, max_age=86400)
+```
+
+**Custom refresh logic with `refresh`:**
+
+```python
+# Always re-download
+content = graze(url, refresh=True)
+
+# Or use a function for complex logic
+def should_refresh(cache_key, url):
+    # Your custom logic here
+    return some_condition
+
+content = graze(url, refresh=should_refresh)
+```
+
+### Custom data sources
+
+By default, `graze` uses `requests` to fetch URLs, but you can plug in any data source:
+
+```python
+from graze import graze, Internet
+
+# Use a custom fetcher function
+def my_fetcher(url):
+    # Your custom logic (must return bytes)
+    return response_bytes
+
+content = graze(url, source=my_fetcher)
+
+# Or use an object with __getitem__
+content = graze(url, source=Internet(timeout=30))
+```
+
+### Getting notified of downloads
+
+Want to know when `graze` is actually hitting the network?
+
+```python
+# Simple notification
+content = graze(url, key_ingress=lambda k: print(f"Downloading {k}..."))
+
+# Or get fancy with logging
+import logging
+logger = logging.getLogger(__name__)
+content = graze(url, key_ingress=lambda k: logger.info(f"Fetching fresh data from {k}"))
+```
+
+### Other useful parameters
+
+```python
+# Get the cache key/filepath instead of contents
+filepath = graze(url, return_key=True)
+```
+
+## The `Graze` class: Your dict-like cache interface
+
+While the `graze()` function is great for one-off fetches, the `Graze` class gives you a convenient dict-like interface to browse and manage your cached data.
+
+```python
+from graze import Graze
+
+# Create your cache interface
+g = Graze('~/my_cache')
+
+# It's a mapping - use it like a dict!
+urls = list(g)  # See what you've cached
+content = g[url]  # Get contents (downloads if not cached)
+url in g  # Check if cached
+len(g)  # Count cached items
+del g[url]  # Remove from cache
+```
+
+The beauty of `Graze` is that it makes your cache feel like a dictionary where the keys are URLs and the values are the byte contents. Under the hood, it's using the `graze()` function for all the heavy lifting.
+
+### Configuring your Graze instance
+
+`Graze` accepts similar parameters to `graze()`, but they apply to all operations:
+
+```python
+from graze import Graze, Internet
+
+g = Graze(
+    rootdir='~/my_cache',  # Where to cache
+    source=Internet(timeout=30),  # Custom source
+    key_ingress=lambda k: print(f"Fetching {k}"),  # Download notifications
+)
+
+# Now all operations use these settings
+content = g['https://example.com/data.json']
+```
+
+### Working with filepaths
+
+Sometimes you need the actual filepath where data is cached:
+
+```python
+# Get filepaths instead of contents
+g = Graze('~/cache', return_filepaths=True)
+filepath = g[url]  # Returns path string instead of bytes
+
+# Or get filepath on demand
+g = Graze('~/cache')
+filepath = g.filepath_of(url)
+content = g[url]  # Still gets contents normally
+```
+
+### When you need TTL (time-to-live) caching
+
+For data that changes periodically, use `GrazeWithDataRefresh`:
+
+```python
+from graze import GrazeWithDataRefresh
+
+# Re-fetch if data is older than 1 hour
+g = GrazeWithDataRefresh(
+    rootdir='~/cache',
+    time_to_live=3600,  # seconds
+    on_error='ignore'  # Return stale data if refresh fails
+)
+
+content = g[url]  # Fresh data (or cached if recent enough)
+```
+
+The `on_error` parameter controls what happens when refresh fails:
+- `'ignore'`: Silently return stale cached data
+- `'warn'`: Warn but return stale data
+- `'raise'`: Raise the error
+- `'warn_and_return_local'`: Warn and return stale data
+
+### Advanced cache backends
+
+Want to cache to something other than files? Use any `MutableMapping`:
+
+```python
+from dol import Files
+
+# Files gives you a dict-like interface to a filesystem
+cache = Files('~/cache')
+g = Graze(cache)  # Now using Files instead of plain folder
+
+# Or use an in-memory dict for temporary caching
+cache = {}
+g = Graze(cache)
+```
+
+## Choosing between `graze()` and `Graze`
+
+Use the **`graze()` function** when:
+- You're fetching a single URL
+- You want different settings per fetch
+- You prefer a functional style
+
+Use the **`Graze` class** when:
+- You want a dict-like interface to your cache
+- You're working with multiple URLs with consistent settings
+- You need to browse, count, or manage cached items
+- You want to check what's cached before fetching
 
 
 # Q&A
@@ -141,28 +372,41 @@ g = my_graze()
 Classic caching problem. 
 You like the convenience of having a local copy, but then how do you keep in sync with the data source if it changes?
 
+See the "Keeping data fresh" section above for comprehensive coverage of refresh strategies. In brief:
+
 If you KNOW the source data changed and want to sync, it's easy. You delete the local copy 
-(like deleting a key from a dict: `del Graze()[url]`)
+(like deleting a key from a dict: `del g[url]`)
 and you try to access it again. 
 Since you don't have a local copy, it will get one from the `url` source. 
 
-What if you want this to happen automatically? 
+For automatic refresh, you have several options:
 
-Well, there's several ways to do that. 
-
-If you have a way to know if the source and local are different (through modified dates, or hashes, etc.), 
-then you can write a little function to keep things in sync. 
-But that's context dependent; `graze` doesn't offer you any default way to do it. 
-
-Another way to do this is sometimes known as a `TTL Cache` (time-to-live cache). 
-You get such functionality with the `graze.GrazeWithDataRefresh` store, or for most cases, 
-simply getting your data through the `graze` function
-specifying a `max_age` value (in seconds):
-
-```
+**Time-based (TTL) refresh:**
+```python
 from graze import graze
 
-content_bytes = graze(url, max_age=in_seconds)
+# Re-download if cached data is older than an hour
+content_bytes = graze(url, max_age=3600)
+```
+
+**Or use `GrazeWithDataRefresh` for dict-like TTL caching:**
+```python
+from graze import GrazeWithDataRefresh
+
+g = GrazeWithDataRefresh(time_to_live=3600, on_error='ignore')
+content = g[url]
+```
+
+**Custom refresh logic:**
+```python
+# Always refresh
+content = graze(url, refresh=True)
+
+# Or use a custom function
+def should_refresh(cache_key, url):
+    return your_logic_here
+
+content = graze(url, refresh=should_refresh)
 ```
 
 ## Can I make graze notify me when it gets a new copy of the data?
@@ -182,16 +426,16 @@ Yes it does, but you need to be aware that dropbox systematically send the data 
 Here's some code that can help.
 
 ```python
-def zip_store_of_gropbox_url(dropbox_url: str):
+def zip_store_of_dropbox_url(dropbox_url: str):
     """Get a key-value perspective of the (folder) contents 
     of the zip a dropbox url gets you"""
     from graze import graze
-    from py2store import FilesOfZip
+    from dol import FilesOfZip
     return FilesOfZip(graze(dropbox_url))
     
 def filebytes_of_dropbox_url(dropbox_url: str, assert_only_one_file=True):
     """Get the bytes of the first file in a zip that a dropbox url gives you"""
-    zip_store = zip_store_of_gropbox_url(dropbox_url)
+    zip_store = zip_store_of_dropbox_url(dropbox_url)
     zip_filepaths = iter(zip_store)
     first_filepath = next(zip_filepaths)
     if assert_only_one_file:

@@ -1,6 +1,6 @@
 """Base functionality"""
 
-from typing import Optional, Union, Any, Protocol
+from typing import Optional, Union, Any, Protocol, Iterator
 from collections.abc import Callable, MutableMapping
 import os
 import time
@@ -241,7 +241,18 @@ def _cache_set(
             f.write(contents)
         return
 
-    # It's a MutableMapping
+    # It's a MutableMapping - need to ensure directories exist if it's file-based
+    # Try to create dirs for the key (gracefully handle if cache doesn't support it)
+    try:
+        # For Files and similar stores, we need to ensure parent dirs exist
+        if hasattr(cache, 'rootdir'):
+            # It's likely a file-based store like Files
+            full_path = os.path.join(cache.rootdir, cache_key)
+            os.makedirs(os.path.dirname(full_path), exist_ok=True)
+    except (AttributeError, OSError):
+        # Not a file-based store, or dirs already exist, just continue
+        pass
+
     cache[cache_key] = contents
 
 
@@ -604,7 +615,191 @@ class Internet:
 
 # TODO: Use reususable caching decorator?
 # TODO: Not seeing the right signature, but the LocalGrazed one!
-class Graze(LocalGrazed):
+
+
+# --------------------------------------------------------------------------------------
+# Helper functions for GrazeBase
+# --------------------------------------------------------------------------------------
+
+
+def _iterate_cache(
+    cache: Optional[Union[str, MutableMapping]],
+    cache_key_to_url: Callable[[str], str] = localpath_to_url,
+) -> Iterator[str]:
+    """Iterate over URLs in cache.
+
+    Args:
+        cache: The cache (folder path, MutableMapping, or None)
+        cache_key_to_url: Function to convert cache keys to URLs
+
+    Yields:
+        URLs (str)
+    """
+    if cache is None:
+        return
+
+    if isinstance(cache, str):
+        # It's a folder path
+        expanded_cache = os.path.expanduser(cache)
+        if not os.path.exists(expanded_cache):
+            return
+
+        # Walk the directory and yield URLs
+        for root, dirs, files in os.walk(expanded_cache):
+            for filename in files:
+                # Get relative path from cache root
+                filepath = os.path.join(root, filename)
+                relpath = os.path.relpath(filepath, expanded_cache)
+                # Convert to URL
+                yield cache_key_to_url(relpath)
+    else:
+        # It's a MutableMapping
+        for key in cache:
+            yield cache_key_to_url(key)
+
+
+def _get_cache_size(cache: Optional[Union[str, MutableMapping]]) -> int:
+    """Get the number of items in cache."""
+    if cache is None:
+        return 0
+
+    if isinstance(cache, str):
+        expanded_cache = os.path.expanduser(cache)
+        if not os.path.exists(expanded_cache):
+            return 0
+        count = 0
+        for root, dirs, files in os.walk(expanded_cache):
+            count += len(files)
+        return count
+    else:
+        return len(cache)
+
+
+# --------------------------------------------------------------------------------------
+# GrazeBase: The foundation class that uses graze() function
+# --------------------------------------------------------------------------------------
+
+
+class GrazeBase(MutableMapping):
+    """Base class for Graze that wraps the graze() function.
+
+    This class provides a MutableMapping interface (dict-like) where:
+    - Keys are URLs
+    - Values are the contents of those URLs (bytes)
+    - Items are cached locally (in folder, Files, or dict)
+
+    The key design principle: All actual work is delegated to the graze() function.
+    This class just provides the Mapping interface and state management.
+
+    Args:
+        cache: Where to cache contents. Can be:
+            - str: folder path for file-based caching
+            - MutableMapping: custom cache (e.g., Files, dict)
+            - None: uses DFLT_GRAZE_DIR
+        source: Where to get contents if not cached. Defaults to Internet().
+        key_ingress: Function to call on URL before downloading.
+        url_to_cache_key: Function to convert URL to cache key.
+            Defaults to url_to_localpath.
+        cache_key_to_url: Function to convert cache key back to URL.
+            Defaults to localpath_to_url.
+
+    Examples:
+        >>> # With folder cache (default)
+        >>> g = GrazeBase(cache='~/my_cache')  # doctest: +SKIP
+        >>> content = g['http://example.com/data.json']  # doctest: +SKIP
+
+        >>> # With Files cache
+        >>> from dol import Files
+        >>> g = GrazeBase(cache=Files('~/cache'))  # doctest: +SKIP
+
+        >>> # With dict cache (in-memory)
+        >>> g = GrazeBase(cache={})  # doctest: +SKIP
+    """
+
+    def __init__(
+        self,
+        cache: Optional[Union[str, MutableMapping]] = None,
+        *,
+        source: Union[Callable, Gettable] = None,
+        key_ingress: Callable | None = None,
+        url_to_cache_key: Callable[[str], str] = url_to_localpath,
+        cache_key_to_url: Callable[[str], str] = localpath_to_url,
+        refresh: Union[bool, Callable] = False,
+    ):
+        # Set defaults
+        if cache is None:
+            cache = DFLT_GRAZE_DIR
+        if source is None:
+            source = Internet()
+
+        # Store configuration
+        self.cache = cache
+        self.source = source
+        self.key_ingress = key_ingress
+        self.url_to_cache_key = url_to_cache_key
+        self.cache_key_to_url = cache_key_to_url
+        self.refresh = refresh
+
+    def __getitem__(self, url: str) -> Contents:
+        """Get contents for URL (downloads if not cached)."""
+        cache_key = self.url_to_cache_key(url)
+        return graze(
+            url,
+            cache=self.cache,
+            cache_key=cache_key,
+            source=self.source,
+            key_ingress=self.key_ingress,
+            refresh=self.refresh,
+        )
+
+    def __setitem__(self, url: str, contents: Contents):
+        """Manually set contents for URL in cache."""
+        cache_key = self.url_to_cache_key(url)
+        _cache_set(self.cache, cache_key, contents, is_explicit_filepath=False)
+
+    def __delitem__(self, url: str):
+        """Delete cached contents for URL."""
+        cache_key = self.url_to_cache_key(url)
+
+        # Check if it exists first
+        if not _cache_contains(self.cache, cache_key, is_explicit_filepath=False):
+            raise KeyError(url)
+
+        if isinstance(self.cache, str):
+            # It's a folder path - delete the file
+            expanded_cache = os.path.expanduser(self.cache)
+            filepath = os.path.join(expanded_cache, cache_key)
+            if os.path.isfile(filepath):
+                os.remove(filepath)
+            else:
+                raise KeyError(url)
+        else:
+            # It's a MutableMapping
+            del self.cache[cache_key]
+
+    def __contains__(self, url: str) -> bool:
+        """Check if URL is cached."""
+        cache_key = self.url_to_cache_key(url)
+        return _cache_contains(self.cache, cache_key, is_explicit_filepath=False)
+
+    def __iter__(self) -> Iterator[str]:
+        """Iterate over cached URLs."""
+        return _iterate_cache(self.cache, self.cache_key_to_url)
+
+    def __len__(self) -> int:
+        """Return number of cached URLs."""
+        return _get_cache_size(self.cache)
+
+    def __repr__(self):
+        cache_repr = (
+            repr(self.cache) if not isinstance(self.cache, str) else f"'{self.cache}'"
+        )
+        return f"{self.__class__.__name__}(cache={cache_repr})"
+
+
+# TODO: Use reususable caching decorator?
+# TODO: Not seeing the right signature, but the LocalGrazed one!
+class Graze(GrazeBase):
     """A data access object that will get data from the internet if it's not
     already stored locally.
 
@@ -615,6 +810,8 @@ class Graze(LocalGrazed):
     ``Graze`` will first look if the contents are stored locally, and return that,
     if not it will get the contents from the internet and store it locally,
     then return those bytes.
+
+    This class now extends GrazeBase and delegates most work to the graze() function.
     """
 
     def __init__(
@@ -639,47 +836,54 @@ class Graze(LocalGrazed):
 
 
         """
-        super().__init__(rootdir)
-        self.source = source
-        self.rootdir = rootdir
+        # Handle key_ingress=True shortcut
         if key_ingress is True:
             key_ingress = key_egress_print_downloading_message
+
+        # Initialize GrazeBase with mapped parameters
+        super().__init__(
+            cache=rootdir,
+            source=source,
+            key_ingress=key_ingress,
+        )
+
+        # Store attributes for backwards compatibility
+        self.rootdir = rootdir
+        self.source = source
         self.key_ingress = key_ingress
         self.return_filepaths = return_filepaths
 
-    # def __getitem__(self, k):
-    #     if not super().__contains__(k):
-    #         return self.filepath_of(k)
-    #     return self.filepath_of(k)
-
-    #     path = self.filepath_of(k)  # get the target filepath
-    #     v = super().__getitem__(k)  # get the contents from the target filepath
-    #     if self.return_filepaths:
-
-    # TODO: Could be more RAM-efficient by not systematically loading the whole file
-    #  in memory when it's not necessary.
-    def __missing__(self, k):
-        if self.key_ingress:
-            k = self.key_ingress(k)
-
-        path = self.filepath_of(k)  # get the target filepath
-        self.source.download_to_file(k, file=path)  # download the contents to target
+    def __getitem__(self, url: str) -> Union[Contents, str]:
+        """Get contents for URL (or filepath if return_filepaths=True)."""
         if self.return_filepaths:
-            return path  # if return_path, return the path
+            # Return the filepath instead of contents
+            cache_key = self.url_to_cache_key(url)
+            return graze(
+                url,
+                cache=self.cache,
+                cache_key=cache_key,
+                source=self.source,
+                key_ingress=self.key_ingress,
+                refresh=self.refresh,
+                return_key=True,
+            )
         else:
-            return self[k]  # if not, retrieve contents from file and return them
+            # Normal behavior - return contents
+            return super().__getitem__(url)
 
-        # PREVIOUS WAY (using stores -- only return_path=False case
-        # # if you didn't have it "locally", ask src for it
-        # v = self.source[k]  # ... get it from _src,
-        # self[k] = v  # ... store it in self
-        # return v  # ... and return it.
-
-    filepath_of = partialmethod(inner_most_key)
-    filepath_of.__doc__ = (
-        "Get the filepath of where graze stored (or would store) "
-        "the contents for a url locally"
-    )
+    def filepath_of(self, url: str) -> str:
+        """Get the filepath of where graze stored (or would store) the contents for a url locally."""
+        cache_key = self.url_to_cache_key(url)
+        if isinstance(self.cache, str):
+            # It's a folder path
+            expanded_cache = os.path.expanduser(self.cache)
+            return os.path.join(expanded_cache, cache_key)
+        else:
+            # For MutableMapping, if it has a rootdir, use that
+            if hasattr(self.cache, 'rootdir'):
+                return os.path.join(self.cache.rootdir, cache_key)
+            # Otherwise, just return the cache_key (which may not be a filepath)
+            return cache_key
 
     def filepath_of_url_downloading_if_necessary(self, url):
         """Get the file path for the url, downloading contents before hand if necessary.
@@ -763,48 +967,117 @@ class GrazeWithDataRefresh(Graze):
             stale data anyway
 
         """
+        # Store time_to_live and on_error before calling super().__init__
+        self.time_to_live = time_to_live
+        self.on_error = on_error
+
+        # Create refresh function based on time_to_live
+        refresh_func = self._make_refresh_func()
+
+        # Initialize parent with refresh function
+        # NOTE: We can't pass refresh to super().__init__ directly because
+        # Graze.__init__ doesn't accept it. So we'll set it after.
         super().__init__(
             rootdir,
             source=source,
             key_ingress=key_ingress,
             return_filepaths=return_filepaths,
         )
-        self.time_to_live = time_to_live
-        self.on_error = on_error
 
-    def __getitem__(self, k):
-        k = k.strip()
-        v = None
-        if k in self:
-            # TODO: Use info store that is not necessarily a local files sys?
-            filepath = inner_most_key(self, k)
-            age = (
-                time.time() - os.stat(filepath).st_mtime
-            )  # Note: local file sys cache is assumed here!
-            if age > self.time_to_live:
-                # Need to refresh the data...
-                try:
-                    # TODO: perhaps do this with super()
-                    v = Internet()[k]
-                    with open(filepath, "wb") as f:
-                        f.write(v)  # replace existing
-                except Exception as e:
-                    if self.on_error == "warn_and_return_local":
+        # Override the refresh attribute from GrazeBase
+        self.refresh = refresh_func
+
+    def _make_refresh_func(self) -> Callable:
+        """Create a refresh function based on time_to_live."""
+        time_to_live = self.time_to_live
+
+        def should_refresh(cache_key: str, url: str) -> bool:
+            """Check if cached data is stale based on time_to_live."""
+            # Determine filepath
+            if isinstance(self.cache, str):
+                expanded_cache = os.path.expanduser(self.cache)
+                filepath = os.path.join(expanded_cache, cache_key)
+            else:
+                # For MutableMapping with rootdir
+                if hasattr(self.cache, 'rootdir'):
+                    filepath = os.path.join(self.cache.rootdir, cache_key)
+                else:
+                    # Can't determine age for non-file-based caches
+                    return False
+
+            if not os.path.exists(filepath):
+                return False  # File doesn't exist, so it's not a refresh situation
+
+            age = time.time() - os.stat(filepath).st_mtime
+            return age > time_to_live
+
+        return should_refresh
+
+    def __getitem__(self, url: str) -> Union[Contents, str]:
+        """Get contents for URL with refresh logic and error handling."""
+        url = url.strip()
+
+        # Check if we need to refresh
+        cache_key = self.url_to_cache_key(url)
+        should_refresh = (
+            self.refresh(cache_key, url) if callable(self.refresh) else self.refresh
+        )
+
+        if should_refresh and url in self:
+            # Data exists but is stale - try to refresh, handle errors based on on_error setting
+            try:
+                # Use graze() function with refresh=True
+                if self.return_filepaths:
+                    return graze(
+                        url,
+                        cache=self.cache,
+                        cache_key=cache_key,
+                        source=self.source,
+                        key_ingress=self.key_ingress,
+                        refresh=True,
+                        return_key=True,
+                    )
+                else:
+                    return graze(
+                        url,
+                        cache=self.cache,
+                        cache_key=cache_key,
+                        source=self.source,
+                        key_ingress=self.key_ingress,
+                        refresh=True,
+                    )
+            except Exception as e:
+                # Handle error based on on_error setting
+                filepath = self.filepath_of(url)
+                if os.path.exists(filepath):
+                    age = time.time() - os.stat(filepath).st_mtime
+                else:
+                    age = None
+
+                if self.on_error == "raise":
+                    raise
+                elif (
+                    self.on_error == "warn" or self.on_error == "warn_and_return_local"
+                ):
+                    if age is not None:
                         warn(
-                            "There was an error getting a fresh copy of {k}, "
-                            f"so I'll give you a copy that's {age} seconds old."
+                            f"There was an error getting a fresh copy of {url}, "
+                            f"so I'll give you a copy that's {age:.1f} seconds old. "
+                            f"The error was: {e}"
                         )
-                    elif self.on_error == "raise":
-                        raise
-                    elif self.on_error == "warn":
-                        warn(
-                            f"There was an error getting a fresh copy of {k}, "
-                            f"so I'll give you a copy that's {age} seconds old. "
-                            f"The error was {e}"
-                        )
-        if v is None:
-            v = super().__getitem__(k)  # retrieve the data normally
-        return v
+                    else:
+                        warn(f"There was an error getting {url}: {e}")
+
+                # For 'ignore' and after warning, return stale data directly
+                # Read the file directly without triggering download
+                if self.return_filepaths:
+                    return filepath
+                else:
+                    with open(filepath, 'rb') as f:
+                        return f.read()
+
+        # Get data normally (from cache or download)
+        return super().__getitem__(url)
 
 
 def graze(

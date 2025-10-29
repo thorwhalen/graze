@@ -739,6 +739,7 @@ def test_graze_with_cache_key_callable():
     expected_path = os.path.join(temp_dir, expected_filename)
     assert os.path.isfile(expected_path)
 
+
 def test_graze_with_full_filepath_cache_key():
     """Test graze with full filepath as cache_key (cache param ignored)."""
     from graze.base import graze
@@ -774,6 +775,7 @@ def test_graze_with_tilde_filepath_cache_key():
     # Clean up
     if os.path.isfile(expanded_path):
         os.remove(expanded_path)
+
 
 # --------------------------------------------------------------------------------------
 # Tests for new refresh parameter
@@ -1127,3 +1129,486 @@ def test_graze_integration_source_and_cache():
     contents2 = graze(test_url_1, cache=temp_dir, source=source)
     assert len(source_calls) == 1  # Still 1, not 2
     assert contents2 == contents1
+
+
+# --------------------------------------------------------------------------------------
+# Tests for current Graze class behavior (before refactoring)
+# --------------------------------------------------------------------------------------
+
+
+def test_graze_class_iteration():
+    """Test that Graze can iterate over cached URLs."""
+    from graze.base import Graze
+
+    temp_dir = tempfile.mkdtemp()
+    g = Graze(rootdir=temp_dir)
+
+    # Initially empty
+    assert list(g) == []
+
+    # Add first URL
+    _ = g[test_url_1]
+    urls = list(g)
+    assert test_url_1 in urls
+    assert len(urls) == 1
+
+    # Add second URL (use a variant)
+    test_url_2 = test_url_1 + "#variant"
+    _ = g[test_url_2]
+    urls = list(g)
+    assert test_url_1 in urls
+    assert test_url_2 in urls
+    assert len(urls) == 2
+
+
+def test_graze_class_contains():
+    """Test that Graze __contains__ works correctly."""
+    from graze.base import Graze
+
+    temp_dir = tempfile.mkdtemp()
+    g = Graze(rootdir=temp_dir)
+
+    # URL not in cache yet
+    assert test_url_1 not in g
+
+    # Download it
+    _ = g[test_url_1]
+
+    # Now it should be in cache
+    assert test_url_1 in g
+
+
+def test_graze_class_len():
+    """Test that Graze __len__ works correctly."""
+    from graze.base import Graze
+
+    temp_dir = tempfile.mkdtemp()
+    g = Graze(rootdir=temp_dir)
+
+    # Initially empty
+    assert len(g) == 0
+
+    # Add one URL
+    _ = g[test_url_1]
+    assert len(g) == 1
+
+    # Add second URL
+    test_url_2 = test_url_1 + "#variant"
+    _ = g[test_url_2]
+    assert len(g) == 2
+
+
+def test_graze_class_deletion():
+    """Test that Graze can delete cached URLs."""
+    from graze.base import Graze
+
+    temp_dir = tempfile.mkdtemp()
+    g = Graze(rootdir=temp_dir)
+
+    # Download and verify it's cached
+    _ = g[test_url_1]
+    assert test_url_1 in g
+
+    # Delete it
+    del g[test_url_1]
+
+    # Should no longer be in cache
+    assert test_url_1 not in g
+
+
+def test_graze_class_setitem():
+    """Test that Graze can manually set items in cache."""
+    from graze.base import Graze
+
+    temp_dir = tempfile.mkdtemp()
+    g = Graze(rootdir=temp_dir)
+
+    test_url = "http://example.com/manual_set.txt"
+    test_content = b"Manual content"
+
+    # Manually set content
+    g[test_url] = test_content
+
+    # Should be retrievable
+    assert g[test_url] == test_content
+    assert test_url in g
+
+
+def test_graze_class_keys_values_items():
+    """Test that Graze supports keys(), values(), items()."""
+    from graze.base import Graze
+
+    temp_dir = tempfile.mkdtemp()
+    g = Graze(rootdir=temp_dir)
+
+    # Add some URLs
+    _ = g[test_url_1]
+    test_url_2 = test_url_1 + "#variant"
+    test_content_2 = g[test_url_2]
+
+    # Test keys()
+    keys = list(g.keys())
+    assert test_url_1 in keys
+    assert test_url_2 in keys
+
+    # Test values()
+    values = list(g.values())
+    assert len(values) == 2
+    assert any(val.startswith(b'"""Test') for val in values)
+
+    # Test items()
+    items = dict(g.items())
+    assert test_url_1 in items
+    assert test_url_2 in items
+    assert items[test_url_1].startswith(b'"""Test')
+
+
+def test_graze_class_missing_hook():
+    """Test that Graze __missing__ hook downloads content."""
+    from graze.base import Graze
+
+    temp_dir = tempfile.mkdtemp()
+    g = Graze(rootdir=temp_dir)
+
+    # URL not cached yet
+    assert test_url_1 not in g
+
+    # Access triggers __missing__, which downloads
+    content = g[test_url_1]
+    _assert_first_line_is(
+        content, "downloaded via __missing__", test_url_contents_1_first_line
+    )
+
+    # Now it's cached
+    assert test_url_1 in g
+
+
+# --------------------------------------------------------------------------------------
+# Tests for GrazeWithDataRefresh (before refactoring)
+# --------------------------------------------------------------------------------------
+
+
+def test_graze_with_data_refresh_time_to_live_not_stale():
+    """Test GrazeWithDataRefresh when data is not stale."""
+    from graze.base import GrazeWithDataRefresh
+
+    temp_dir = tempfile.mkdtemp()
+    g = GrazeWithDataRefresh(rootdir=temp_dir, time_to_live=10.0)
+
+    # First access
+    content1 = g[test_url_1]
+    _assert_first_line_is(content1, "first access", test_url_contents_1_first_line)
+
+    # Immediate second access (not stale yet)
+    content2 = g[test_url_1]
+    assert content2 == content1
+
+
+def test_graze_with_data_refresh_on_error_raise():
+    """Test GrazeWithDataRefresh with on_error='raise'.
+
+    Note: Current implementation uses Internet() directly in __getitem__,
+    so we can't inject a custom source that fails. This test documents
+    the actual behavior - it will try to re-download using Internet().
+    """
+    from graze.base import GrazeWithDataRefresh
+
+    temp_dir = tempfile.mkdtemp()
+    g = GrazeWithDataRefresh(rootdir=temp_dir, time_to_live=0.1, on_error="raise")
+
+    # First access succeeds
+    content1 = g[test_url_1]
+    _assert_first_line_is(content1, "first access", test_url_contents_1_first_line)
+
+    time.sleep(0.2)
+
+    # Second access will try to refresh using Internet()
+    # Since test_url_1 is valid, it won't actually raise
+    # This documents the current behavior
+    content2 = g[test_url_1]
+    _assert_first_line_is(content2, "refreshed", test_url_contents_1_first_line)
+
+
+def test_graze_with_data_refresh_on_error_warn():
+    """Test GrazeWithDataRefresh with on_error='warn'.
+
+    Note: Current implementation uses Internet() directly, so we just
+    document that the on_error parameter is stored correctly.
+    """
+    from graze.base import GrazeWithDataRefresh
+
+    temp_dir = tempfile.mkdtemp()
+    g = GrazeWithDataRefresh(rootdir=temp_dir, time_to_live=0.1, on_error="warn")
+
+    # Verify the on_error parameter is stored
+    assert g.on_error == "warn"
+
+    # First access succeeds
+    content1 = g[test_url_1]
+    _assert_first_line_is(content1, "first access", test_url_contents_1_first_line)
+
+    time.sleep(0.2)
+
+    # Second access will refresh (since time_to_live passed)
+    content2 = g[test_url_1]
+    # Content should still be valid
+    _assert_first_line_is(content2, "after refresh", test_url_contents_1_first_line)
+
+
+def test_graze_with_data_refresh_iteration():
+    """Test that GrazeWithDataRefresh supports iteration."""
+    from graze.base import GrazeWithDataRefresh
+
+    temp_dir = tempfile.mkdtemp()
+    g = GrazeWithDataRefresh(rootdir=temp_dir, time_to_live=1.0)
+
+    # Add URLs
+    _ = g[test_url_1]
+    test_url_2 = test_url_1 + "#variant"
+    _ = g[test_url_2]
+
+    # Should be able to iterate
+    urls = list(g)
+    assert test_url_1 in urls
+    assert test_url_2 in urls
+
+
+def test_graze_with_data_refresh_deletion():
+    """Test that GrazeWithDataRefresh supports deletion."""
+    from graze.base import GrazeWithDataRefresh
+
+    temp_dir = tempfile.mkdtemp()
+    g = GrazeWithDataRefresh(rootdir=temp_dir, time_to_live=1.0)
+
+    # Add and verify
+    _ = g[test_url_1]
+    assert test_url_1 in g
+
+    # Delete
+    del g[test_url_1]
+    assert test_url_1 not in g
+
+
+# --------------------------------------------------------------------------------------
+# Tests for new GrazeBase class
+# --------------------------------------------------------------------------------------
+
+
+def test_graze_base_with_folder_cache():
+    """Test GrazeBase with folder path as cache."""
+    from graze.base import GrazeBase
+
+    temp_dir = tempfile.mkdtemp()
+    g = GrazeBase(cache=temp_dir)
+
+    # Basic getitem
+    contents = g[test_url_1]
+    _assert_first_line_is(
+        contents, "GrazeBase folder cache", test_url_contents_1_first_line
+    )
+
+    # Check it's cached
+    assert test_url_1 in g
+
+    # Get again (from cache)
+    contents2 = g[test_url_1]
+    assert contents2 == contents
+
+
+def test_graze_base_with_files_cache():
+    """Test GrazeBase with Files object as cache."""
+    from graze.base import GrazeBase
+    from dol import Files
+
+    temp_dir = tempfile.mkdtemp()
+    cache = Files(temp_dir)
+    g = GrazeBase(cache=cache)
+
+    # Basic getitem
+    contents = g[test_url_1]
+    _assert_first_line_is(
+        contents, "GrazeBase Files cache", test_url_contents_1_first_line
+    )
+
+    # Check it's in the cache
+    from graze.base import url_to_localpath
+
+    cache_key = url_to_localpath(test_url_1)
+    assert cache_key in cache
+
+
+def test_graze_base_with_dict_cache():
+    """Test GrazeBase with dict as cache (in-memory)."""
+    from graze.base import GrazeBase
+
+    cache = {}
+    g = GrazeBase(cache=cache)
+
+    # Basic getitem
+    contents = g[test_url_1]
+    _assert_first_line_is(
+        contents, "GrazeBase dict cache", test_url_contents_1_first_line
+    )
+
+    # Check it's in the dict
+    from graze.base import url_to_localpath
+
+    cache_key = url_to_localpath(test_url_1)
+    assert cache_key in cache
+
+
+def test_graze_base_iteration_folder():
+    """Test GrazeBase iteration with folder cache."""
+    from graze.base import GrazeBase
+
+    temp_dir = tempfile.mkdtemp()
+    g = GrazeBase(cache=temp_dir)
+
+    # Initially empty
+    assert list(g) == []
+
+    # Add items
+    _ = g[test_url_1]
+    test_url_2 = test_url_1 + "#variant"
+    _ = g[test_url_2]
+
+    # Iterate
+    urls = list(g)
+    assert test_url_1 in urls
+    assert test_url_2 in urls
+
+
+def test_graze_base_iteration_dict():
+    """Test GrazeBase iteration with dict cache."""
+    from graze.base import GrazeBase
+
+    cache = {}
+    g = GrazeBase(cache=cache)
+
+    # Add items
+    _ = g[test_url_1]
+    test_url_2 = test_url_1 + "#variant"
+    _ = g[test_url_2]
+
+    # Iterate
+    urls = list(g)
+    assert test_url_1 in urls
+    assert test_url_2 in urls
+
+
+def test_graze_base_len():
+    """Test GrazeBase __len__."""
+    from graze.base import GrazeBase
+
+    temp_dir = tempfile.mkdtemp()
+    g = GrazeBase(cache=temp_dir)
+
+    # Initially empty
+    assert len(g) == 0
+
+    # Add items
+    _ = g[test_url_1]
+    assert len(g) == 1
+
+    test_url_2 = test_url_1 + "#variant"
+    _ = g[test_url_2]
+    assert len(g) == 2
+
+
+def test_graze_base_setitem():
+    """Test GrazeBase __setitem__ (manual caching)."""
+    from graze.base import GrazeBase
+
+    temp_dir = tempfile.mkdtemp()
+    g = GrazeBase(cache=temp_dir)
+
+    test_url = "http://example.com/manual.txt"
+    test_content = b"Manual content"
+
+    # Manually set
+    g[test_url] = test_content
+
+    # Should be retrievable
+    assert g[test_url] == test_content
+
+
+def test_graze_base_delitem_folder():
+    """Test GrazeBase __delitem__ with folder cache."""
+    from graze.base import GrazeBase
+
+    temp_dir = tempfile.mkdtemp()
+    g = GrazeBase(cache=temp_dir)
+
+    # Add and verify
+    _ = g[test_url_1]
+    assert test_url_1 in g
+
+    # Delete
+    del g[test_url_1]
+    assert test_url_1 not in g
+
+    # Deleting again should raise KeyError
+    import pytest
+
+    with pytest.raises(KeyError):
+        del g[test_url_1]
+
+
+def test_graze_base_delitem_dict():
+    """Test GrazeBase __delitem__ with dict cache."""
+    from graze.base import GrazeBase
+
+    cache = {}
+    g = GrazeBase(cache=cache)
+
+    # Add and verify
+    _ = g[test_url_1]
+    assert test_url_1 in g
+
+    # Delete
+    del g[test_url_1]
+    assert test_url_1 not in g
+
+
+def test_graze_base_contains():
+    """Test GrazeBase __contains__."""
+    from graze.base import GrazeBase
+
+    temp_dir = tempfile.mkdtemp()
+    g = GrazeBase(cache=temp_dir)
+
+    # Not in cache yet
+    assert test_url_1 not in g
+
+    # Download it
+    _ = g[test_url_1]
+
+    # Now it's in cache
+    assert test_url_1 in g
+
+
+def test_graze_base_keys_values_items():
+    """Test GrazeBase keys(), values(), items()."""
+    from graze.base import GrazeBase
+
+    temp_dir = tempfile.mkdtemp()
+    g = GrazeBase(cache=temp_dir)
+
+    # Add items
+    _ = g[test_url_1]
+    test_url_2 = test_url_1 + "#variant"
+    _ = g[test_url_2]
+
+    # Test keys()
+    keys = list(g.keys())
+    assert test_url_1 in keys
+    assert test_url_2 in keys
+
+    # Test values()
+    values = list(g.values())
+    assert len(values) == 2
+
+    # Test items()
+    items = dict(g.items())
+    assert test_url_1 in items
+    assert test_url_2 in items
