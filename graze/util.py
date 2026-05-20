@@ -227,9 +227,9 @@ def human_readable_bytes(
     factor = 1
     for unit in units:
         if num_of_bytes < factor * base:
-            return f"{approx_marker}{num_of_bytes / factor:.{n_digits-1}f}{unit}"
+            return f"{approx_marker}{num_of_bytes / factor:.{n_digits - 1}f}{unit}"
         factor *= base
-    return f"{approx_marker}{num_of_bytes:.{n_digits-1}e}{units[-1]}"
+    return f"{approx_marker}{num_of_bytes:.{n_digits - 1}e}{units[-1]}"
 
 
 DFLT_USER_AGENT = "Wget/1.16 (linux-gnu)"

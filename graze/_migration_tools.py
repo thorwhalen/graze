@@ -34,9 +34,9 @@ class _KeyMapVersion02:
         return pjoin(path, _KeyMapVersion02.CONTENT_FILENAME)
 
     def localpath_to_url(path: str) -> str:
-        assert path.endswith(
-            psep + _KeyMapVersion02.CONTENT_FILENAME
-        ), f"Not a valid key: {path}"
+        assert path.endswith(psep + _KeyMapVersion02.CONTENT_FILENAME), (
+            f"Not a valid key: {path}"
+        )
         # remove the /CONTENT_FILENAME part
         path = path[: _KeyMapVersion02.CONTENT_FILENAME_INDEX]
         return path.replace("https/", "https://").replace("http/", "http://")
