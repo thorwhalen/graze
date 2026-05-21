@@ -13,9 +13,7 @@ Cache (a tiny part of) the internet.
 
 ```python
 from graze import Graze
-import os
-rootdir = os.path.expanduser('~/graze')
-g = Graze(rootdir)
+g = Graze()  # caches under ~/.cache/graze by default
 list(g)
 ```
 
@@ -107,7 +105,7 @@ content_again = graze('https://example.com/data.json')
 
 ### Where does it cache?
 
-By default, `graze()` stores files in `~/graze`, but you have full control over this through the `cache` parameter:
+By default, `graze()` stores files in `~/.cache/graze` (honoring `$XDG_CACHE_HOME`), but you have full control over this through the `cache` parameter:
 
 ```python
 # Cache to a specific folder
@@ -122,7 +120,7 @@ content = graze(url, cache=my_cache, cache_key='data.json')
 ```
 
 The `cache` parameter accepts:
-- `None` (default): Uses `~/graze` as the cache folder
+- `None` (default): Uses `~/.cache/graze` as the cache folder
 - A string path: Any folder where you want files cached
 - A `MutableMapping` (like dict or `dol.Files`): Custom storage backend
 

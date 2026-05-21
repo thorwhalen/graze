@@ -44,7 +44,13 @@ pjoin = os.path.join
 psep = os.path.sep
 
 URL = str
-DFLT_GRAZE_DIR = os.path.expanduser("~/graze")
+
+# Cache lives under XDG ~/.cache, not ~/graze: a ``graze`` directory directly
+# in $HOME becomes an implicit namespace package (PEP 420) and shadows the
+# real ``graze`` package whenever Python runs with $HOME on sys.path.
+DFLT_GRAZE_DIR = os.path.join(
+    os.environ.get("XDG_CACHE_HOME") or os.path.expanduser("~/.cache"), "graze"
+)
 
 # TODO: Make url-localpath conversion a plugin (with class or partials)
 SUBDIR_SUFFIX = "_f"
