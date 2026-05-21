@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze._migration_tools &mdash; graze 0.1.39 documentation</title>
+  <title>graze._migration_tools &mdash; graze 0.1.40 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=f48ec9ae"></script>
+      <script src="../../_static/documentation_options.js?v=967b4925"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -117,9 +117,9 @@
         <span class="k">return</span> <span class="n">pjoin</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">_KeyMapVersion02</span><span class="o">.</span><span class="n">CONTENT_FILENAME</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">localpath_to_url</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
-            <span class="n">psep</span> <span class="o">+</span> <span class="n">_KeyMapVersion02</span><span class="o">.</span><span class="n">CONTENT_FILENAME</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Not a valid key: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">psep</span> <span class="o">+</span> <span class="n">_KeyMapVersion02</span><span class="o">.</span><span class="n">CONTENT_FILENAME</span><span class="p">),</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Not a valid key: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
         <span class="c1"># remove the /CONTENT_FILENAME part</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[:</span> <span class="n">_KeyMapVersion02</span><span class="o">.</span><span class="n">CONTENT_FILENAME_INDEX</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;https/&quot;</span><span class="p">,</span> <span class="s2">&quot;https://&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;http/&quot;</span><span class="p">,</span> <span class="s2">&quot;http://&quot;</span><span class="p">)</span>
