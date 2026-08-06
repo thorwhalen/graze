@@ -138,14 +138,27 @@ def test_google_drive_file_links_resolve_to_the_download_endpoint(url):
     "url",
     [
         "https://drive.google.com/uc?export=download&id=1AbC",
+        "https://drive.google.com/uc?id=1AbC&export=download",  # params in either order
+        "https://drive.google.com/u/0/uc?id=1AbC&export=download",
         "https://drive.usercontent.google.com/download?id=1AbC&export=download",
+        # Workspace endpoints where the caller has ALREADY chosen the format -- which
+        # is the only decision the Workspace refusal is about, so there is nothing
+        # left to refuse. Refusing these would break `graze`ing a published sheet.
+        "https://docs.google.com/spreadsheets/d/1Sh/export?format=csv&gid=0",
+        "https://docs.google.com/spreadsheets/d/1Sh/gviz/tq?tqx=out:csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1v/pub?output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1v/pubhtml",
+        "https://docs.google.com/document/d/1Do/export?format=pdf",
+        "https://docs.google.com/presentation/d/1Pr/export/pdf",
     ],
 )
-def test_already_direct_google_drive_urls_pass_through_untouched(url):
+def test_already_direct_google_urls_pass_through_untouched(url):
     """Rebuilding them would drop whatever extra parameters they carry."""
     resolved = resolve_share_url(url)
     assert resolved.provider == "google_drive"
+    assert resolved.kind is ShareLinkKind.FILE
     assert resolved.direct_url == url
+    assert direct_download_url(url) == url
 
 
 def test_google_drive_resourcekey_is_preserved():

@@ -304,11 +304,16 @@ _gdrive_file_path_re = re.compile(r"^/file/d/([\w-]+)")
 _gdrive_folder_path_re = re.compile(r"^/drive/(?:u/\d+/)?folders/([\w-]+)")
 _gworkspace_app_re = re.compile(r"^/(document|spreadsheets|presentation|forms)/d/")
 
+#: A Workspace path that already names an export / publish endpoint (`/export`,
+#: `/export/pdf`, `/pub`, `/pubhtml`, `/gviz/tq`) is a *direct* URL: the caller has
+#: already made the format choice this module otherwise refuses to make for them.
+_gworkspace_direct_re = re.compile(r"/(?:export|pub[a-z]*|gviz)(?:/|$)")
+
 #: Paths that are already direct-download endpoints -- pass them through untouched
 #: rather than rebuild them, so any extra parameters they carry survive.
-_GDRIVE_DIRECT_PATHS = {
-    "drive.google.com": ("/uc",),
-    "drive.usercontent.google.com": ("/download",),
+_GDRIVE_DIRECT_PATH_RES = {
+    "drive.google.com": re.compile(r"^/(?:u/\d+/)?uc$"),
+    "drive.usercontent.google.com": re.compile(r"^/download$"),
 }
 
 
@@ -356,6 +361,13 @@ def resolve_google_drive(url: str) -> Optional[ResolvedShareLink]:
     >>> r.kind.value, r.direct_url is None
     ('file', True)
 
+    ...*unless* the caller already chose a format, which is the only thing the
+    refusal above was ever about:
+
+    >>> u = 'https://docs.google.com/spreadsheets/d/1Sh/export?format=csv&gid=0'
+    >>> resolve_google_drive(u).direct_url == u
+    True
+
     >>> resolve_google_drive('https://example.com/file/d/1AbC/view') is None
     True
     """
@@ -366,6 +378,15 @@ def resolve_google_drive(url: str) -> Optional[ResolvedShareLink]:
         app_match = _gworkspace_app_re.match(parts.path)
         if app_match is None:
             return None
+        if _gworkspace_direct_re.search(parts.path):
+            # The caller already picked a format -- that is the whole decision this
+            # adapter declines to make, so there is nothing left to refuse.
+            return ResolvedShareLink(
+                url=url,
+                provider="google_drive",
+                kind=ShareLinkKind.FILE,
+                direct_url=url,
+            )
         app = app_match.group(1)
         return ResolvedShareLink(
             url=url,
@@ -375,15 +396,17 @@ def resolve_google_drive(url: str) -> Optional[ResolvedShareLink]:
                 f"Google Workspace ({app}) documents are not stored as files: they "
                 "have to be exported, and the export format is a caller decision "
                 "(and some apps offer no export at all). graze refuses rather than "
-                "pick a format for you -- fetch the export endpoint yourself, or "
-                "use the Drive API."
+                "pick a format for you. Pass the export endpoint itself -- e.g. "
+                ".../export?format=<fmt>, .../pub?output=<fmt>, .../gviz/tq?... -- "
+                "and graze will fetch it as given."
             ),
         )
 
     if host not in GOOGLE_DRIVE_HOSTS:
         return None
 
-    if parts.path in _GDRIVE_DIRECT_PATHS.get(host, ()) and _query_value(
+    # Total: every host in GOOGLE_DRIVE_HOSTS is a key, and we returned above otherwise.
+    if _GDRIVE_DIRECT_PATH_RES[host].match(parts.path) and _query_value(
         parts.query, "id"
     ):
         return ResolvedShareLink(
