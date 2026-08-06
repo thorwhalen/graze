@@ -8,6 +8,12 @@ import urllib
 import re
 from io import BytesIO
 
+from graze.share_links import (
+    ShareLinkResolutionError,
+    direct_download_url,
+    resolve_share_url,
+)
+
 Filepath = str
 
 
@@ -296,92 +302,90 @@ def download_url_contents(
 bytes_of_url_content = partial(download_url_contents, file=None)
 
 
+# --------------------- Share links ---------------------
+#
+# Recognising a share link and turning it into a direct-download URL is a *pure*
+# concern -- no sockets, no redirects, no byte caps -- so it lives in its own module,
+# `graze.share_links`, where it is testable offline. Everything below is the thin
+# I/O half: resolve first, then download whatever the resolution points at.
+
+
+def is_share_url_of(provider: str) -> Callable[[str], bool]:
+    """Make a predicate: "is this URL a share link of `provider`?".
+
+    >>> is_dropbox = is_share_url_of('dropbox')
+    >>> is_dropbox('https://www.dropbox.com/scl/fo/q7/z?rlkey=abc&dl=0')
+    True
+    >>> is_dropbox('https://example.com/data.csv')
+    False
+    """
+
+    def _is_provider_url(url: str) -> bool:
+        return resolve_share_url(url).provider == provider
+
+    _is_provider_url.__name__ = f"is_{provider}_url"
+    _is_provider_url.__qualname__ = _is_provider_url.__name__
+    _is_provider_url.__doc__ = f"Whether `url` is a {provider} share link."
+    return _is_provider_url
+
+
+def download_from_share_link(
+    url: str, file=None, *, chk_size=DFLT_CHK_SIZE, user_agent=DFLT_USER_AGENT
+):
+    """Resolve a share link to its direct-download URL, then download that.
+
+    Raises `ShareLinkResolutionError` (a `ValueError`) when the link cannot be
+    resolved without a provider API -- deliberately, in preference to fetching the
+    share URL itself and silently storing an HTML preview page as if it were the
+    asset.
+
+    Note that what comes back may be an *archive*: a Dropbox folder link downloads
+    as a single ZIP holding every member. Check
+    `resolve_share_url(url).kind == ShareLinkKind.ARCHIVE` and expand it (e.g. with
+    `dol.FilesOfZip`) rather than treating those bytes as one asset.
+    """
+    return download_url_contents(
+        direct_download_url(url), file, chk_size=chk_size, user_agent=user_agent
+    )
+
+
 # --------------------- Dropbox ---------------------
 
-# Note to the developper: In Dropbox shared links, the query parameter dl controls how
-# the link behaves:
-# * dl=0: The link opens a preview page for the file on the Dropbox website.
-#   It's used when you want to share a viewable link rather than a direct download link.
-# * dl=1: The link becomes a direct download link. When someone clicks on this link,
-#   the file starts downloading immediately, instead of opening a preview page.
-# Changing the value of dl in a Dropbox link is a common way to control the user
-# experience when accessing shared files.
+# Note to the developer: in Dropbox share links, the query parameter `dl` controls what
+# the link serves:
+# * dl=0: intended as a preview page -- but what you get is User-Agent dependent
+#   (measured: a wget UA got the archive, a browser UA got 224 KB of HTML).
+# * dl=1: a direct download, deterministic across clients.
+# Which is why `graze.share_links.resolve_dropbox` forces dl=1 -- correctness, not
+# convenience. Note also that a *folder* link downloads as a ZIP, even when the folder
+# holds a single file.
 
-drobox_url_re = re.compile(r"https?://www\.dropbox\.com/s/.+\?dl=(0|1)$")
-
-
-def is_dropbox_url(url: str):
-    return bool(drobox_url_re.match(url))
-
-
-download_from_dropbox = download_url_contents  # backwards compatibility alias
-bytes_from_dropbox = bytes_of_url_content  # backwards compatibility alias
+is_dropbox_url = is_share_url_of("dropbox")
 
 # --------------------- Google Drive ---------------------
 
-_google_drive_file_id_patterns = (
-    r"drive\.google\.com/file/d/([\w-]+)",  # Standard file URL
-    r"drive\.google\.com/uc\?export=download&id=([\w-]+)",  # Direct download link
-    r"drive\.google\.com/open\?id=([\w-]+)",  # Open link format
-    r"docs\.google\.com/spreadsheets/d/([\w-]+)",  # Google Sheets URL
-    r"docs\.google\.com/document/d/([\w-]+)",  # Google Docs URL
-    r"docs\.google\.com/presentation/d/([\w-]+)",  # Google Slides URL
-    r"docs\.google\.com/forms/d/([\w-]+)",  # Google Forms URL
-    r"drive\.google\.com/drive/folders/([\w-]+)",  # Google Drive folder URL
-    r"drive\.google\.com/drive/u/\d/folders/([\w-]+)",  # Google Drive folder with user ID
-    r"drive\.google\.com/file/d/([\w-]+)",  # Standard file link with variations
-    r"drive\.google\.com/file/d/([\w-]+)/view",  # File view URL
-    r"drive\.google\.com/file/d/([\w-]+)/edit",  # File edit URL
-    r"drive\.google\.com/file/d/([\w-]+)/preview",  # File preview URL
-)
-_google_drive_file_id_pattern = re.compile("|".join(_google_drive_file_id_patterns))
-
-
-def _google_drive_id(url: str) -> str:
-    match = _google_drive_file_id_pattern.search(url)
-    if match:
-        # Return the first non-None group found in the match
-        return next(g for g in match.groups() if g is not None)
-    else:
-        msg = "Only FILE Google Drive URLs are supported, "
-        msg += "which have the format '...drive.google.com/file/d/{file_id}... "
-        msg += f"This url is not supported: {url}"
-        raise ValueError(msg)
-
-
-def is_google_drive_url(url: str) -> bool:
-    """
-    Checks if the provided URL is a Google Drive URL.
-
-    Args:
-        url (str): The URL to check.
-
-    Returns:
-        bool: True if the URL is a Google Drive URL, False otherwise.
-
-    >>> is_google_drive_url('https://drive.google.com/file/d/1Ul5mPePKAO11dG98GN/view')
-    True
-    >>> is_google_drive_url('http://drive.google.com/file/d/1Ul5mPePKAO11dG98GN/view')
-    True
-    >>> is_google_drive_url('https://example.com/file/d/1Ul5mPePKAO11dG98GN/view')
-    False
-    """
-    try:
-        _google_drive_id(url)
-        return True
-    except ValueError:
-        return False
+is_google_drive_url = is_share_url_of("google_drive")
 
 
 def google_drive_download_url(url):
-    """Get the download url from a FILE Google Drive URL.
+    """Get the direct-download url of a Google Drive FILE url.
 
-    Note: File URLs have the format: `...drive.google.com/file/d/{file_id}...`.
-    Folder URLs as well as "special format" (google docs, sheets, etc.) URLs are not
-    supported.
+    Raises `ShareLinkResolutionError` for a *folder* URL (enumerating one needs the
+    Drive API) and for a Google Workspace document (those must be exported, and the
+    format is a caller decision) -- rather than build a file-download URL out of a
+    folder id, which is what graze used to do.
+
+    >>> google_drive_download_url('https://drive.google.com/file/d/1Ab/view')
+    'https://drive.google.com/uc?export=download&id=1Ab'
     """
-    file_id = _google_drive_id(url)
-    return f"https://drive.google.com/uc?export=download&id={file_id}"
+    resolved = resolve_share_url(url)
+    if resolved.provider != "google_drive":
+        raise ValueError(f"Not a Google Drive url: {url}")
+    if resolved.direct_url is None:
+        raise ShareLinkResolutionError(
+            f"Cannot resolve this Google Drive url ({url}). {resolved.reason}"
+        )
+    return resolved.direct_url
 
 
 def _is_html_doc(src: bytes | Filepath):
@@ -405,9 +409,11 @@ def download_from_google_drive(
     or file-like object.
     If `file=None`, returns the bytes of the contents of the url.
 
-    Note: File URLs have the format: `...drive.google.com/file/d/{file_id}...`.
-    Folder URLs as well as "special format" (google docs, sheets, etc.) URLs are not
-    supported.
+    Only FILE urls (`...drive.google.com/file/d/{file_id}...`, `/open?id=`, and the
+    already-direct `/uc?...id=` and `drive.usercontent.google.com/download?id=` forms)
+    can be downloaded. A *folder* url, or a Google Workspace document (docs, sheets,
+    slides, forms), raises `ShareLinkResolutionError` -- see
+    `google_drive_download_url`.
     """
     _download_kwargs = dict(chk_size=chk_size, user_agent=user_agent)
     download_url = google_drive_download_url(url)
@@ -440,12 +446,25 @@ def url_with_virus_scan_confirmation_token(url, page_html):
     return url + "&confirm=" + confirmation_token
 
 
+# --------------------- OneDrive ---------------------
+
+is_onedrive_url = is_share_url_of("onedrive")
+
+
 # --------------------- Special URLS ---------------------
 
-# Note: Add/edit default special url routes here:
+# Note: Add/edit default special url routes here.
+# The predicates come from the `graze.share_links` registry -- that module is the single
+# place a provider is described, so adding one there is enough to recognise it here.
+# `download_from_share_link` covers every provider whose resolution is "rewrite the URL,
+# then GET it"; providers needing more (Google Drive's virus-scan interstitial) get their
+# own downloader. OneDrive is routed on purpose even though graze cannot resolve it: the
+# route raises a message saying so, where falling through to a plain GET would silently
+# store a login page as if it were the asset.
 special_url_routes = {
-    is_dropbox_url: download_url_contents,
+    is_dropbox_url: download_from_share_link,
     is_google_drive_url: download_from_google_drive,
+    is_onedrive_url: download_from_share_link,
 }
 
 

@@ -523,8 +523,9 @@ def url_to_file_download(
             the data if the file hasn't been modified for X days (i.e. stale contents).
         url_egress: The function to call on the url before getting the contents from it.
             This can, for example, be used to notify the user that data is being
-            downloaded, or to modify the url before fetching the contents (for example,
-            replacing the dl=0 in a dropbox url with dl=1).
+            downloaded, or to modify the url before fetching the contents.
+            Note you do NOT need it to normalize share links: `graze.share_links`
+            already resolves those (Dropbox's `dl=1` among them) on the way in.
         rootdir: The root directory where the file will be stored
         ensure_dirs: Whether to ensure the directories of the file exist
         read_contents_of_file: The function to read the contents of a file
@@ -540,8 +541,10 @@ def url_to_file_download(
     process.
 
     Need to decide how to download the url based on some characteristics of the url?
-    For example, if it's a dropbox url with dl=0, change that to dl=1.
-    Put this in the url_to_contents logic.
+    Put this in the url_to_contents logic -- or, for a *provider* rule (this is a
+    Dropbox folder link, so it needs dl=1 and comes back as a ZIP), register an
+    adapter with `graze.add_share_link_resolver` and let `special_url_routes`
+    dispatch to it.
 
     """
     if filepath is None:

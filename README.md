@@ -417,11 +417,32 @@ are being downloaded from the internet. The typical function would be:
 key_ingress = lambda key: print(f"Getting {key} from the internet")
 ```
 
-## Does graze work for dropbox links?
+## Does graze work for dropbox (and drive, and onedrive) share links?
 
-Yes it does, but you need to be aware that dropbox systematically send the data as a zip, **even if there's only one file in it**.
+A *share link* is what you copy out of Dropbox or Google Drive. It is **not** a
+download URL — fetching it usually gets you an HTML preview page. `graze.share_links`
+turns one into a description of what it actually denotes, with no network access at all:
 
-Here's some code that can help.
+```python
+from graze import resolve_share_url, direct_download_url
+
+r = resolve_share_url('https://www.dropbox.com/scl/fo/q7x/AAB?rlkey=zz&dl=0')
+r.provider    # 'dropbox'
+r.kind        # <ShareLinkKind.ARCHIVE: 'archive'>  -- a folder, i.e. a ZIP
+r.direct_url  # '...?rlkey=zz&dl=1'  (dl=1 forced; every other param kept verbatim)
+```
+
+`dl=1` is forced because `dl=0` is **User-Agent dependent** — the same folder link
+served a 31 KB zip to one client and 224 KB of HTML to another. Normalizing is a
+correctness requirement, not a nicety.
+
+`graze` uses this automatically: a Dropbox link is resolved before it is fetched.
+
+Two things worth knowing:
+
+**A folder link is a ZIP** — dropbox sends the data as an archive, **even if there's
+only one file in it** — so `kind == 'archive'` means "expand me", not "here's your
+asset":
 
 ```python
 def zip_store_of_dropbox_url(dropbox_url: str):
@@ -439,6 +460,32 @@ def filebytes_of_dropbox_url(dropbox_url: str, assert_only_one_file=True):
     if assert_only_one_file:
         assert next(zip_filepaths, None) is None, f"More than one file in {dropbox_url}"
     return zip_store[first_filepath]
+```
+
+**Some links have no download URL at all, and graze says so** rather than guessing —
+a Google Drive *folder* needs the Drive API, a Google Workspace document has to be
+exported (in a format only you can choose), and OneDrive's contract hasn't been
+measured yet. Those raise `ShareLinkResolutionError`, carrying the reason:
+
+```python
+direct_download_url('https://drive.google.com/drive/folders/1AbCdEf')
+# ShareLinkResolutionError: Cannot resolve this google_drive link ... enumerating a
+# folder needs the Drive API (files.list with q="'1AbCdEf' in parents") and a credential.
+```
+
+Adding a provider takes no core edits — register an adapter:
+
+```python
+from graze import add_share_link_resolver, ResolvedShareLink, ShareLinkKind
+
+def resolve_my_host(url):
+    if url.startswith('https://my.host/dl/'):
+        return ResolvedShareLink(
+            url=url, provider='my_host', kind=ShareLinkKind.FILE, direct_url=url + '?raw=1'
+        )
+    # returning None means "not mine" -- the next adapter gets a turn
+
+add_share_link_resolver('my_host', resolve_my_host)
 ```
 
 ## How do I use tiny_url?
