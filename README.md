@@ -26,7 +26,7 @@ If this is your first time, you got nothing:
 So get something. For no particular reason let's be self-referential and get myself:
 
 ```python
-url = 'https://raw.githubusercontent.com/thorwhalen/graze/master/README.md'
+url = "https://raw.githubusercontent.com/thorwhalen/graze/master/README.md"
 content = g[url]
 type(content), len(content)
 ```
@@ -97,10 +97,10 @@ At the heart of the package is the `graze()` function. It's simple: give it a UR
 from graze import graze
 
 # First call downloads and caches
-content = graze('https://example.com/data.json')
+content = graze("https://example.com/data.json")
 
 # Second call uses cached version - blazing fast!
-content_again = graze('https://example.com/data.json')
+content_again = graze("https://example.com/data.json")
 ```
 
 ### Where does it cache?
@@ -109,14 +109,14 @@ By default, `graze()` stores files in `~/.cache/graze` (honoring `$XDG_CACHE_HOM
 
 ```python
 # Cache to a specific folder
-content = graze(url, cache='~/my_project/cache')
+content = graze(url, cache="~/my_project/cache")
 
 # Or use a specific filepath (cache defaults to None automatically)
-content = graze(url, cache_key='~/data/specific_file.json')
+content = graze(url, cache_key="~/data/specific_file.json")
 
 # Or even use a dict for in-memory caching!
 my_cache = {}
-content = graze(url, cache=my_cache, cache_key='data.json')
+content = graze(url, cache=my_cache, cache_key="data.json")
 ```
 
 The `cache` parameter accepts:
@@ -130,18 +130,21 @@ The `cache_key` parameter determines what key is used in your cache. By default,
 
 ```python
 # Auto-generated key (default)
-content = graze('https://example.com/data.json')
+content = graze("https://example.com/data.json")
 
 # Explicit cache key
-content = graze('https://example.com/data.json', cache_key='my_data.json')
+content = graze("https://example.com/data.json", cache_key="my_data.json")
+
 
 # Use a function to generate keys
 def url_to_key(url):
-    return url.split('/')[-1]  # Just use filename
-content = graze('https://example.com/data/file.json', cache_key=url_to_key)
+    return url.split("/")[-1]  # Just use filename
+
+
+content = graze("https://example.com/data/file.json", cache_key=url_to_key)
 
 # Or provide a full filepath (makes cache default to None)
-content = graze('https://example.com/data.json', cache_key='~/my_data/important.json')
+content = graze("https://example.com/data.json", cache_key="~/my_data/important.json")
 ```
 
 ### Keeping data fresh
@@ -164,10 +167,12 @@ content = graze(url, max_age=86400)
 # Always re-download
 content = graze(url, refresh=True)
 
+
 # Or use a function for complex logic
 def should_refresh(cache_key, url):
     # Your custom logic here
     return some_condition
+
 
 content = graze(url, refresh=should_refresh)
 ```
@@ -179,10 +184,12 @@ By default, `graze` uses `requests` to fetch URLs, but you can plug in any data 
 ```python
 from graze import graze, Internet
 
+
 # Use a custom fetcher function
 def my_fetcher(url):
     # Your custom logic (must return bytes)
     return response_bytes
+
 
 content = graze(url, source=my_fetcher)
 
@@ -200,6 +207,7 @@ content = graze(url, key_ingress=lambda k: print(f"Downloading {k}..."))
 
 # Or get fancy with logging
 import logging
+
 logger = logging.getLogger(__name__)
 content = graze(url, key_ingress=lambda k: logger.info(f"Fetching fresh data from {k}"))
 ```
@@ -219,7 +227,7 @@ While the `graze()` function is great for one-off fetches, the `Graze` class giv
 from graze import Graze
 
 # Create your cache interface
-g = Graze('~/my_cache')
+g = Graze("~/my_cache")
 
 # It's a mapping - use it like a dict!
 urls = list(g)  # See what you've cached
@@ -239,13 +247,13 @@ The beauty of `Graze` is that it makes your cache feel like a dictionary where t
 from graze import Graze, Internet
 
 g = Graze(
-    rootdir='~/my_cache',  # Where to cache
+    rootdir="~/my_cache",  # Where to cache
     source=Internet(timeout=30),  # Custom source
     key_ingress=lambda k: print(f"Fetching {k}"),  # Download notifications
 )
 
 # Now all operations use these settings
-content = g['https://example.com/data.json']
+content = g["https://example.com/data.json"]
 ```
 
 ### Working with filepaths
@@ -254,11 +262,11 @@ Sometimes you need the actual filepath where data is cached:
 
 ```python
 # Get filepaths instead of contents
-g = Graze('~/cache', return_filepaths=True)
+g = Graze("~/cache", return_filepaths=True)
 filepath = g[url]  # Returns path string instead of bytes
 
 # Or get filepath on demand
-g = Graze('~/cache')
+g = Graze("~/cache")
 filepath = g.filepath_of(url)
 content = g[url]  # Still gets contents normally
 ```
@@ -272,9 +280,9 @@ from graze import GrazeWithDataRefresh
 
 # Re-fetch if data is older than 1 hour
 g = GrazeWithDataRefresh(
-    rootdir='~/cache',
+    rootdir="~/cache",
     time_to_live=3600,  # seconds
-    on_error='ignore'  # Return stale data if refresh fails
+    on_error="ignore",  # Return stale data if refresh fails
 )
 
 content = g[url]  # Fresh data (or cached if recent enough)
@@ -294,7 +302,7 @@ Want to cache to something other than files? Use any `MutableMapping`:
 from dol import Files
 
 # Files gives you a dict-like interface to a filesystem
-cache = Files('~/cache')
+cache = Files("~/cache")
 g = Graze(cache)  # Now using Files instead of plain folder
 
 # Or use an in-memory dict for temporary caching
@@ -353,10 +361,11 @@ And if you'll be using it often, just do:
 ```python
 from graze import Graze, url_to_contents, Internet
 from functools import partial
-my_graze =  partial(
+
+my_graze = partial(
     Graze,
-    rootdir='a_specific_root_dir_for_your_project',
-    source=Internet(url_to_contents=url_to_contents.selenium_chrome)
+    rootdir="a_specific_root_dir_for_your_project",
+    source=Internet(url_to_contents=url_to_contents.selenium_chrome),
 )
 
 # and then you can just do
@@ -391,7 +400,7 @@ content_bytes = graze(url, max_age=3600)
 ```python
 from graze import GrazeWithDataRefresh
 
-g = GrazeWithDataRefresh(time_to_live=3600, on_error='ignore')
+g = GrazeWithDataRefresh(time_to_live=3600, on_error="ignore")
 content = g[url]
 ```
 
@@ -400,9 +409,11 @@ content = g[url]
 # Always refresh
 content = graze(url, refresh=True)
 
+
 # Or use a custom function
 def should_refresh(cache_key, url):
     return your_logic_here
+
 
 content = graze(url, refresh=should_refresh)
 ```
@@ -426,9 +437,9 @@ turns one into a description of what it actually denotes, with no network access
 ```python
 from graze import resolve_share_url, direct_download_url
 
-r = resolve_share_url('https://www.dropbox.com/scl/fo/q7x/AAB?rlkey=zz&dl=0')
-r.provider    # 'dropbox'
-r.kind        # <ShareLinkKind.ARCHIVE: 'archive'>  -- a folder, i.e. a ZIP
+r = resolve_share_url("https://www.dropbox.com/scl/fo/q7x/AAB?rlkey=zz&dl=0")
+r.provider  # 'dropbox'
+r.kind  # <ShareLinkKind.ARCHIVE: 'archive'>  -- a folder, i.e. a ZIP
 r.direct_url  # '...?rlkey=zz&dl=1'  (dl=1 forced; every other param kept verbatim)
 ```
 
@@ -446,12 +457,14 @@ asset":
 
 ```python
 def zip_store_of_dropbox_url(dropbox_url: str):
-    """Get a key-value perspective of the (folder) contents 
+    """Get a key-value perspective of the (folder) contents
     of the zip a dropbox url gets you"""
     from graze import graze
     from dol import FilesOfZip
+
     return FilesOfZip(graze(dropbox_url))
-    
+
+
 def filebytes_of_dropbox_url(dropbox_url: str, assert_only_one_file=True):
     """Get the bytes of the first file in a zip that a dropbox url gives you"""
     zip_store = zip_store_of_dropbox_url(dropbox_url)
@@ -468,7 +481,7 @@ exported (in a format only you can choose), and OneDrive's contract hasn't been
 measured yet. Those raise `ShareLinkResolutionError`, carrying the reason:
 
 ```python
-direct_download_url('https://drive.google.com/drive/folders/1AbCdEf')
+direct_download_url("https://drive.google.com/drive/folders/1AbCdEf")
 # ShareLinkResolutionError: Cannot resolve this google_drive link ... enumerating a
 # folder needs the Drive API (files.list with q="'1AbCdEf' in parents") and a credential.
 ```
@@ -478,14 +491,19 @@ Adding a provider takes no core edits — register an adapter:
 ```python
 from graze import add_share_link_resolver, ResolvedShareLink, ShareLinkKind
 
+
 def resolve_my_host(url):
-    if url.startswith('https://my.host/dl/'):
+    if url.startswith("https://my.host/dl/"):
         return ResolvedShareLink(
-            url=url, provider='my_host', kind=ShareLinkKind.FILE, direct_url=url + '?raw=1'
+            url=url,
+            provider="my_host",
+            kind=ShareLinkKind.FILE,
+            direct_url=url + "?raw=1",
         )
     # returning None means "not mine" -- the next adapter gets a turn
 
-add_share_link_resolver('my_host', resolve_my_host)
+
+add_share_link_resolver("my_host", resolve_my_host)
 ```
 
 ## How do I use tiny_url?
@@ -497,7 +515,7 @@ add_share_link_resolver('my_host', resolve_my_host)
 ```python
 from graze import tiny_url
 
-url = 'https://raw.githubusercontent.com/thorwhalen/graze/refs/heads/master/README.md'
+url = "https://raw.githubusercontent.com/thorwhalen/graze/refs/heads/master/README.md"
 short_url = tiny_url(url)
 print(short_url)  # Much shorter!
 ```

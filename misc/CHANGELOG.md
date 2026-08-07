@@ -125,14 +125,18 @@ When user accesses URL:
 from graze import Graze, add_exception
 
 # Setup: Add an exception for pre-existing data
-add_exception('~/graze', 'http://example.com/data.json', '/path/to/existing/file.json')
+add_exception("~/graze", "http://example.com/data.json", "/path/to/existing/file.json")
 
 # Use: Graze auto-discovers and uses the exception
-g = Graze(rootdir='~/graze')
-data = g['http://example.com/data.json']  # Uses /path/to/existing/file.json (no download!)
+g = Graze(rootdir="~/graze")
+data = g[
+    "http://example.com/data.json"
+]  # Uses /path/to/existing/file.json (no download!)
 
 # Normal URLs still work as before
-readme = g['https://raw.githubusercontent.com/thorwhalen/graze/master/README.md']  # Downloads normally
+readme = g[
+    "https://raw.githubusercontent.com/thorwhalen/graze/master/README.md"
+]  # Downloads normally
 ```
 
 ### Key Design Decisions
