@@ -6,4 +6,5 @@
    module_docs/graze/_migration_tools
    module_docs/graze/base
    module_docs/graze/graze_exceptional
+   module_docs/graze/share_links
    module_docs/graze/util

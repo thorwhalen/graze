@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.base &mdash; graze 0.1.41 documentation</title>
+  <title>graze.base &mdash; graze 0.1.42 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=3203cd3c"></script>
+      <script src="../../_static/documentation_options.js?v=05fb4756"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -79,6 +79,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="graze_exceptional.html">graze.graze_exceptional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="share_links.html">graze.share_links</a></li>
 <li class="toctree-l1"><a class="reference internal" href="util.html">graze.util</a></li>
 </ul>
 
@@ -498,8 +499,9 @@ a boolean. For example, one can use this to only redownload and overwrite
 the data if the file hasn’t been modified for X days (i.e. stale contents).</p></li>
 <li><p><strong>url_egress</strong> – The function to call on the url before getting the contents from it.
 This can, for example, be used to notify the user that data is being
-downloaded, or to modify the url before fetching the contents (for example,
-replacing the dl=0 in a dropbox url with dl=1).</p></li>
+downloaded, or to modify the url before fetching the contents.
+Note you do NOT need it to normalize share links: <cite>graze.share_links</cite>
+already resolves those (Dropbox’s <cite>dl=1</cite> among them) on the way in.</p></li>
 <li><p><strong>rootdir</strong> – The root directory where the file will be stored</p></li>
 <li><p><strong>ensure_dirs</strong> – Whether to ensure the directories of the file exist</p></li>
 <li><p><strong>read_contents_of_file</strong> – The function to read the contents of a file</p></li>
@@ -515,8 +517,10 @@ You can make <cite>url_to_contents</cite> return the url itself, and <cite>write
 do the work of opening url and filepath, and launch a get-chunk-write-chunk
 process.</p>
 <p>Need to decide how to download the url based on some characteristics of the url?
-For example, if it’s a dropbox url with dl=0, change that to dl=1.
-Put this in the url_to_contents logic.</p>
+Put this in the url_to_contents logic – or, for a <em>provider</em> rule (this is a
+Dropbox folder link, so it needs dl=1 and comes back as a ZIP), register an
+adapter with <cite>graze.add_share_link_resolver</cite> and let <cite>special_url_routes</cite>
+dispatch to it.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -575,7 +579,7 @@ such a file if needed… or you can use the following for the best of both world
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright NO COPYRIGHT.</p>
+    <p></p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

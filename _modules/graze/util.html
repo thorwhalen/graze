@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.util &mdash; graze 0.1.41 documentation</title>
+  <title>graze.util &mdash; graze 0.1.42 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=3203cd3c"></script>
+      <script src="../../_static/documentation_options.js?v=05fb4756"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/_migration_tools.html">graze._migration_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/base.html">graze.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/graze_exceptional.html">graze.graze_exceptional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/share_links.html">graze.share_links</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/util.html">graze.util</a></li>
 </ul>
 
@@ -87,6 +88,12 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">urllib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BytesIO</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">graze.share_links</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ShareLinkResolutionError</span><span class="p">,</span>
+    <span class="n">direct_download_url</span><span class="p">,</span>
+    <span class="n">resolve_share_url</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">Filepath</span> <span class="o">=</span> <span class="nb">str</span>
 
@@ -400,97 +407,98 @@
 <span class="n">bytes_of_url_content</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">download_url_contents</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
 
+<span class="c1"># --------------------- Share links ---------------------</span>
+<span class="c1">#</span>
+<span class="c1"># Recognising a share link and turning it into a direct-download URL is a *pure*</span>
+<span class="c1"># concern -- no sockets, no redirects, no byte caps -- so it lives in its own module,</span>
+<span class="c1"># `graze.share_links`, where it is testable offline. Everything below is the thin</span>
+<span class="c1"># I/O half: resolve first, then download whatever the resolution points at.</span>
+
+
+<div class="viewcode-block" id="is_share_url_of">
+<a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.is_share_url_of">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_share_url_of</span><span class="p">(</span><span class="n">provider</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a predicate: &quot;is this URL a share link of `provider`?&quot;.</span>
+
+<span class="sd">    &gt;&gt;&gt; is_dropbox = is_share_url_of(&#39;dropbox&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; is_dropbox(&#39;https://www.dropbox.com/scl/fo/q7/z?rlkey=abc&amp;dl=0&#39;)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; is_dropbox(&#39;https://example.com/data.csv&#39;)</span>
+<span class="sd">    False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_provider_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">resolve_share_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">provider</span> <span class="o">==</span> <span class="n">provider</span>
+
+    <span class="n">_is_provider_url</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;is_</span><span class="si">{</span><span class="n">provider</span><span class="si">}</span><span class="s2">_url&quot;</span>
+    <span class="n">_is_provider_url</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="n">_is_provider_url</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="n">_is_provider_url</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Whether `url` is a </span><span class="si">{</span><span class="n">provider</span><span class="si">}</span><span class="s2"> share link.&quot;</span>
+    <span class="k">return</span> <span class="n">_is_provider_url</span></div>
+
+
+
+<div class="viewcode-block" id="download_from_share_link">
+<a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.download_from_share_link">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_from_share_link</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="n">DFLT_CHK_SIZE</span><span class="p">,</span> <span class="n">user_agent</span><span class="o">=</span><span class="n">DFLT_USER_AGENT</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve a share link to its direct-download URL, then download that.</span>
+
+<span class="sd">    Raises `ShareLinkResolutionError` (a `ValueError`) when the link cannot be</span>
+<span class="sd">    resolved without a provider API -- deliberately, in preference to fetching the</span>
+<span class="sd">    share URL itself and silently storing an HTML preview page as if it were the</span>
+<span class="sd">    asset.</span>
+
+<span class="sd">    Note that what comes back may be an *archive*: a Dropbox folder link downloads</span>
+<span class="sd">    as a single ZIP holding every member. Check</span>
+<span class="sd">    `resolve_share_url(url).kind == ShareLinkKind.ARCHIVE` and expand it (e.g. with</span>
+<span class="sd">    `dol.FilesOfZip`) rather than treating those bytes as one asset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">download_url_contents</span><span class="p">(</span>
+        <span class="n">direct_download_url</span><span class="p">(</span><span class="n">url</span><span class="p">),</span> <span class="n">file</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="n">chk_size</span><span class="p">,</span> <span class="n">user_agent</span><span class="o">=</span><span class="n">user_agent</span>
+    <span class="p">)</span></div>
+
+
+
 <span class="c1"># --------------------- Dropbox ---------------------</span>
 
-<span class="c1"># Note to the developper: In Dropbox shared links, the query parameter dl controls how</span>
-<span class="c1"># the link behaves:</span>
-<span class="c1"># * dl=0: The link opens a preview page for the file on the Dropbox website.</span>
-<span class="c1">#   It&#39;s used when you want to share a viewable link rather than a direct download link.</span>
-<span class="c1"># * dl=1: The link becomes a direct download link. When someone clicks on this link,</span>
-<span class="c1">#   the file starts downloading immediately, instead of opening a preview page.</span>
-<span class="c1"># Changing the value of dl in a Dropbox link is a common way to control the user</span>
-<span class="c1"># experience when accessing shared files.</span>
+<span class="c1"># Note to the developer: in Dropbox share links, the query parameter `dl` controls what</span>
+<span class="c1"># the link serves:</span>
+<span class="c1"># * dl=0: intended as a preview page -- but what you get is User-Agent dependent</span>
+<span class="c1">#   (measured: a wget UA got the archive, a browser UA got 224 KB of HTML).</span>
+<span class="c1"># * dl=1: a direct download, deterministic across clients.</span>
+<span class="c1"># Which is why `graze.share_links.resolve_dropbox` forces dl=1 -- correctness, not</span>
+<span class="c1"># convenience. Note also that a *folder* link downloads as a ZIP, even when the folder</span>
+<span class="c1"># holds a single file.</span>
 
-<span class="n">drobox_url_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;https?://www\.dropbox\.com/s/.+\?dl=(0|1)$&quot;</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">is_dropbox_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">drobox_url_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
-
-
-<span class="n">download_from_dropbox</span> <span class="o">=</span> <span class="n">download_url_contents</span>  <span class="c1"># backwards compatibility alias</span>
-<span class="n">bytes_from_dropbox</span> <span class="o">=</span> <span class="n">bytes_of_url_content</span>  <span class="c1"># backwards compatibility alias</span>
+<span class="n">is_dropbox_url</span> <span class="o">=</span> <span class="n">is_share_url_of</span><span class="p">(</span><span class="s2">&quot;dropbox&quot;</span><span class="p">)</span>
 
 <span class="c1"># --------------------- Google Drive ---------------------</span>
 
-<span class="n">_google_drive_file_id_patterns</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/file/d/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Standard file URL</span>
-    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/uc\?export=download&amp;id=([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Direct download link</span>
-    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/open\?id=([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Open link format</span>
-    <span class="sa">r</span><span class="s2">&quot;docs\.google\.com/spreadsheets/d/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Google Sheets URL</span>
-    <span class="sa">r</span><span class="s2">&quot;docs\.google\.com/document/d/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Google Docs URL</span>
-    <span class="sa">r</span><span class="s2">&quot;docs\.google\.com/presentation/d/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Google Slides URL</span>
-    <span class="sa">r</span><span class="s2">&quot;docs\.google\.com/forms/d/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Google Forms URL</span>
-    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/drive/folders/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Google Drive folder URL</span>
-    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/drive/u/\d/folders/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Google Drive folder with user ID</span>
-    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/file/d/([\w-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Standard file link with variations</span>
-    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/file/d/([\w-]+)/view&quot;</span><span class="p">,</span>  <span class="c1"># File view URL</span>
-    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/file/d/([\w-]+)/edit&quot;</span><span class="p">,</span>  <span class="c1"># File edit URL</span>
-    <span class="sa">r</span><span class="s2">&quot;drive\.google\.com/file/d/([\w-]+)/preview&quot;</span><span class="p">,</span>  <span class="c1"># File preview URL</span>
-<span class="p">)</span>
-<span class="n">_google_drive_file_id_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_google_drive_file_id_patterns</span><span class="p">))</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_google_drive_id</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="n">match</span> <span class="o">=</span> <span class="n">_google_drive_file_id_pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-        <span class="c1"># Return the first non-None group found in the match</span>
-        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Only FILE Google Drive URLs are supported, &quot;</span>
-        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;which have the format &#39;...drive.google.com/file/d/</span><span class="si">{file_id}</span><span class="s2">... &quot;</span>
-        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;This url is not supported: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="is_google_drive_url">
-<a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.is_google_drive_url">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">is_google_drive_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Checks if the provided URL is a Google Drive URL.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        url (str): The URL to check.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        bool: True if the URL is a Google Drive URL, False otherwise.</span>
-
-<span class="sd">    &gt;&gt;&gt; is_google_drive_url(&#39;https://drive.google.com/file/d/1Ul5mPePKAO11dG98GN/view&#39;)</span>
-<span class="sd">    True</span>
-<span class="sd">    &gt;&gt;&gt; is_google_drive_url(&#39;http://drive.google.com/file/d/1Ul5mPePKAO11dG98GN/view&#39;)</span>
-<span class="sd">    True</span>
-<span class="sd">    &gt;&gt;&gt; is_google_drive_url(&#39;https://example.com/file/d/1Ul5mPePKAO11dG98GN/view&#39;)</span>
-<span class="sd">    False</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">_google_drive_id</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
-
+<span class="n">is_google_drive_url</span> <span class="o">=</span> <span class="n">is_share_url_of</span><span class="p">(</span><span class="s2">&quot;google_drive&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="google_drive_download_url">
 <a class="viewcode-back" href="../../module_docs/graze/util.html#graze.util.google_drive_download_url">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">google_drive_download_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the download url from a FILE Google Drive URL.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the direct-download url of a Google Drive FILE url.</span>
 
-<span class="sd">    Note: File URLs have the format: `...drive.google.com/file/d/{file_id}...`.</span>
-<span class="sd">    Folder URLs as well as &quot;special format&quot; (google docs, sheets, etc.) URLs are not</span>
-<span class="sd">    supported.</span>
+<span class="sd">    Raises `ShareLinkResolutionError` for a *folder* URL (enumerating one needs the</span>
+<span class="sd">    Drive API) and for a Google Workspace document (those must be exported, and the</span>
+<span class="sd">    format is a caller decision) -- rather than build a file-download URL out of a</span>
+<span class="sd">    folder id, which is what graze used to do.</span>
+
+<span class="sd">    &gt;&gt;&gt; google_drive_download_url(&#39;https://drive.google.com/file/d/1Ab/view&#39;)</span>
+<span class="sd">    &#39;https://drive.google.com/uc?export=download&amp;id=1Ab&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">file_id</span> <span class="o">=</span> <span class="n">_google_drive_id</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;https://drive.google.com/uc?export=download&amp;id=</span><span class="si">{</span><span class="n">file_id</span><span class="si">}</span><span class="s2">&quot;</span></div>
+    <span class="n">resolved</span> <span class="o">=</span> <span class="n">resolve_share_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">resolved</span><span class="o">.</span><span class="n">provider</span> <span class="o">!=</span> <span class="s2">&quot;google_drive&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Not a Google Drive url: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">resolved</span><span class="o">.</span><span class="n">direct_url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ShareLinkResolutionError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Cannot resolve this Google Drive url (</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">). </span><span class="si">{</span><span class="n">resolved</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">resolved</span><span class="o">.</span><span class="n">direct_url</span></div>
 
 
 
@@ -517,9 +525,11 @@
 <span class="sd">    or file-like object.</span>
 <span class="sd">    If `file=None`, returns the bytes of the contents of the url.</span>
 
-<span class="sd">    Note: File URLs have the format: `...drive.google.com/file/d/{file_id}...`.</span>
-<span class="sd">    Folder URLs as well as &quot;special format&quot; (google docs, sheets, etc.) URLs are not</span>
-<span class="sd">    supported.</span>
+<span class="sd">    Only FILE urls (`...drive.google.com/file/d/{file_id}...`, `/open?id=`, and the</span>
+<span class="sd">    already-direct `/uc?...id=` and `drive.usercontent.google.com/download?id=` forms)</span>
+<span class="sd">    can be downloaded. A *folder* url, or a Google Workspace document (docs, sheets,</span>
+<span class="sd">    slides, forms), raises `ShareLinkResolutionError` -- see</span>
+<span class="sd">    `google_drive_download_url`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_download_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">chk_size</span><span class="o">=</span><span class="n">chk_size</span><span class="p">,</span> <span class="n">user_agent</span><span class="o">=</span><span class="n">user_agent</span><span class="p">)</span>
     <span class="n">download_url</span> <span class="o">=</span> <span class="n">google_drive_download_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
@@ -553,12 +563,25 @@
     <span class="k">return</span> <span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;&amp;confirm=&quot;</span> <span class="o">+</span> <span class="n">confirmation_token</span>
 
 
+<span class="c1"># --------------------- OneDrive ---------------------</span>
+
+<span class="n">is_onedrive_url</span> <span class="o">=</span> <span class="n">is_share_url_of</span><span class="p">(</span><span class="s2">&quot;onedrive&quot;</span><span class="p">)</span>
+
+
 <span class="c1"># --------------------- Special URLS ---------------------</span>
 
-<span class="c1"># Note: Add/edit default special url routes here:</span>
+<span class="c1"># Note: Add/edit default special url routes here.</span>
+<span class="c1"># The predicates come from the `graze.share_links` registry -- that module is the single</span>
+<span class="c1"># place a provider is described, so adding one there is enough to recognise it here.</span>
+<span class="c1"># `download_from_share_link` covers every provider whose resolution is &quot;rewrite the URL,</span>
+<span class="c1"># then GET it&quot;; providers needing more (Google Drive&#39;s virus-scan interstitial) get their</span>
+<span class="c1"># own downloader. OneDrive is routed on purpose even though graze cannot resolve it: the</span>
+<span class="c1"># route raises a message saying so, where falling through to a plain GET would silently</span>
+<span class="c1"># store a login page as if it were the asset.</span>
 <span class="n">special_url_routes</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">is_dropbox_url</span><span class="p">:</span> <span class="n">download_url_contents</span><span class="p">,</span>
+    <span class="n">is_dropbox_url</span><span class="p">:</span> <span class="n">download_from_share_link</span><span class="p">,</span>
     <span class="n">is_google_drive_url</span><span class="p">:</span> <span class="n">download_from_google_drive</span><span class="p">,</span>
+    <span class="n">is_onedrive_url</span><span class="p">:</span> <span class="n">download_from_share_link</span><span class="p">,</span>
 <span class="p">}</span>
 
 
@@ -605,7 +628,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright NO COPYRIGHT.</p>
+    <p></p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

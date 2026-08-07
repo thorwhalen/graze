@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.base &mdash; graze 0.1.41 documentation</title>
+  <title>graze.base &mdash; graze 0.1.42 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=3203cd3c"></script>
+      <script src="../../_static/documentation_options.js?v=05fb4756"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/_migration_tools.html">graze._migration_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/base.html">graze.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/graze_exceptional.html">graze.graze_exceptional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/share_links.html">graze.share_links</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/util.html">graze.util</a></li>
 </ul>
 
@@ -629,8 +630,9 @@
 <span class="sd">            the data if the file hasn&#39;t been modified for X days (i.e. stale contents).</span>
 <span class="sd">        url_egress: The function to call on the url before getting the contents from it.</span>
 <span class="sd">            This can, for example, be used to notify the user that data is being</span>
-<span class="sd">            downloaded, or to modify the url before fetching the contents (for example,</span>
-<span class="sd">            replacing the dl=0 in a dropbox url with dl=1).</span>
+<span class="sd">            downloaded, or to modify the url before fetching the contents.</span>
+<span class="sd">            Note you do NOT need it to normalize share links: `graze.share_links`</span>
+<span class="sd">            already resolves those (Dropbox&#39;s `dl=1` among them) on the way in.</span>
 <span class="sd">        rootdir: The root directory where the file will be stored</span>
 <span class="sd">        ensure_dirs: Whether to ensure the directories of the file exist</span>
 <span class="sd">        read_contents_of_file: The function to read the contents of a file</span>
@@ -646,8 +648,10 @@
 <span class="sd">    process.</span>
 
 <span class="sd">    Need to decide how to download the url based on some characteristics of the url?</span>
-<span class="sd">    For example, if it&#39;s a dropbox url with dl=0, change that to dl=1.</span>
-<span class="sd">    Put this in the url_to_contents logic.</span>
+<span class="sd">    Put this in the url_to_contents logic -- or, for a *provider* rule (this is a</span>
+<span class="sd">    Dropbox folder link, so it needs dl=1 and comes back as a ZIP), register an</span>
+<span class="sd">    adapter with `graze.add_share_link_resolver` and let `special_url_routes`</span>
+<span class="sd">    dispatch to it.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">filepath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1472,7 +1476,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright NO COPYRIGHT.</p>
+    <p></p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

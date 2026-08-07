@@ -1,0 +1,446 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graze.share_links &mdash; graze 0.1.42 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=05fb4756"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="graze.util" href="util.html" />
+    <link rel="prev" title="graze.graze_exceptional" href="graze_exceptional.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            graze
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../graze.html">graze</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_migration_tools.html">graze._migration_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">graze.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graze_exceptional.html">graze.graze_exceptional</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">graze.share_links</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#graze.share_links.DROPBOX_PATH_KINDS"><code class="docutils literal notranslate"><span class="pre">DROPBOX_PATH_KINDS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.share_links.PASSTHROUGH_SCHEMES"><code class="docutils literal notranslate"><span class="pre">PASSTHROUGH_SCHEMES</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.share_links.ResolvedShareLink"><code class="docutils literal notranslate"><span class="pre">ResolvedShareLink</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#graze.share_links.ResolvedShareLink.resolved"><code class="docutils literal notranslate"><span class="pre">ResolvedShareLink.resolved</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.share_links.ShareLinkKind"><code class="docutils literal notranslate"><span class="pre">ShareLinkKind</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.share_links.ShareLinkResolutionError"><code class="docutils literal notranslate"><span class="pre">ShareLinkResolutionError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.share_links.ShareLinkResolver"><code class="docutils literal notranslate"><span class="pre">ShareLinkResolver</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.share_links.add_share_link_resolver"><code class="docutils literal notranslate"><span class="pre">add_share_link_resolver()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.share_links.direct_download_url"><code class="docutils literal notranslate"><span class="pre">direct_download_url()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.share_links.resolve_dropbox"><code class="docutils literal notranslate"><span class="pre">resolve_dropbox()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.share_links.resolve_google_drive"><code class="docutils literal notranslate"><span class="pre">resolve_google_drive()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.share_links.resolve_onedrive"><code class="docutils literal notranslate"><span class="pre">resolve_onedrive()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.share_links.resolve_share_url"><code class="docutils literal notranslate"><span class="pre">resolve_share_url()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.share_links.share_link_resolvers"><code class="docutils literal notranslate"><span class="pre">share_link_resolvers</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">graze.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">graze</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">graze.share_links</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/graze/share_links.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-graze.share_links">
+<span id="graze-share-links"></span><h1>graze.share_links<a class="headerlink" href="#module-graze.share_links" title="Link to this heading"></a></h1>
+<p>Pure (network-free) resolution of cloud share links to direct-download URLs.</p>
+<p>A <em>share link</em> is what a person copies out of Dropbox / Google Drive / OneDrive.
+It is <strong>not</strong> a download URL: fetching it usually gets you an HTML preview page,
+and — worse — what you get can depend on your <code class="docutils literal notranslate"><span class="pre">User-Agent</span></code> rather than on the
+link. This module maps a pasted share link to a description of what it actually
+denotes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">share</span> <span class="n">link</span>  <span class="o">-&gt;</span>  <span class="n">ResolvedShareLink</span><span class="p">(</span><span class="n">provider</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">direct_url</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Everything here is a <code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">-&gt;</span> <span class="pre">description</span></code> mapping. <strong>No function in this module
+opens a socket</strong>, which is the whole point: resolution is deterministic and
+testable offline, while fetching (redirect policy, byte caps, content-type
+assertions, SSRF protection) is a separate concern that belongs to the transport
+layer, and archive expansion (a folder link is a ZIP, see <a class="reference internal" href="#graze.share_links.ShareLinkKind" title="graze.share_links.ShareLinkKind"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShareLinkKind</span></code></a>)
+belongs to the caller.</p>
+<p>The two things a caller needs to know before fetching:</p>
+<ul class="simple">
+<li><p><strong>the direct URL</strong> — or, honestly, that there isn’t one (some links genuinely
+need a provider API, and this module refuses rather than guess);</p></li>
+<li><p><strong>the kind</strong> — a <em>file</em> and a <em>folder</em> are different operations. A Dropbox
+folder link downloads as a single ZIP that must be expanded into N assets.</p></li>
+</ul>
+<p>Simple use — give me something I can fetch, or tell me why not:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">direct_download_url</span><span class="p">(</span><span class="s1">&#39;https://www.dropbox.com/scl/fi/a1b2/clip.mp4?rlkey=zz&amp;dl=0&#39;</span><span class="p">)</span>
+<span class="go">&#39;https://www.dropbox.com/scl/fi/a1b2/clip.mp4?rlkey=zz&amp;dl=1&#39;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">direct_download_url</span><span class="p">(</span><span class="s1">&#39;https://drive.google.com/drive/folders/1AbCdEf&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">graze.share_links.ShareLinkResolutionError</span>: <span class="n">Cannot resolve this google_drive link...</span>
+</pre></div>
+</div>
+<p>Full use — the whole description, including what kind of thing it is:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">resolve_share_url</span><span class="p">(</span><span class="s1">&#39;https://www.dropbox.com/scl/fo/x9/y?rlkey=zz&amp;dl=0&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">resolved</span>
+<span class="go">(&#39;dropbox&#39;, &#39;archive&#39;, True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">direct_url</span>
+<span class="go">&#39;https://www.dropbox.com/scl/fo/x9/y?rlkey=zz&amp;dl=1&#39;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">kind</span> <span class="pre">==</span> <span class="pre">'archive'</span></code> is the signal that the bytes are a ZIP of many members,
+not one asset – <code class="docutils literal notranslate"><span class="pre">dol.FilesOfZip</span></code> is the tool for that half.</p>
+<p>A URL that is nobody’s share link passes through unchanged:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">resolve_share_url</span><span class="p">(</span><span class="s1">&#39;https://example.com/video.mp4&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">direct_url</span>
+<span class="go">(&#39;http&#39;, &#39;https://example.com/video.mp4&#39;)</span>
+</pre></div>
+</div>
+<p>Adding a provider is open-closed – register an adapter, no core edits:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">resolve_my_host</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;https://my.host/dl/&#39;</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">ResolvedShareLink</span><span class="p">(</span>
+<span class="gp">... </span>            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">provider</span><span class="o">=</span><span class="s1">&#39;my_host&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">ShareLinkKind</span><span class="o">.</span><span class="n">FILE</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="n">direct_url</span><span class="o">=</span><span class="n">url</span> <span class="o">+</span> <span class="s1">&#39;?raw=1&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add_share_link_resolver</span><span class="p">(</span><span class="s1">&#39;my_host&#39;</span><span class="p">,</span> <span class="n">resolve_my_host</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_share_url</span><span class="p">(</span><span class="s1">&#39;https://my.host/dl/thing&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">direct_url</span>
+<span class="go">&#39;https://my.host/dl/thing?raw=1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">share_link_resolvers</span><span class="p">[</span><span class="s1">&#39;my_host&#39;</span><span class="p">]</span>  <span class="c1"># (cleaning up after the example)</span>
+</pre></div>
+</div>
+<p>Note: this module is <strong>not</strong> a security boundary. It will happily hand back a URL
+pointing anywhere; validating scheme/port/address and re-validating every redirect
+hop is the transport layer’s job.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="graze.share_links.DROPBOX_PATH_KINDS">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">DROPBOX_PATH_KINDS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(('/scl/fi/',</span> <span class="pre">ShareLinkKind.FILE),</span> <span class="pre">('/scl/fo/',</span> <span class="pre">ShareLinkKind.ARCHIVE),</span> <span class="pre">('/s/',</span> <span class="pre">ShareLinkKind.FILE),</span> <span class="pre">('/sh/',</span> <span class="pre">ShareLinkKind.ARCHIVE))</span></span><a class="headerlink" href="#graze.share_links.DROPBOX_PATH_KINDS" title="Link to this definition"></a></dt>
+<dd><p>Share-link path prefixes -&gt; what they denote. <code class="docutils literal notranslate"><span class="pre">/s/</span></code> + <code class="docutils literal notranslate"><span class="pre">/sh/</span></code> are the legacy
+forms; <code class="docutils literal notranslate"><span class="pre">/scl/fi/</span></code> + <code class="docutils literal notranslate"><span class="pre">/scl/fo/</span></code> are the ones Dropbox issues today.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="graze.share_links.PASSTHROUGH_SCHEMES">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">PASSTHROUGH_SCHEMES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('http',</span> <span class="pre">'https')</span></span><a class="headerlink" href="#graze.share_links.PASSTHROUGH_SCHEMES" title="Link to this definition"></a></dt>
+<dd><p>this module
+describes <em>fetchable web resources</em>, and unknown schemes are not that.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Schemes a plain URL may pass through with. Anything else is refused</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graze.share_links.ResolvedShareLink">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">ResolvedShareLink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#graze.share_links.ShareLinkKind" title="graze.share_links.ShareLinkKind"><span class="pre">ShareLinkKind</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">direct_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/share_links.html#ResolvedShareLink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.share_links.ResolvedShareLink" title="Link to this definition"></a></dt>
+<dd><p>What a share URL denotes, and how (or whether) to fetch it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – The share URL as given (stripped of surrounding whitespace).</p></li>
+<li><p><strong>provider</strong> – Provider slug, e.g. <code class="docutils literal notranslate"><span class="pre">'dropbox'</span></code>, <code class="docutils literal notranslate"><span class="pre">'google_drive'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'onedrive'</span></code>, <code class="docutils literal notranslate"><span class="pre">'http'</span></code> (a plain URL that is nobody’s share link),
+or <code class="docutils literal notranslate"><span class="pre">'unknown'</span></code>.</p></li>
+<li><p><strong>kind</strong> – See <a class="reference internal" href="#graze.share_links.ShareLinkKind" title="graze.share_links.ShareLinkKind"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShareLinkKind</span></code></a>.</p></li>
+<li><p><strong>direct_url</strong> – A URL whose response body is the content – or <code class="docutils literal notranslate"><span class="pre">None</span></code> when
+the link cannot be resolved without a provider API.</p></li>
+<li><p><strong>reason</strong> – Why <code class="docutils literal notranslate"><span class="pre">direct_url</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>. Required whenever it is.</p></li>
+</ul>
+</dd>
+</dl>
+<p><code class="docutils literal notranslate"><span class="pre">direct_url</span></code> and <code class="docutils literal notranslate"><span class="pre">kind</span></code> are independent: a Google Workspace document is a
+<code class="docutils literal notranslate"><span class="pre">FILE</span></code> that still has no resolvable download URL.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">ResolvedShareLink</span><span class="p">(</span><span class="s1">&#39;https://x/y&#39;</span><span class="p">,</span> <span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="n">ShareLinkKind</span><span class="o">.</span><span class="n">FILE</span><span class="p">,</span> <span class="s1">&#39;https://x/y&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">resolved</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>An unresolved link must say why – an adapter that refuses silently is a bug:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ResolvedShareLink</span><span class="p">(</span><span class="s1">&#39;https://x/y&#39;</span><span class="p">,</span> <span class="s1">&#39;nope&#39;</span><span class="p">,</span> <span class="n">ShareLinkKind</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">An unresolved ResolvedShareLink must carry a reason (url: https://x/y)</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="graze.share_links.ResolvedShareLink.resolved">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">resolved</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#graze.share_links.ResolvedShareLink.resolved" title="Link to this definition"></a></dt>
+<dd><p>True when there is a direct URL to fetch.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graze.share_links.ShareLinkKind">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">ShareLinkKind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/share_links.html#ShareLinkKind"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.share_links.ShareLinkKind" title="Link to this definition"></a></dt>
+<dd><p>What a share link denotes – a file, an archive, a folder, or unknown.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ARCHIVE</span></code> is a refinement of <code class="docutils literal notranslate"><span class="pre">FILE</span></code>: the URL still resolves to one blob,
+but that blob is a ZIP the caller must expand into N assets. Providers render
+<em>folder</em> links this way (Dropbox does so even for a single-file folder).</p>
+<p><code class="docutils literal notranslate"><span class="pre">FOLDER</span></code> is the honest answer when a link denotes a folder and the provider
+offers <strong>no</strong> URL that downloads it – listing it needs an API credential.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ShareLinkKind</span><span class="o">.</span><span class="n">ARCHIVE</span><span class="o">.</span><span class="n">value</span>
+<span class="go">&#39;archive&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ShareLinkKind</span><span class="p">(</span><span class="s1">&#39;folder&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="n">ShareLinkKind</span><span class="o">.</span><span class="n">FOLDER</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="graze.share_links.ShareLinkResolutionError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">ShareLinkResolutionError</span></span><a class="reference internal" href="../../_modules/graze/share_links.html#ShareLinkResolutionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.share_links.ShareLinkResolutionError" title="Link to this definition"></a></dt>
+<dd><p>Raised when a share link cannot be resolved to a direct-download URL.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="graze.share_links.ShareLinkResolver">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">ShareLinkResolver</span></span><a class="headerlink" href="#graze.share_links.ShareLinkResolver" title="Link to this definition"></a></dt>
+<dd><p>given a URL, return its resolution, or <code class="docutils literal notranslate"><span class="pre">None</span></code> for “not mine”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An adapter</p>
+</dd>
+</dl>
+<p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <a class="reference internal" href="#graze.share_links.ResolvedShareLink" title="graze.share_links.ResolvedShareLink"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResolvedShareLink</span></code></a> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.share_links.add_share_link_resolver">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">add_share_link_resolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#graze.share_links.ResolvedShareLink" title="graze.share_links.ResolvedShareLink"><span class="pre">ResolvedShareLink</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/graze/share_links.html#add_share_link_resolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.share_links.add_share_link_resolver" title="Link to this definition"></a></dt>
+<dd><p>Register (or replace) a provider adapter.</p>
+<p><code class="docutils literal notranslate"><span class="pre">resolver</span></code> takes a URL and returns a <a class="reference internal" href="#graze.share_links.ResolvedShareLink" title="graze.share_links.ResolvedShareLink"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResolvedShareLink</span></code></a>, or <code class="docutils literal notranslate"><span class="pre">None</span></code>
+to mean “not mine, try the next one”. Replacing an existing provider keeps its
+position in the try-order; a new one is appended (so it is tried last).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.share_links.direct_download_url">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">direct_download_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolvers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#graze.share_links.ResolvedShareLink" title="graze.share_links.ResolvedShareLink"><span class="pre">ResolvedShareLink</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/graze/share_links.html#direct_download_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.share_links.direct_download_url" title="Link to this definition"></a></dt>
+<dd><p>The URL to actually fetch, or raise <a class="reference internal" href="#graze.share_links.ShareLinkResolutionError" title="graze.share_links.ShareLinkResolutionError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShareLinkResolutionError</span></code></a>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">direct_download_url</span><span class="p">(</span><span class="s1">&#39;https://drive.google.com/file/d/1AbC/view&#39;</span><span class="p">)</span>
+<span class="go">&#39;https://drive.google.com/uc?export=download&amp;id=1AbC&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">direct_download_url</span><span class="p">(</span><span class="s1">&#39;https://1drv.ms/u/s!AbCd&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">graze.share_links.ShareLinkResolutionError</span>: <span class="n">Cannot resolve this onedrive link...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.share_links.resolve_dropbox">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">resolve_dropbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#graze.share_links.ResolvedShareLink" title="graze.share_links.ResolvedShareLink"><span class="pre">ResolvedShareLink</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/graze/share_links.html#resolve_dropbox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.share_links.resolve_dropbox" title="Link to this definition"></a></dt>
+<dd><p>Resolve a Dropbox share link by forcing <code class="docutils literal notranslate"><span class="pre">dl=1</span></code>.</p>
+<p>Both the modern <code class="docutils literal notranslate"><span class="pre">/scl/</span></code> forms and the legacy <code class="docutils literal notranslate"><span class="pre">/s/</span></code> + <code class="docutils literal notranslate"><span class="pre">/sh/</span></code> forms; every
+other query parameter (notably <code class="docutils literal notranslate"><span class="pre">rlkey</span></code>, which is a bearer secret) is kept
+byte-for-byte.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">resolve_dropbox</span><span class="p">(</span><span class="s1">&#39;https://www.dropbox.com/s/a1/data.csv?dl=0&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">direct_url</span>
+<span class="go">(&#39;file&#39;, &#39;https://www.dropbox.com/s/a1/data.csv?dl=1&#39;)</span>
+</pre></div>
+</div>
+<p>A folder link is an <em>archive</em> – one ZIP holding N members:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">resolve_dropbox</span><span class="p">(</span><span class="s1">&#39;https://www.dropbox.com/scl/fo/q7/z?rlkey=abc&amp;st=t1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">direct_url</span>
+<span class="go">(&#39;archive&#39;, &#39;https://www.dropbox.com/scl/fo/q7/z?rlkey=abc&amp;st=t1&amp;dl=1&#39;)</span>
+</pre></div>
+</div>
+<p>Non-share Dropbox URLs are not this adapter’s business:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_dropbox</span><span class="p">(</span><span class="s1">&#39;https://www.dropbox.com/home&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_dropbox</span><span class="p">(</span><span class="s1">&#39;https://example.com/s/a1/data.csv?dl=0&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.share_links.resolve_google_drive">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">resolve_google_drive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#graze.share_links.ResolvedShareLink" title="graze.share_links.ResolvedShareLink"><span class="pre">ResolvedShareLink</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/graze/share_links.html#resolve_google_drive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.share_links.resolve_google_drive" title="Link to this definition"></a></dt>
+<dd><p>Resolve a Google Drive / Google Workspace URL.</p>
+<p>Files resolve; <strong>folders and Workspace documents are refused</strong>, because
+neither has a plain-URL download and pretending otherwise is how a folder id
+ends up in a file-download URL.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_google_drive</span><span class="p">(</span><span class="s1">&#39;https://drive.google.com/file/d/1AbC/view&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">direct_url</span>
+<span class="go">&#39;https://drive.google.com/uc?export=download&amp;id=1AbC&#39;</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">resourcekey</span></code> (required by link-shared files created before 2021) is kept:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">resolve_google_drive</span><span class="p">(</span><span class="s1">&#39;https://drive.google.com/file/d/1AbC/view?resourcekey=0-x&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">direct_url</span>
+<span class="go">&#39;https://drive.google.com/uc?export=download&amp;id=1AbC&amp;resourcekey=0-x&#39;</span>
+</pre></div>
+</div>
+<p>A folder is a folder – refused, with the reason and the id to hand:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">resolve_google_drive</span><span class="p">(</span><span class="s1">&#39;https://drive.google.com/drive/folders/1FoLd&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">direct_url</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">(&#39;folder&#39;, True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span>
+<span class="go">Google Drive folder links have no direct-download URL...</span>
+</pre></div>
+</div>
+<p>So is a native Google doc – a file, but not a downloadable one:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">resolve_google_drive</span><span class="p">(</span><span class="s1">&#39;https://docs.google.com/spreadsheets/d/1Sh/edit&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">direct_url</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">(&#39;file&#39;, True)</span>
+</pre></div>
+</div>
+<p>…*unless* the caller already chose a format, which is the only thing the
+refusal above was ever about:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="s1">&#39;https://docs.google.com/spreadsheets/d/1Sh/export?format=csv&amp;gid=0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_google_drive</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="o">.</span><span class="n">direct_url</span> <span class="o">==</span> <span class="n">u</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_google_drive</span><span class="p">(</span><span class="s1">&#39;https://example.com/file/d/1AbC/view&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.share_links.resolve_onedrive">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">resolve_onedrive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#graze.share_links.ResolvedShareLink" title="graze.share_links.ResolvedShareLink"><span class="pre">ResolvedShareLink</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/graze/share_links.html#resolve_onedrive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.share_links.resolve_onedrive" title="Link to this definition"></a></dt>
+<dd><p>Recognise a OneDrive / SharePoint share link, and refuse it.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">resolve_onedrive</span><span class="p">(</span><span class="s1">&#39;https://1drv.ms/f/s!AbCd&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">direct_url</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">(&#39;onedrive&#39;, &#39;folder&#39;, True)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">resolve_onedrive</span><span class="p">(</span><span class="s1">&#39;https://contoso-my.sharepoint.com/:v:/g/personal/x/EaB&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">value</span>
+<span class="go">(&#39;onedrive&#39;, &#39;unknown&#39;)</span>
+</pre></div>
+</div>
+<p>An ordinary SharePoint document path is not a share link:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_onedrive</span><span class="p">(</span><span class="s1">&#39;https://contoso.sharepoint.com/sites/x/clip.mp4&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.share_links.resolve_share_url">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">resolve_share_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolvers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#graze.share_links.ResolvedShareLink" title="graze.share_links.ResolvedShareLink"><span class="pre">ResolvedShareLink</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#graze.share_links.ResolvedShareLink" title="graze.share_links.ResolvedShareLink"><span class="pre">ResolvedShareLink</span></a></span></span><a class="reference internal" href="../../_modules/graze/share_links.html#resolve_share_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.share_links.resolve_share_url" title="Link to this definition"></a></dt>
+<dd><p>Describe what a share URL denotes and how (or whether) to fetch it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – The URL as a user pasted it. Surrounding whitespace is stripped.</p></li>
+<li><p><strong>resolvers</strong> – Adapters to try, in order. Defaults to
+<a class="reference internal" href="#graze.share_links.share_link_resolvers" title="graze.share_links.share_link_resolvers"><code class="xref py py-data docutils literal notranslate"><span class="pre">share_link_resolvers</span></code></a>; pass your own to test in isolation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A <a class="reference internal" href="#graze.share_links.ResolvedShareLink" title="graze.share_links.ResolvedShareLink"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResolvedShareLink</span></code></a>. Never raises for an unresolvable link –
+the refusal is in the return value (<code class="docutils literal notranslate"><span class="pre">direct_url</span> <span class="pre">is</span> <span class="pre">None</span></code> plus a
+<code class="docutils literal notranslate"><span class="pre">reason</span></code>). Use <a class="reference internal" href="#graze.share_links.direct_download_url" title="graze.share_links.direct_download_url"><code class="xref py py-func docutils literal notranslate"><span class="pre">direct_download_url()</span></code></a> when you want the raise.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_share_url</span><span class="p">(</span><span class="s1">&#39;  https://www.dropbox.com/s/a1/x.csv?dl=0  &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">direct_url</span>
+<span class="go">&#39;https://www.dropbox.com/s/a1/x.csv?dl=1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_share_url</span><span class="p">(</span><span class="s1">&#39;https://example.com/a.mp4&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">provider</span>
+<span class="go">&#39;http&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_share_url</span><span class="p">(</span><span class="s1">&#39;ftp://example.com/a.mp4&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">resolved</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="graze.share_links.share_link_resolvers">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">share_link_resolvers</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#graze.share_links.ResolvedShareLink" title="graze.share_links.ResolvedShareLink"><span class="pre">ResolvedShareLink</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'dropbox':</span> <span class="pre">&lt;function</span> <span class="pre">resolve_dropbox&gt;,</span> <span class="pre">'google_drive':</span> <span class="pre">&lt;function</span> <span class="pre">resolve_google_drive&gt;,</span> <span class="pre">'onedrive':</span> <span class="pre">&lt;function</span> <span class="pre">resolve_onedrive&gt;}</span></span><a class="headerlink" href="#graze.share_links.share_link_resolvers" title="Link to this definition"></a></dt>
+<dd><p>Provider adapters, tried in order; the first non-<code class="docutils literal notranslate"><span class="pre">None</span></code> result wins. Open-closed:
+extend it with <a class="reference internal" href="#graze.share_links.add_share_link_resolver" title="graze.share_links.add_share_link_resolver"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_share_link_resolver()</span></code></a> instead of editing this module.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="graze_exceptional.html" class="btn btn-neutral float-left" title="graze.graze_exceptional" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="util.html" class="btn btn-neutral float-right" title="graze.util" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.util &mdash; graze 0.1.41 documentation</title>
+  <title>graze.util &mdash; graze 0.1.42 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=3203cd3c"></script>
+      <script src="../../_static/documentation_options.js?v=05fb4756"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -24,7 +24,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="graze.graze_exceptional" href="graze_exceptional.html" /> 
+    <link rel="prev" title="graze.share_links" href="share_links.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -52,20 +52,23 @@
 <li class="toctree-l1"><a class="reference internal" href="_migration_tools.html">graze._migration_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="base.html">graze.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graze_exceptional.html">graze.graze_exceptional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="share_links.html">graze.share_links</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">graze.util</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.add_special_url_route"><code class="docutils literal notranslate"><span class="pre">add_special_url_route()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#graze.util.bytes_from_dropbox"><code class="docutils literal notranslate"><span class="pre">bytes_from_dropbox()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.bytes_of_url_content"><code class="docutils literal notranslate"><span class="pre">bytes_of_url_content()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.chks_of_url_contents"><code class="docutils literal notranslate"><span class="pre">chks_of_url_contents()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.clog"><code class="docutils literal notranslate"><span class="pre">clog()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#graze.util.download_from_dropbox"><code class="docutils literal notranslate"><span class="pre">download_from_dropbox()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.download_from_google_drive"><code class="docutils literal notranslate"><span class="pre">download_from_google_drive()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.download_from_share_link"><code class="docutils literal notranslate"><span class="pre">download_from_share_link()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.download_from_special_url"><code class="docutils literal notranslate"><span class="pre">download_from_special_url()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.download_url_contents"><code class="docutils literal notranslate"><span class="pre">download_url_contents()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.get_content_size"><code class="docutils literal notranslate"><span class="pre">get_content_size()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.google_drive_download_url"><code class="docutils literal notranslate"><span class="pre">google_drive_download_url()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.human_readable_bytes"><code class="docutils literal notranslate"><span class="pre">human_readable_bytes()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.is_dropbox_url"><code class="docutils literal notranslate"><span class="pre">is_dropbox_url()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.is_google_drive_url"><code class="docutils literal notranslate"><span class="pre">is_google_drive_url()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.is_onedrive_url"><code class="docutils literal notranslate"><span class="pre">is_onedrive_url()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graze.util.is_share_url_of"><code class="docutils literal notranslate"><span class="pre">is_share_url_of()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.is_special_url"><code class="docutils literal notranslate"><span class="pre">is_special_url()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.last_element"><code class="docutils literal notranslate"><span class="pre">last_element()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graze.util.original_url_of_tiny_url"><code class="docutils literal notranslate"><span class="pre">original_url_of_tiny_url()</span></code></a></li>
@@ -109,12 +112,6 @@ for a specific condition on the url.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="graze.util.bytes_from_dropbox">
-<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">bytes_from_dropbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wget/1.16</span> <span class="pre">(linux-gnu)'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graze.util.bytes_from_dropbox" title="Link to this definition"></a></dt>
-<dd><p>Download url contents into a <cite>file</cite> object, or return bytes if <cite>file</cite> is None.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="graze.util.bytes_of_url_content">
 <span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">bytes_of_url_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wget/1.16</span> <span class="pre">(linux-gnu)'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graze.util.bytes_of_url_content" title="Link to this definition"></a></dt>
 <dd><p>Download url contents into a <cite>file</cite> object, or return bytes if <cite>file</cite> is None.</p>
@@ -153,21 +150,31 @@ whether they want to log or not. Instead of having to litter your code with
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="graze.util.download_from_dropbox">
-<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">download_from_dropbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">chk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wget/1.16</span> <span class="pre">(linux-gnu)'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graze.util.download_from_dropbox" title="Link to this definition"></a></dt>
-<dd><p>Download url contents into a <cite>file</cite> object, or return bytes if <cite>file</cite> is None.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="graze.util.download_from_google_drive">
 <span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">download_from_google_drive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">chk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wget/1.16</span> <span class="pre">(linux-gnu)'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_virus_scan_confirmation_page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/util.html#download_from_google_drive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.download_from_google_drive" title="Link to this definition"></a></dt>
 <dd><p>Download a file from a Google Drive URL.
 Will write the downloaded contents bytes to <cite>file</cite>, which can be a local file path
 or file-like object.
 If <cite>file=None</cite>, returns the bytes of the contents of the url.</p>
-<p>Note: File URLs have the format: <cite>…drive.google.com/file/d/{file_id}…</cite>.
-Folder URLs as well as “special format” (google docs, sheets, etc.) URLs are not
-supported.</p>
+<p>Only FILE urls (<cite>…drive.google.com/file/d/{file_id}…</cite>, <cite>/open?id=</cite>, and the
+already-direct <cite>/uc?…id=</cite> and <cite>drive.usercontent.google.com/download?id=</cite> forms)
+can be downloaded. A <em>folder</em> url, or a Google Workspace document (docs, sheets,
+slides, forms), raises <cite>ShareLinkResolutionError</cite> – see
+<cite>google_drive_download_url</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.download_from_share_link">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">download_from_share_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">chk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wget/1.16</span> <span class="pre">(linux-gnu)'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/util.html#download_from_share_link"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.download_from_share_link" title="Link to this definition"></a></dt>
+<dd><p>Resolve a share link to its direct-download URL, then download that.</p>
+<p>Raises <cite>ShareLinkResolutionError</cite> (a <cite>ValueError</cite>) when the link cannot be
+resolved without a provider API – deliberately, in preference to fetching the
+share URL itself and silently storing an HTML preview page as if it were the
+asset.</p>
+<p>Note that what comes back may be an <em>archive</em>: a Dropbox folder link downloads
+as a single ZIP holding every member. Check
+<cite>resolve_share_url(url).kind == ShareLinkKind.ARCHIVE</cite> and expand it (e.g. with
+<cite>dol.FilesOfZip</cite>) rather than treating those bytes as one asset.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -191,10 +198,15 @@ supported.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graze.util.google_drive_download_url">
 <span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">google_drive_download_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/graze/util.html#google_drive_download_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.google_drive_download_url" title="Link to this definition"></a></dt>
-<dd><p>Get the download url from a FILE Google Drive URL.</p>
-<p>Note: File URLs have the format: <cite>…drive.google.com/file/d/{file_id}…</cite>.
-Folder URLs as well as “special format” (google docs, sheets, etc.) URLs are not
-supported.</p>
+<dd><p>Get the direct-download url of a Google Drive FILE url.</p>
+<p>Raises <cite>ShareLinkResolutionError</cite> for a <em>folder</em> URL (enumerating one needs the
+Drive API) and for a Google Workspace document (those must be exported, and the
+format is a caller decision) – rather than build a file-download URL out of a
+folder id, which is what graze used to do.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">google_drive_download_url</span><span class="p">(</span><span class="s1">&#39;https://drive.google.com/file/d/1Ab/view&#39;</span><span class="p">)</span>
+<span class="go">&#39;https://drive.google.com/uc?export=download&amp;id=1Ab&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -253,25 +265,31 @@ units.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="graze.util.is_dropbox_url">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">is_dropbox_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#graze.util.is_dropbox_url" title="Link to this definition"></a></dt>
+<dd><p>Whether <cite>url</cite> is a dropbox share link.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="graze.util.is_google_drive_url">
-<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">is_google_drive_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/graze/util.html#is_google_drive_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.is_google_drive_url" title="Link to this definition"></a></dt>
-<dd><p>Checks if the provided URL is a Google Drive URL.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – The URL to check.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if the URL is a Google Drive URL, False otherwise.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">is_google_drive_url</span><span class="p">(</span><span class="s1">&#39;https://drive.google.com/file/d/1Ul5mPePKAO11dG98GN/view&#39;</span><span class="p">)</span>
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">is_google_drive_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#graze.util.is_google_drive_url" title="Link to this definition"></a></dt>
+<dd><p>Whether <cite>url</cite> is a google_drive share link.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.is_onedrive_url">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">is_onedrive_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#graze.util.is_onedrive_url" title="Link to this definition"></a></dt>
+<dd><p>Whether <cite>url</cite> is a onedrive share link.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.is_share_url_of">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">is_share_url_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/graze/util.html#is_share_url_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.is_share_url_of" title="Link to this definition"></a></dt>
+<dd><p>Make a predicate: “is this URL a share link of <cite>provider</cite>?”.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">is_dropbox</span> <span class="o">=</span> <span class="n">is_share_url_of</span><span class="p">(</span><span class="s1">&#39;dropbox&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_dropbox</span><span class="p">(</span><span class="s1">&#39;https://www.dropbox.com/scl/fo/q7/z?rlkey=abc&amp;dl=0&#39;</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">is_google_drive_url</span><span class="p">(</span><span class="s1">&#39;http://drive.google.com/file/d/1Ul5mPePKAO11dG98GN/view&#39;</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">is_google_drive_url</span><span class="p">(</span><span class="s1">&#39;https://example.com/file/d/1Ul5mPePKAO11dG98GN/view&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_dropbox</span><span class="p">(</span><span class="s1">&#39;https://example.com/data.csv&#39;</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
@@ -329,13 +347,13 @@ units.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="graze_exceptional.html" class="btn btn-neutral float-left" title="graze.graze_exceptional" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="share_links.html" class="btn btn-neutral float-left" title="graze.share_links" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright NO COPYRIGHT.</p>
+    <p></p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
