@@ -224,10 +224,17 @@ def kind_checked(
 ) -> Iterator[bytes]:
     """Wrap a byte stream so its head is asserted **before any chunk escapes**.
 
-    Buffers up to :data:`SNIFF_BYTES`, runs :func:`assert_content_kind`, and only then
-    starts yielding. Checking before yielding — rather than after the stream drains — is
-    what makes the guard independent of the consumer: it holds even for one that writes
-    incrementally.
+    Buffers until it holds at least :data:`SNIFF_BYTES`, runs :func:`assert_content_kind`,
+    and only then starts yielding. Checking before yielding — rather than after the stream
+    drains — is what makes the guard independent of the consumer: it holds even for one
+    that writes incrementally.
+
+    **On memory**: the buffer is bounded by :data:`SNIFF_BYTES` *plus one producer chunk* —
+    the length is checked after appending, so a producer that hands over one enormous chunk
+    has it held whole. That is not avoidable (the bytes are already in memory by then) and
+    is harmless for the chunked readers this is meant for, but it means the bound is a
+    function of the producer's chunk size, not of :data:`SNIFF_BYTES` alone. A stream whose
+    *total* is under :data:`SNIFF_BYTES` is likewise drained completely.
 
     The bytes are preserved exactly; only the *chunking* changes, since the head is
     re-emitted as one buffered piece:

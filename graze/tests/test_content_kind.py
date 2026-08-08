@@ -136,8 +136,7 @@ class TestKindChecked:
 
         The first chunk alone exceeds SNIFF_BYTES, so buffering stops immediately and
         nothing beyond it is pulled. (A stream whose *total* is under SNIFF_BYTES is
-        legitimately drained into the head buffer — that is the cost of a fixed sniff
-        window, and it is bounded by SNIFF_BYTES.)
+        legitimately drained into the head buffer — the cost of a fixed sniff window.)
         """
         pulled = []
 
@@ -150,3 +149,14 @@ class TestKindChecked:
         stream = kind_checked(source(), expect_kind="image")
         next(stream)  # the buffered head
         assert pulled == [], "the tail must not have been consumed yet"
+
+    def test_buffer_bound_is_sniff_bytes_plus_one_chunk(self):
+        """Pin the honest memory bound, so the docstring cannot quietly become false.
+
+        The length is checked *after* appending, so a producer handing over one enormous
+        chunk has it held whole. Unavoidable (the bytes are already in memory), harmless
+        for chunked readers, but it must not be described as bounded by SNIFF_BYTES alone.
+        """
+        big = PNG + b"\x00" * (4 * SNIFF_BYTES)
+        first = next(kind_checked([big, b"tail"], expect_kind="image"))
+        assert len(first) == len(big) > SNIFF_BYTES
