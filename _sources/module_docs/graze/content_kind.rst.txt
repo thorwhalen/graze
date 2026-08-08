@@ -1,0 +1,4 @@
+graze.content_kind
+==================
+.. automodule:: graze.content_kind
+   :members:
