@@ -67,7 +67,8 @@ _MAGIC_PREFIXES: tuple[tuple[bytes, str], ...] = (
     (b"\xff\xd8\xff", "image"),  # JPEG
     (b"GIF87a", "image"),
     (b"GIF89a", "image"),
-    (b"BM", "image"),  # BMP
+    # BMP is NOT here: its magic is the 2 bytes "BM", too short to be evidence on its own
+    # (it matches ordinary prose). See _looks_like_bmp, which checks the size field too.
     (b"II*\x00", "image"),  # TIFF little-endian
     (b"MM\x00*", "image"),  # TIFF big-endian
     (b"\x1a\x45\xdf\xa3", "video"),  # Matroska / WebM
@@ -86,11 +87,89 @@ _MAGIC_PREFIXES: tuple[tuple[bytes, str], ...] = (
 # an .m4a and an .mp4 are the same container.
 _FTYP_AUDIO_BRANDS = frozenset({b"M4A ", b"M4B ", b"M4P ", b"F4A ", b"F4B "})
 _FTYP_IMAGE_BRANDS = frozenset(
-    {b"avif", b"avis", b"heic", b"heix", b"heim", b"heis", b"hevc", b"mif1", b"msf1"}
+    {
+        b"avif",
+        b"avis",
+        b"heic",
+        b"heix",
+        b"heim",
+        b"heis",
+        b"hevc",
+        b"hevx",
+        b"heif",
+        b"avio",
+        b"mif1",
+        b"msf1",
+        b"crx ",  # Canon CR3 raw photo
+    }
+)
+#: Video brands are listed EXPLICITLY rather than used as the fallback, because the ISO
+#: brand registry is open-ended: an unrecognised brand must classify as unknown (permissive)
+#: rather than be asserted to be video, which would hard-refuse a genuine image.
+_FTYP_VIDEO_BRANDS = frozenset(
+    {
+        b"isom",
+        b"iso2",
+        b"iso4",
+        b"iso5",
+        b"iso6",
+        b"mp41",
+        b"mp42",
+        b"avc1",
+        b"qt  ",
+        b"M4V ",
+        b"M4VH",
+        b"M4VP",
+        b"mmp4",
+        b"dash",
+        b"3gp4",
+        b"3gp5",
+        b"3gp6",
+        b"3g2a",
+    }
 )
 
-#: An HTML page is never the media a caller asked for, whatever kind that was.
-_HTML_PREFIXES = (b"<!doctype html", b"<html", b"<!--", b"<?xml", b"<head", b"<body")
+#: Root elements that make a markup document an HTML *page*. A sign-in interstitial does
+#: not reliably open with ``<html>`` — a meta-refresh redirect, a script bounce, or a bare
+#: ``<title>`` are all common — so the set is deliberately broader than the obvious two.
+_HTML_ROOT_TAGS = frozenset(
+    {
+        "html",
+        "head",
+        "body",
+        "meta",
+        "script",
+        "title",
+        "link",
+        "div",
+        "span",
+        "p",
+        "a",
+        "table",
+        "form",
+        "center",
+        "frameset",
+        "noscript",
+        "style",
+    }
+)
+
+#: Markup root elements that are *not* HTML pages, mapped to what they actually are. SVG is
+#: the load-bearing entry: it is a legitimate image, and classifying it as ``html`` would
+#: refuse a real asset with an actively misleading diagnosis.
+_MARKUP_ROOT_FAMILIES = {"svg": "image"}
+
+#: Byte-order marks that prove a payload is *text*, and the codec to read it with. Checked
+#: before any binary signature: a UTF-16 BOM (``\xff\xfe``) otherwise trips the MP3
+#: frame-sync test, and because audio/video are mutually permissive that made a UTF-16
+#: sign-in page pass as media — defeating the entire point of this module.
+_TEXT_BOMS: tuple[tuple[bytes, str], ...] = (
+    (b"\x00\x00\xfe\xff", "utf-32-be"),
+    (b"\xff\xfe\x00\x00", "utf-32-le"),
+    (b"\xef\xbb\xbf", "utf-8"),
+    (b"\xfe\xff", "utf-16-be"),
+    (b"\xff\xfe", "utf-16-le"),
+)
 
 # Deliberately only ``{`` and ``[``. A looser rule (``t`` for ``true``, digits for a bare
 # number) misfires on ordinary text and on binary payloads that happen to start with an
@@ -127,9 +206,19 @@ def sniff_content_family(head: bytes) -> Optional[str]:
     """
     if not head:
         return None
+    # A byte-order mark PROVES text, so it is checked before every binary signature. Doing
+    # this later let `\xff\xfe` (UTF-16LE) reach the MP3 frame-sync test and classify as
+    # audio — and since audio/video are mutually permissive, a UTF-16 sign-in page then
+    # passed `assert_content_kind` as media. That is the exact corruption this module
+    # exists to prevent, so the BOM check goes first.
+    for bom, codec in _TEXT_BOMS:
+        if head.startswith(bom):
+            return _classify_text(head[len(bom) :].decode(codec, errors="replace"))
     for prefix, family in _MAGIC_PREFIXES:
         if head.startswith(prefix):
             return family
+    if head.startswith(b"BM") and _looks_like_bmp(head):
+        return "image"
     # RIFF containers carry the family in bytes 8..12.
     if head.startswith(b"RIFF") and len(head) >= 12:
         form = head[8:12]
@@ -139,28 +228,127 @@ def sniff_content_family(head: bytes) -> Optional[str]:
             return "image"
         if form == b"AVI ":
             return "video"
-    # ISO base media: ``....ftyp<brand>``.
+    # ISO base media: ``....ftyp<brand>``. An UNRECOGNISED brand returns None rather than
+    # guessing 'video': the brand registry is open-ended, images are excluded from the
+    # audio/video ambiguity exemption, and so a wrong guess of 'video' HARD-REFUSES a
+    # genuine image (a Canon CR3 photo is `ftypcrx `). Unknown must stay permissive.
     if len(head) >= 12 and head[4:8] == b"ftyp":
         brand = head[8:12]
         if brand in _FTYP_AUDIO_BRANDS:
             return "audio"
         if brand in _FTYP_IMAGE_BRANDS:
             return "image"
-        return "video"
-    # MP3 frame sync (no ID3 tag).
-    if len(head) >= 2 and head[0] == 0xFF and (head[1] & 0xE0) == 0xE0:
-        return "audio"
-    # Text-shaped payloads. Strip a UTF-8 BOM and leading whitespace first — a share-link
-    # interstitial is served with neither, but a proxy's error page may carry both.
-    text = head.lstrip(b"\xef\xbb\xbf").lstrip()
-    if text[:1] == b"<":
-        lowered = text[:16].lower()
-        if any(lowered.startswith(p) for p in _HTML_PREFIXES):
-            return "html"
+        if brand in _FTYP_VIDEO_BRANDS:
+            return "video"
         return None
-    if text[:1] in _JSON_FIRST_BYTES:
+    if _looks_like_mp3_frame(head):
+        return "audio"
+    return _classify_text(head.decode("utf-8", errors="replace"))
+
+
+def _looks_like_bmp(head: bytes) -> bool:
+    """True iff ``head`` is a BMP, checked past the 2-byte ``BM`` magic.
+
+    ``BM`` alone is far too short to be evidence — it matches ordinary prose ("BMW service
+    manual"). The file-size field at 2..6 is not enough either: that phrase's bytes there
+    decode to a perfectly plausible 1.7 GB. The **pixel-data offset** at 10..14 is what
+    settles it — in a real BMP it is a small header offset (54 for the common
+    BITMAPINFOHEADER, more with a palette), and text almost never lands in that range.
+    """
+    if len(head) < 14:
+        return False
+    size = int.from_bytes(head[2:6], "little")
+    data_offset = int.from_bytes(head[10:14], "little")
+    return (
+        26 <= size <= (1 << 31)  # 26 = smallest possible BMP (header + 1 pixel)
+        and 14 <= data_offset <= 4096  # header + at most a 1024-entry palette
+        and data_offset <= size
+    )
+
+
+def _looks_like_mp3_frame(head: bytes) -> bool:
+    """True iff ``head`` opens with a plausible MPEG audio frame header.
+
+    The 11-bit sync word alone is not enough — it matches a UTF-16 BOM, among other things.
+    Reserved values in the version, layer, bitrate-index and sampling-rate-index fields are
+    all rejected, which is what separates a real frame from a coincidence.
+    """
+    if len(head) < 3 or head[0] != 0xFF or (head[1] & 0xE0) != 0xE0:
+        return False
+    version = (head[1] >> 3) & 0b11
+    layer = (head[1] >> 1) & 0b11
+    bitrate_index = (head[2] >> 4) & 0b1111
+    sampling_index = (head[2] >> 2) & 0b11
+    return (
+        version != 0b01  # reserved MPEG version
+        and layer != 0b00  # reserved layer
+        and bitrate_index not in (0b0000, 0b1111)  # 'free' and 'bad'
+        and sampling_index != 0b11  # reserved sampling rate
+    )
+
+
+def _classify_text(text: str) -> Optional[str]:
+    """Classify an already-decoded payload as ``'html'``, ``'image'``, ``'json'`` or None.
+
+    Markup is classified by its **root element**, not by a fixed list of opening byte
+    strings. An XML declaration and comments are skipped first, so ``<?xml ...?><svg>`` and
+    a bare ``<svg>`` agree — the older prefix rule called the former ``html`` and refused a
+    legitimate SVG image with a diagnosis about share-link permissions.
+    """
+    text = text.lstrip()
+    if text[:1] in ("{", "["):
         return "json"
-    return None
+    if text[:1] != "<":
+        return None
+    if text[:9].lower() == "<!doctype":
+        # Tolerant of any whitespace run, unlike a literal '<!doctype html' prefix match.
+        rest = text[9:].lstrip().lower()
+        return "html" if rest.startswith("html") else None
+    body = _strip_markup_preamble(text)
+    tag = _root_tag_name(body)
+    if tag is None:
+        return None
+    if tag in _MARKUP_ROOT_FAMILIES:
+        return _MARKUP_ROOT_FAMILIES[tag]
+    return "html" if tag in _HTML_ROOT_TAGS else None
+
+
+def _strip_markup_preamble(text: str) -> str:
+    """Drop a leading XML declaration, processing instructions, comments and doctype."""
+    while True:
+        text = text.lstrip()
+        if text.startswith("<?"):
+            end = text.find("?>")
+            if end == -1:
+                return ""
+            text = text[end + 2 :]
+        elif text.startswith("<!--"):
+            end = text.find("-->")
+            if end == -1:
+                return ""
+            text = text[end + 3 :]
+        elif text[:9].lower() == "<!doctype":
+            end = text.find(">")
+            if end == -1:
+                return ""
+            text = text[end + 1 :]
+        else:
+            return text
+
+
+def _root_tag_name(text: str) -> Optional[str]:
+    """The lowercased name of the first element in ``text``, or None."""
+    if not text.startswith("<"):
+        return None
+    name = []
+    for ch in text[1:]:
+        if ch.isalnum() or ch in "-_:":
+            name.append(ch)
+        else:
+            break
+    if not name:
+        return None
+    return "".join(name).lower().rpartition(":")[2]  # drop any namespace prefix
 
 
 def assert_content_kind(

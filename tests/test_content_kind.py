@@ -160,3 +160,104 @@ class TestKindChecked:
         big = PNG + b"\x00" * (4 * SNIFF_BYTES)
         first = next(kind_checked([big, b"tail"], expect_kind="image"))
         assert len(first) == len(big) > SNIFF_BYTES
+
+
+class TestAdversarialFindings:
+    """Regression tests for four blocking findings from the pre-merge review.
+
+    Every one of these passed review only because the test file was originally placed
+    outside pytest's ``testpaths``, so none of it ran in CI. That is the finding behind the
+    findings: a green check on an uncollected suite says nothing.
+    """
+
+    def test_svg_with_an_xml_declaration_is_an_image_not_html(self):
+        """`<?xml` used to be an HTML prefix, so a declared SVG was refused as a web page.
+
+        Worse, it was self-inconsistent: the same image WITHOUT the declaration passed.
+        """
+        declared = b'<?xml version="1.0"?>\n<svg xmlns="http://www.w3.org/2000/svg"/>'
+        bare = b'<svg xmlns="http://www.w3.org/2000/svg"/>'
+        assert sniff_content_family(declared) == "image"
+        assert sniff_content_family(bare) == "image"
+        assert_content_kind(declared, expect_kind="image")  # must not raise
+
+    def test_utf16_html_does_not_pass_as_media(self):
+        """A UTF-16LE BOM is `\\xff\\xfe`, which trips the MP3 frame-sync test.
+
+        Because audio and video are mutually permissive, that made a UTF-16 sign-in page
+        pass `assert_content_kind` as media — defeating the module's entire purpose.
+        """
+        page = b"\xff\xfe" + "<html><body>Sign in</body></html>".encode("utf-16-le")
+        assert sniff_content_family(page) == "html"
+        for kind in ("audio", "video", "image"):
+            with pytest.raises(ContentKindMismatch):
+                assert_content_kind(page, expect_kind=kind)
+
+    @pytest.mark.parametrize("bom,codec", [(b"\xfe\xff", "utf-16-be"), (b"\xff\xfe", "utf-16-le")])
+    def test_utf16_json_is_json_either_endianness(self, bom, codec):
+        assert sniff_content_family(bom + '{"a": 1}'.encode(codec)) == "json"
+
+    def test_a_real_mp3_frame_still_sniffs_as_audio(self):
+        """The tightened sync check must not cost a true positive.
+
+        MPEG-1 Layer III, 128 kbps, 44.1 kHz: \\xff\\xfb\\x90\\x00.
+        """
+        assert sniff_content_family(b"\xff\xfb\x90\x00") == "audio"
+
+    def test_unrecognised_ftyp_brand_is_unknown_not_video(self):
+        """An open-ended registry must not be guessed at.
+
+        Guessing 'video' hard-refuses genuine images, because images are deliberately
+        outside the audio/video ambiguity exemption.
+        """
+        assert sniff_content_family(b"\x00\x00\x00\x18ftypzzzz\x00\x00\x00\x00") is None
+        assert_content_kind(
+            b"\x00\x00\x00\x18ftypzzzz\x00\x00\x00\x00", expect_kind="image"
+        )  # permissive
+
+    def test_canon_cr3_photo_is_an_image(self):
+        assert sniff_content_family(b"\x00\x00\x00\x18ftypcrx \x00\x00\x00\x01") == "image"
+
+    def test_bm_prose_is_not_an_image(self):
+        """'BM' alone matched ordinary text; a BMP also has a plausible size field."""
+        assert sniff_content_family(b"BMW service manual, page 1") is None
+        real_bmp = (
+            b"BM"
+            + (1024).to_bytes(4, "little")  # file size
+            + b"\x00" * 4  # reserved
+            + (54).to_bytes(4, "little")  # pixel-data offset
+        )
+        assert sniff_content_family(real_bmp) == "image"
+
+    @pytest.mark.parametrize(
+        "page",
+        [
+            b'<meta http-equiv="refresh" content="0;url=https://accounts.google.com/signin">',
+            b'<script>window.location="https://accounts.google.com"</script>',
+            b"<title>Sign in - Google Accounts</title>",
+            b"<!DOCTYPE\nhtml>\n<html>",
+            b"<!-- a comment first --><html><body>Sign in</body></html>",
+        ],
+    )
+    def test_interstitials_that_do_not_open_with_html_are_still_html(self, page):
+        """A sign-in page does not reliably start with `<html>`."""
+        assert sniff_content_family(page) == "html"
+        with pytest.raises(ContentKindMismatch):
+            assert_content_kind(page, expect_kind="video")
+
+
+def test_content_kind_doctests():
+    """CI's testpaths is ["tests"], so --doctest-modules never reaches graze/.
+
+    Run the module's doctests explicitly so its examples are actually gated — mirroring
+    tests/test_share_links.py::test_share_links_doctests.
+    """
+    import doctest
+
+    import graze.content_kind
+
+    results = doctest.testmod(
+        graze.content_kind,
+        optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE,
+    )
+    assert results.failed == 0, f"{results.failed} doctest failure(s)"
