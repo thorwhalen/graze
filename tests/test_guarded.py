@@ -64,6 +64,11 @@ class _Handler(http.server.BaseHTTPRequestHandler):
             self.send_header("Connection", "close")
             self.end_headers()
             self.wfile.write(b"x" * 10_000)
+        elif parts.path == "/short":  # promises 1000 bytes, sends 9, hangs up
+            self.send_response(200)
+            self.send_header("Content-Length", "1000")
+            self.end_headers()
+            self.wfile.write(b"only-9-b!")
         elif parts.path == "/missing":
             self._send(404, b"nope")
         else:
@@ -269,6 +274,7 @@ class TestRedirects:
             "Cookie": "sid=1",
             "X-Api-Key": "k",
             "User-Agent": "graze-test",
+            "Range": "bytes=100-",
         }
         same = json.loads(
             guarded_fetch(
@@ -289,6 +295,7 @@ class TestRedirects:
         )
         assert not {"Authorization", "Cookie", "X-Api-Key"} & set(cross)
         assert cross["User-Agent"] == "graze-test"
+        assert cross["Range"] == "bytes=100-"  # a resumed download survives a CDN hop
 
 
 class TestRefusedTargets:
@@ -416,6 +423,18 @@ class TestBudgets:
                 connector=recorder,
                 max_bytes=1000,
             )
+
+    def test_a_body_cut_short_of_its_content_length_is_not_returned(self, recorder):
+        resolver = fixed_resolver({"a.example": [PUBLIC_IP]})
+        with pytest.raises(FetchFailed, match="991 bytes short"):
+            guarded_fetch(
+                "http://a.example/short", resolver=resolver, connector=recorder
+            )
+
+    @pytest.mark.parametrize("timeout", [0, -1, float("inf"), float("nan"), 1e12, None])
+    def test_an_unusable_timeout_is_a_usage_error(self, timeout):
+        with pytest.raises(ValueError, match="timeout"):
+            guarded_fetch("http://a.example/", timeout=timeout)
 
     def test_streaming_respects_the_cap(self, recorder):
         resolver = fixed_resolver({"a.example": [PUBLIC_IP]})

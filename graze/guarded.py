@@ -59,8 +59,8 @@ import socket
 import ssl
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
-from concurrent.futures import TimeoutError as FutureTimeoutError
+import math
+import queue
 from dataclasses import dataclass, field
 from typing import Callable, Iterable, Iterator, Mapping, Optional
 from urllib.parse import urljoin, urlsplit
@@ -103,7 +103,17 @@ DFLT_CHUNK_SIZE = 64 * 1024
 #: The only caller headers that follow a redirect to a different origin. Anything else
 #: (``Authorization``, ``Cookie``, an ``X-Api-Key``...) was meant for the first origin.
 CROSS_ORIGIN_SAFE_HEADERS = frozenset(
-    {"accept", "accept-encoding", "accept-language", "user-agent", "content-type"}
+    {
+        "accept",
+        "accept-encoding",
+        "accept-language",
+        "user-agent",
+        "content-type",
+        "range",  # so a resumed download survives a CDN redirect
+        "if-range",
+        "if-none-match",
+        "if-modified-since",
+    }
 )
 
 _DEFAULT_PORTS = {"http": 80, "https": 443}
@@ -200,15 +210,26 @@ def system_resolver(host: str, port: int) -> list[str]:
 def _resolve_within(resolver: Resolver, host: str, port: int, *, deadline: float):
     """``resolver(host, port)``, given up on when the deadline passes.
 
-    ``getaddrinfo`` takes no timeout, so it runs in a worker thread that is abandoned
-    (not killed — nothing can kill it) if it outlives the budget.
+    ``getaddrinfo`` takes no timeout, so it runs in a daemon thread that is abandoned
+    (not killed — nothing can kill it) if it outlives the budget. A daemon, so an
+    abandoned lookup cannot hold up interpreter exit either.
     """
-    executor = ThreadPoolExecutor(max_workers=1)
+    results: queue.Queue = queue.Queue(maxsize=1)
+
+    def resolve():
+        try:
+            results.put((True, list(resolver(host, port))))
+        except BaseException as e:  # handed to the caller, re-raised there
+            results.put((False, e))
+
+    threading.Thread(target=resolve, daemon=True).start()
     try:
-        future = executor.submit(lambda: list(resolver(host, port)))
-        return future.result(timeout=max(0.0, deadline - time.monotonic()))
-    finally:
-        executor.shutdown(wait=False)
+        ok, value = results.get(timeout=max(0.0, deadline - time.monotonic()))
+    except queue.Empty:
+        raise TimeoutError(f"resolving {host!r} did not finish in time") from None
+    if not ok:
+        raise value
+    return value
 
 
 def _resolve_and_check(
@@ -230,7 +251,7 @@ def _resolve_and_check(
     except ValueError:
         try:
             raw_addresses = _resolve_within(resolver, host, port, deadline=deadline)
-        except FutureTimeoutError as e:
+        except TimeoutError as e:
             raise FetchLimitExceeded(
                 f"resolving {host!r} of {url} ran over the time budget"
             ) from e
@@ -272,23 +293,31 @@ class _Watchdog:
     def watch(self, sock: socket.socket) -> socket.socket:
         with self._lock:
             self._sock = sock
-            fired = self.fired
-        if fired:
-            self._shutdown(sock)
+            if self.fired:
+                self._shutdown(sock)
         return sock
+
+    def release(self) -> None:
+        """Forget the current socket; call it before closing that socket.
+
+        Shutting down and forgetting both happen under the lock, so the timer can never
+        reach a closed socket's file descriptor after the OS has handed it to another.
+        """
+        with self._lock:
+            self._sock = None
 
     def remaining(self) -> float:
         return self.deadline - time.monotonic()
 
     def cancel(self) -> None:
         self._timer.cancel()
+        self.release()
 
     def _fire(self) -> None:
         with self._lock:
             self.fired = True
-            sock = self._sock
-        if sock is not None:
-            self._shutdown(sock)
+            if self._sock is not None:
+                self._shutdown(self._sock)
 
     @staticmethod
     def _shutdown(sock: socket.socket) -> None:
@@ -378,7 +407,9 @@ class GuardedResponse:
     Use it as a context manager, and read it with :meth:`iter_chunks` (streaming) or
     :meth:`read` (everything). Reading past ``max_bytes`` or past the deadline raises
     :class:`FetchLimitExceeded`. ``max_bytes`` counts bytes as they arrive, so a caller
-    who overrides ``Accept-Encoding`` caps the compressed size.
+    who overrides ``Accept-Encoding`` caps the compressed size. The time budget keeps
+    running while the caller handles a chunk, so a slow consumer (writing to a slow
+    disk, say) should ask for a ``timeout`` that covers its own work too.
     """
 
     url: str  #: the final URL, after redirects
@@ -409,6 +440,11 @@ class GuardedResponse:
             if not chunk:
                 if self._watchdog.fired:  # an empty read, but only because we cut it
                     raise self._out_of_time()
+                if self._response.length:  # http.client's count of declared bytes left
+                    raise FetchFailed(
+                        f"{self.url} ended {self._response.length} bytes short of its "
+                        "declared Content-Length"
+                    )
                 return
             self._bytes_read += len(chunk)
             if self._bytes_read > self.max_bytes:
@@ -422,7 +458,7 @@ class GuardedResponse:
         return b"".join(self.iter_chunks())
 
     def close(self) -> None:
-        self._watchdog.cancel()
+        self._watchdog.cancel()  # also releases the socket, before it is closed
         self._response.close()
         self._connection.close()
 
@@ -512,6 +548,14 @@ def guarded_open(
     a body). When a redirect leaves the original origin, only the caller headers in
     :data:`CROSS_ORIGIN_SAFE_HEADERS` go with it.
     """
+    if not (
+        isinstance(timeout, (int, float))
+        and math.isfinite(timeout)
+        and 0 < timeout <= threading.TIMEOUT_MAX
+    ):
+        raise ValueError(
+            f"timeout must be a finite number of seconds > 0, not {timeout!r}"
+        )
     if max_redirects < 0:
         raise ValueError(f"max_redirects must be >= 0, not {max_redirects}")
     allow_schemes = tuple(s.lower() for s in allow_schemes)
@@ -590,9 +634,11 @@ def _open_following_redirects(
             connection.request(method, target.path, body=body, headers=request_headers)
             response = connection.getresponse()
         except GuardedFetchError:
+            watchdog.release()
             connection.close()
             raise
         except (OSError, http.client.HTTPException, ValueError) as e:
+            watchdog.release()
             connection.close()
             if watchdog.fired or isinstance(e, TimeoutError):
                 raise out_of_time() from e
@@ -601,6 +647,7 @@ def _open_following_redirects(
         if response.status in _REDIRECT_STATUSES:
             location = response.getheader("Location")
             response.close()
+            watchdog.release()
             connection.close()
             if not location:
                 raise FetchFailed(f"{current} redirected without a Location")
