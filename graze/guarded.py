@@ -31,6 +31,11 @@ graze.guarded.UnsafeTarget: refusing file:///etc/passwd: scheme 'file' is not al
 :class:`GuardedResponse` to stream from (``iter_chunks``) when the body is large, and
 exposes the final URL, the status, the headers, and the address actually connected to.
 
+``timeout`` is a **wall-clock** budget for the whole fetch — resolution, connection, TLS
+handshake, redirects, headers and body. A per-read socket timeout alone is not one: a
+server trickling a byte just inside it can hold a worker for as long as it likes. So on
+top of the socket timeouts, a watchdog shuts the socket down when the budget runs out.
+
 The seams, all keyword-only:
 
 - ``is_allowed_address`` — the address policy. :func:`default_public_only` by default;
@@ -48,10 +53,14 @@ and the pin would be meaningless.
 from __future__ import annotations
 
 import http.client
+import inspect
 import ipaddress
 import socket
 import ssl
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FutureTimeoutError
 from dataclasses import dataclass, field
 from typing import Callable, Iterable, Iterator, Mapping, Optional
 from urllib.parse import urljoin, urlsplit
@@ -73,11 +82,13 @@ __all__ = [
     "DFLT_TIMEOUT_S",
     "DFLT_MAX_BYTES",
     "DFLT_CHUNK_SIZE",
+    "CROSS_ORIGIN_SAFE_HEADERS",
 ]
 
 IPAddress = ipaddress.IPv4Address | ipaddress.IPv6Address
 AddressPolicy = Callable[[IPAddress], bool]
 Resolver = Callable[[str, int], Iterable[str]]
+#: ``(address, timeout) -> socket``; ``timeout`` is what is left of the budget.
 Connector = Callable[[tuple, float], socket.socket]
 
 DFLT_ALLOWED_SCHEMES = ("https", "http")
@@ -85,20 +96,32 @@ DFLT_ALLOWED_SCHEMES = ("https", "http")
 DFLT_ALLOWED_PORTS = (443, 80)
 DFLT_MAX_REDIRECTS = 5
 #: Wall-clock budget for the whole fetch, redirects and body included, in seconds.
+#: Raise it with ``max_bytes``: the defaults together assume about 1.7 MB/s.
 DFLT_TIMEOUT_S = 30.0
 DFLT_MAX_BYTES = 50 * 1024 * 1024
 DFLT_CHUNK_SIZE = 64 * 1024
+#: The only caller headers that follow a redirect to a different origin. Anything else
+#: (``Authorization``, ``Cookie``, an ``X-Api-Key``...) was meant for the first origin.
+CROSS_ORIGIN_SAFE_HEADERS = frozenset(
+    {"accept", "accept-encoding", "accept-language", "user-agent", "content-type"}
+)
 
 _DEFAULT_PORTS = {"http": 80, "https": 443}
 _REDIRECT_STATUSES = frozenset({301, 302, 303, 307, 308})
-#: Request headers that must not follow a redirect to a different origin.
-_CREDENTIAL_HEADERS = frozenset({"authorization", "proxy-authorization", "cookie"})
-#: IPv6 prefixes that embed an IPv4 address a gateway may translate to (RFC 6052 NAT64,
-#: and the deprecated IPv4-compatible ``::a.b.c.d``). ``ipaddress`` calls some of these
-#: global, so the embedded address is checked as well.
+#: IPv6 prefixes that embed an IPv4 address a gateway may translate to: RFC 6052 NAT64,
+#: SIIT's IPv4-translated ``::ffff:0:a.b.c.d``, and the deprecated IPv4-compatible
+#: ``::a.b.c.d``. ``ipaddress`` calls some of these global, so the embedded address is
+#: checked as well.
 _IPV4_EMBEDDING_PREFIXES = (
     ipaddress.IPv6Network("64:ff9b::/96"),
+    ipaddress.IPv6Network("::ffff:0:0:0/96"),
     ipaddress.IPv6Network("::/96"),
+)
+#: Ranges ``ipaddress`` reports as global that are not ordinary public unicast:
+#: deprecated IPv6 site-local, and the deprecated 6to4 relay anycast.
+_DENIED_NETWORKS = (
+    ipaddress.IPv6Network("fec0::/10"),
+    ipaddress.IPv4Network("192.88.99.0/24"),
 )
 
 
@@ -147,7 +170,7 @@ def default_public_only(ip: IPAddress) -> bool:
 
     Refuses loopback, private, link-local (cloud metadata lives there), carrier-grade
     NAT, reserved, unspecified and multicast addresses. An IPv6 address that embeds an
-    IPv4 one (``::ffff:127.0.0.1``, 6to4, Teredo, NAT64) is judged by the embedded
+    IPv4 one (``::ffff:127.0.0.1``, 6to4, Teredo, NAT64, SIIT) is judged by the embedded
     address too — explicitly, because ``ipaddress`` only learned to look through
     IPv4-mapped addresses in CPython 3.10.14 / 3.11.9 / 3.12.3 (CVE-2024-4032).
 
@@ -163,6 +186,8 @@ def default_public_only(ip: IPAddress) -> bool:
         embedded = _embedded_ipv4(ip)
         if embedded is not None and not default_public_only(embedded):
             return False
+    if any(ip in network for network in _DENIED_NETWORKS):
+        return False
     return ip.is_global and not ip.is_multicast
 
 
@@ -172,9 +197,18 @@ def system_resolver(host: str, port: int) -> list[str]:
     return list(dict.fromkeys(info[4][0] for info in infos))
 
 
-def _parse_address(raw: str) -> IPAddress:
-    # A scoped IPv6 address ('fe80::1%eth0') keeps its zone; ipaddress accepts it.
-    return ipaddress.ip_address(raw)
+def _resolve_within(resolver: Resolver, host: str, port: int, *, deadline: float):
+    """``resolver(host, port)``, given up on when the deadline passes.
+
+    ``getaddrinfo`` takes no timeout, so it runs in a worker thread that is abandoned
+    (not killed — nothing can kill it) if it outlives the budget.
+    """
+    executor = ThreadPoolExecutor(max_workers=1)
+    try:
+        future = executor.submit(lambda: list(resolver(host, port)))
+        return future.result(timeout=max(0.0, deadline - time.monotonic()))
+    finally:
+        executor.shutdown(wait=False)
 
 
 def _resolve_and_check(
@@ -184,6 +218,7 @@ def _resolve_and_check(
     *,
     resolver: Resolver,
     is_allowed_address: AddressPolicy,
+    deadline: float,
 ) -> list[IPAddress]:
     """Resolve ``host`` once and return its addresses, all of which passed the policy.
 
@@ -191,22 +226,78 @@ def _resolve_and_check(
     a private address is exactly what a rebinding attack looks like.
     """
     try:
-        addresses = [_parse_address(host)]  # an IP literal needs no resolution
+        addresses = [ipaddress.ip_address(host)]  # an IP literal needs no resolution
     except ValueError:
         try:
-            raw_addresses = list(resolver(host, port))
+            raw_addresses = _resolve_within(resolver, host, port, deadline=deadline)
+        except FutureTimeoutError as e:
+            raise FetchLimitExceeded(
+                f"resolving {host!r} of {url} ran over the time budget"
+            ) from e
         except (OSError, UnicodeError) as e:
             raise FetchFailed(f"cannot resolve host {host!r} of {url}: {e}") from e
         if not raw_addresses:
             raise FetchFailed(f"host {host!r} of {url} resolved to no address")
         try:
-            addresses = [_parse_address(str(a)) for a in raw_addresses]
+            # A scoped IPv6 address ('fe80::1%eth0') keeps its zone; ipaddress takes it.
+            addresses = [ipaddress.ip_address(str(a)) for a in raw_addresses]
         except ValueError as e:
             raise UnsafeTarget(f"refusing {url}: resolver returned {e}") from e
     for address in addresses:
         if not is_allowed_address(address):
             raise UnsafeTarget(f"refusing {url}: address {address} is not allowed")
     return addresses
+
+
+# --------------------------------------------------------------------------------------
+# The wall-clock budget
+
+
+class _Watchdog:
+    """Shuts the current socket down when the deadline passes, unblocking any read.
+
+    A socket timeout bounds one ``recv``; this bounds them all. Whoever then sees a
+    failed or empty read asks :attr:`fired` to tell "out of time" from "server hung up".
+    """
+
+    def __init__(self, deadline: float):
+        self.deadline = deadline
+        self.fired = False
+        self._sock: Optional[socket.socket] = None
+        self._lock = threading.Lock()
+        self._timer = threading.Timer(max(0.0, deadline - time.monotonic()), self._fire)
+        self._timer.daemon = True
+        self._timer.start()
+
+    def watch(self, sock: socket.socket) -> socket.socket:
+        with self._lock:
+            self._sock = sock
+            fired = self.fired
+        if fired:
+            self._shutdown(sock)
+        return sock
+
+    def remaining(self) -> float:
+        return self.deadline - time.monotonic()
+
+    def cancel(self) -> None:
+        self._timer.cancel()
+
+    def _fire(self) -> None:
+        with self._lock:
+            self.fired = True
+            sock = self._sock
+        if sock is not None:
+            self._shutdown(sock)
+
+    @staticmethod
+    def _shutdown(sock: socket.socket) -> None:
+        try:
+            # The base-class method, so an SSLSocket's TLS state is left alone: only the
+            # file descriptor is shut, which is what a blocked read is waiting on.
+            socket.socket.shutdown(sock, socket.SHUT_RDWR)
+        except (OSError, TypeError):
+            pass
 
 
 # --------------------------------------------------------------------------------------
@@ -219,7 +310,7 @@ def _pinned_connection(
     port: int,
     addresses: list[IPAddress],
     *,
-    timeout: float,
+    watchdog: _Watchdog,
     connector: Connector,
     ssl_context: Optional[ssl.SSLContext],
 ) -> http.client.HTTPConnection:
@@ -228,19 +319,27 @@ def _pinned_connection(
     ``host`` stays the connection's host, so ``http.client`` writes it in the ``Host``
     header and TLS uses it for SNI and certificate verification. Only the socket is
     pinned: it is opened to the first of ``addresses`` that accepts it, which is then
-    recorded as the connection's ``pinned_address``.
+    recorded as the connection's ``pinned_address``. Each attempt gets what is left of
+    the budget, not a fresh one.
     """
 
     def open_pinned_socket(connection) -> socket.socket:
         last_error: Optional[OSError] = None
         for address in addresses:
+            remaining_s = watchdog.remaining()
+            if remaining_s <= 0:
+                break
             try:
-                sock = connector((str(address), port), timeout)
+                sock = connector((str(address), port), remaining_s)
             except OSError as e:
                 last_error = e
                 continue
             connection.pinned_address = str(address)
-            return sock
+            return watchdog.watch(sock)
+        if watchdog.remaining() <= 0:
+            raise FetchLimitExceeded(
+                f"connecting to {host}:{port} ran over the time budget"
+            )
         raise FetchFailed(f"cannot connect to {host}:{port}: {last_error}")
 
     if scheme == "https":
@@ -248,17 +347,20 @@ def _pinned_connection(
 
         class _PinnedHTTPS(http.client.HTTPSConnection):
             def connect(self):
-                self.sock = context.wrap_socket(
-                    open_pinned_socket(self), server_hostname=self.host
+                sock = open_pinned_socket(self)
+                tls = context.wrap_socket(
+                    sock, server_hostname=self.host, do_handshake_on_connect=False
                 )
+                self.sock = watchdog.watch(tls)  # before the handshake can block
+                tls.do_handshake()
 
-        return _PinnedHTTPS(host, port, timeout=timeout, context=context)
+        return _PinnedHTTPS(host, port, timeout=watchdog.remaining(), context=context)
 
     class _PinnedHTTP(http.client.HTTPConnection):
         def connect(self):
             self.sock = open_pinned_socket(self)
 
-    return _PinnedHTTP(host, port, timeout=timeout)
+    return _PinnedHTTP(host, port, timeout=watchdog.remaining())
 
 
 def _default_connector(address: tuple, timeout: float) -> socket.socket:
@@ -275,7 +377,8 @@ class GuardedResponse:
 
     Use it as a context manager, and read it with :meth:`iter_chunks` (streaming) or
     :meth:`read` (everything). Reading past ``max_bytes`` or past the deadline raises
-    :class:`FetchLimitExceeded`.
+    :class:`FetchLimitExceeded`. ``max_bytes`` counts bytes as they arrive, so a caller
+    who overrides ``Accept-Encoding`` caps the compressed size.
     """
 
     url: str  #: the final URL, after redirects
@@ -284,30 +387,28 @@ class GuardedResponse:
     headers: http.client.HTTPMessage
     address: str  #: the IP the socket was actually connected to
     max_bytes: int
-    deadline: float  #: a ``time.monotonic()`` value
     _response: http.client.HTTPResponse = field(repr=False)
     _connection: http.client.HTTPConnection = field(repr=False)
+    _watchdog: _Watchdog = field(repr=False)
     _bytes_read: int = field(default=0, repr=False)
+
+    def _out_of_time(self) -> FetchLimitExceeded:
+        return FetchLimitExceeded(f"fetching {self.url} ran over its time budget")
 
     def iter_chunks(self, chunk_size: int = DFLT_CHUNK_SIZE) -> Iterator[bytes]:
         """Yield the body in chunks of at most ``chunk_size`` bytes, within budget."""
         while True:
-            remaining_s = self.deadline - time.monotonic()
-            if remaining_s <= 0:
-                raise FetchLimitExceeded(
-                    f"fetching {self.url} ran over its time budget"
-                )
-            if self._connection.sock is not None:
-                self._connection.sock.settimeout(remaining_s)
+            if self._watchdog.remaining() <= 0:
+                raise self._out_of_time()
             try:
                 chunk = self._response.read(chunk_size)
-            except TimeoutError as e:
-                raise FetchLimitExceeded(
-                    f"fetching {self.url} ran over its time budget"
-                ) from e
-            except (OSError, http.client.HTTPException) as e:
+            except (OSError, http.client.HTTPException, ValueError) as e:
+                if self._watchdog.fired or isinstance(e, TimeoutError):
+                    raise self._out_of_time() from e
                 raise FetchFailed(f"reading {self.url} failed: {e}") from e
             if not chunk:
+                if self._watchdog.fired:  # an empty read, but only because we cut it
+                    raise self._out_of_time()
                 return
             self._bytes_read += len(chunk)
             if self._bytes_read > self.max_bytes:
@@ -321,6 +422,7 @@ class GuardedResponse:
         return b"".join(self.iter_chunks())
 
     def close(self) -> None:
+        self._watchdog.cancel()
         self._response.close()
         self._connection.close()
 
@@ -335,8 +437,21 @@ class GuardedResponse:
 # The fetch
 
 
-def _check_url(url: str, *, allow_schemes, allow_ports) -> tuple[str, str, int, str]:
-    """``(scheme, host, port, path_and_query)`` of ``url``, or :class:`UnsafeTarget`."""
+@dataclass(frozen=True)
+class _Target:
+    url: str
+    scheme: str
+    host: str
+    port: int
+    path: str  # path and query, as it goes on the request line
+
+    @property
+    def origin(self) -> tuple:
+        return self.scheme, self.host, self.port
+
+
+def _check_url(url: str, *, allow_schemes, allow_ports) -> _Target:
+    """The parsed ``url``, or :class:`UnsafeTarget` if it may not be fetched."""
     try:
         parts = urlsplit(url)
         port = parts.port
@@ -351,19 +466,21 @@ def _check_url(url: str, *, allow_schemes, allow_ports) -> tuple[str, str, int, 
     host = parts.hostname
     if not host:
         raise UnsafeTarget(f"refusing {url}: no host")
-    port = port or _DEFAULT_PORTS[scheme]
+    if port is None:
+        port = _DEFAULT_PORTS[scheme]
     if allow_ports is not None and port not in allow_ports:
         raise UnsafeTarget(f"refusing {url}: port {port} is not allowed")
     path = parts.path or "/"
     if parts.query:
         path = f"{path}?{parts.query}"
-    return scheme, host, port, path
+    return _Target(url, scheme, host, port, path)
 
 
-def _origin(url: str) -> tuple:
-    parts = urlsplit(url)
-    scheme = parts.scheme.lower()
-    return scheme, parts.hostname, parts.port or _DEFAULT_PORTS.get(scheme)
+def _redirect_target(current: str, location: str) -> str:
+    try:
+        return urljoin(current, location).split("#", 1)[0]
+    except ValueError as e:
+        raise UnsafeTarget(f"refusing redirect from {current} to {location!r}: {e}")
 
 
 def guarded_open(
@@ -392,50 +509,93 @@ def guarded_open(
     including reading the body; ``max_bytes`` caps the body.
 
     Redirects follow browser rules (303, and 301/302 after a POST, become a GET without
-    a body), and ``Authorization`` / ``Cookie`` headers are dropped when a redirect
-    leaves the original origin.
+    a body). When a redirect leaves the original origin, only the caller headers in
+    :data:`CROSS_ORIGIN_SAFE_HEADERS` go with it.
     """
+    if max_redirects < 0:
+        raise ValueError(f"max_redirects must be >= 0, not {max_redirects}")
     allow_schemes = tuple(s.lower() for s in allow_schemes)
     allow_ports = None if allow_ports is None else frozenset(allow_ports)
-    deadline = time.monotonic() + timeout
     request_headers = {"Accept-Encoding": "identity", **dict(headers or {})}
-    original_origin = _origin(url)
+    watchdog = _Watchdog(time.monotonic() + timeout)
+    try:
+        return _open_following_redirects(
+            url,
+            method=method,
+            body=body,
+            request_headers=request_headers,
+            allow_schemes=allow_schemes,
+            allow_ports=allow_ports,
+            max_redirects=max_redirects,
+            max_bytes=max_bytes,
+            is_allowed_address=is_allowed_address,
+            resolver=resolver,
+            connector=connector,
+            ssl_context=ssl_context,
+            raise_for_status=raise_for_status,
+            watchdog=watchdog,
+        )
+    except BaseException:
+        watchdog.cancel()
+        raise
+
+
+def _open_following_redirects(
+    url: str,
+    *,
+    method,
+    body,
+    request_headers,
+    allow_schemes,
+    allow_ports,
+    max_redirects,
+    max_bytes,
+    is_allowed_address,
+    resolver,
+    connector,
+    ssl_context,
+    raise_for_status,
+    watchdog: _Watchdog,
+) -> GuardedResponse:
+    original = _check_url(url, allow_schemes=allow_schemes, allow_ports=allow_ports)
     current = url
 
+    def out_of_time():
+        return FetchLimitExceeded(f"fetching {url} ran over its time budget")
+
     for _ in range(max_redirects + 1):
-        scheme, host, port, path = _check_url(
+        target = _check_url(
             current, allow_schemes=allow_schemes, allow_ports=allow_ports
         )
         addresses = _resolve_and_check(
             current,
-            host,
-            port,
+            target.host,
+            target.port,
             resolver=resolver,
             is_allowed_address=is_allowed_address,
+            deadline=watchdog.deadline,
         )
-        remaining_s = deadline - time.monotonic()
-        if remaining_s <= 0:
-            raise FetchLimitExceeded(f"fetching {url} ran over its time budget")
+        if watchdog.remaining() <= 0:
+            raise out_of_time()
         connection = _pinned_connection(
-            scheme,
-            host,
-            port,
+            target.scheme,
+            target.host,
+            target.port,
             addresses,
-            timeout=remaining_s,
+            watchdog=watchdog,
             connector=connector,
             ssl_context=ssl_context,
         )
         try:
-            connection.request(method, path, body=body, headers=request_headers)
+            connection.request(method, target.path, body=body, headers=request_headers)
             response = connection.getresponse()
         except GuardedFetchError:
             connection.close()
             raise
-        except TimeoutError as e:
+        except (OSError, http.client.HTTPException, ValueError) as e:
             connection.close()
-            raise FetchLimitExceeded(f"fetching {url} ran over its time budget") from e
-        except (OSError, http.client.HTTPException) as e:
-            connection.close()
+            if watchdog.fired or isinstance(e, TimeoutError):
+                raise out_of_time() from e
             raise FetchFailed(f"fetching {current} failed: {e}") from e
 
         if response.status in _REDIRECT_STATUSES:
@@ -444,16 +604,19 @@ def guarded_open(
             connection.close()
             if not location:
                 raise FetchFailed(f"{current} redirected without a Location")
-            current = urljoin(current, location).split("#", 1)[0]
+            current = _redirect_target(current, location)
             if response.status == 303 or (
                 response.status in (301, 302) and method.upper() == "POST"
             ):
                 method, body = "GET", None
-            if _origin(current) != original_origin:
+            next_target = _check_url(
+                current, allow_schemes=allow_schemes, allow_ports=allow_ports
+            )
+            if next_target.origin != original.origin:
                 request_headers = {
                     k: v
                     for k, v in request_headers.items()
-                    if k.lower() not in _CREDENTIAL_HEADERS
+                    if k.lower() in CROSS_ORIGIN_SAFE_HEADERS
                 }
             continue
 
@@ -464,9 +627,9 @@ def guarded_open(
             headers=response.headers,
             address=connection.pinned_address,
             max_bytes=max_bytes,
-            deadline=deadline,
             _response=response,
             _connection=connection,
+            _watchdog=watchdog,
         )
         try:
             if raise_for_status and response.status >= 400:
@@ -499,3 +662,8 @@ def guarded_fetch(url: str, **kwargs) -> bytes:
     """
     with guarded_open(url, **kwargs) as response:
         return response.read()
+
+
+guarded_fetch.__signature__ = inspect.signature(guarded_open).replace(
+    return_annotation=bytes
+)

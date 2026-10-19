@@ -13,6 +13,7 @@ import json
 import socket
 import ssl
 import threading
+import time
 from urllib.parse import parse_qs, urlsplit
 
 import pytest
@@ -92,6 +93,50 @@ class Recorder:
     def __call__(self, address, timeout):
         self.dialed.append(address[0])
         return socket.create_connection(("127.0.0.1", self.port), timeout=timeout)
+
+
+class _PlainAsTLS(socket.socket):
+    """A plain socket posing as a TLS one: the handshake is a no-op."""
+
+    def do_handshake(self):
+        pass
+
+
+def trickle_server(head, *, interval, total):
+    """A one-connection server that sends ``head`` then trickles ``total`` bytes slowly.
+
+    Each byte arrives well inside any per-read timeout, which is exactly how a server
+    holds a worker that only has per-read timeouts. Returns ``(port, stop)``.
+    """
+    listener = socket.create_server(("127.0.0.1", 0))
+    stop = threading.Event()
+
+    def serve():
+        conn, _ = listener.accept()
+        with conn:
+            conn.recv(65536)
+            try:
+                conn.sendall(head)
+                for _ in range(total):
+                    if stop.wait(interval):
+                        return
+                    conn.sendall(b"x")
+            except OSError:
+                return
+
+    threading.Thread(target=serve, daemon=True).start()
+
+    def close():
+        stop.set()
+        listener.close()
+
+    return listener.getsockname()[1], close
+
+
+def to_port(port):
+    return lambda address, timeout: socket.create_connection(
+        ("127.0.0.1", port), timeout=timeout
+    )
 
 
 def fixed_resolver(table):
@@ -219,7 +264,12 @@ class TestRedirects:
         resolver = fixed_resolver(
             {"a.example": [PUBLIC_IP], "b.example": [OTHER_PUBLIC_IP]}
         )
-        secret = {"Authorization": "Bearer s3cret", "Cookie": "sid=1", "X-Ok": "1"}
+        secret = {
+            "Authorization": "Bearer s3cret",
+            "Cookie": "sid=1",
+            "X-Api-Key": "k",
+            "User-Agent": "graze-test",
+        }
         same = json.loads(
             guarded_fetch(
                 "http://a.example/redirect?to=/headers",
@@ -237,8 +287,8 @@ class TestRedirects:
                 connector=recorder,
             )
         )
-        assert "Authorization" not in cross and "Cookie" not in cross
-        assert cross["X-Ok"] == "1"
+        assert not {"Authorization", "Cookie", "X-Api-Key"} & set(cross)
+        assert cross["User-Agent"] == "graze-test"
 
 
 class TestRefusedTargets:
@@ -302,6 +352,41 @@ class TestRefusedTargets:
             guarded_fetch("http://a.example:6379/", connector=recorder)
         assert recorder.dialed == []
 
+    @pytest.mark.parametrize(
+        "url", ["http://a.example:99999/", "http://a.example:abc/", "http://[::1/"]
+    )
+    def test_malformed_url_is_an_unsafe_target(self, url):
+        with pytest.raises(UnsafeTarget):
+            guarded_fetch(url)
+
+    def test_malformed_redirect_location_is_an_unsafe_target(self, recorder):
+        resolver = fixed_resolver({"a.example": [PUBLIC_IP]})
+        with pytest.raises(UnsafeTarget):
+            guarded_fetch(
+                "http://a.example/redirect?to=http://a.example:99999/",
+                resolver=resolver,
+                connector=recorder,
+            )
+
+    @pytest.mark.parametrize(
+        "address",
+        [
+            "::ffff:0:7f00:1",  # SIIT IPv4-translated 127.0.0.1
+            "fec0::1",  # deprecated site-local
+            "192.88.99.1",  # deprecated 6to4 relay anycast
+        ],
+    )
+    def test_translated_and_deprecated_ranges_are_refused(self, address):
+        assert not default_public_only(ipaddress.ip_address(address))
+
+    def test_port_zero_is_not_silently_port_80(self, recorder):
+        with pytest.raises(UnsafeTarget, match="port 0"):
+            guarded_fetch("http://a.example:0/", connector=recorder)
+
+    def test_negative_max_redirects_is_a_usage_error(self):
+        with pytest.raises(ValueError, match="max_redirects"):
+            guarded_fetch("http://a.example/", max_redirects=-1)
+
     def test_url_without_host_is_refused(self):
         with pytest.raises(UnsafeTarget, match="no host"):
             guarded_fetch("http:///ok")
@@ -356,6 +441,66 @@ class TestBudgets:
                 )
         finally:
             listener.close()
+
+
+class TestWallClockBudget:
+    """Findings 1-3 of the adversarial review: the budget is for the whole fetch."""
+
+    @pytest.mark.parametrize(
+        "head",
+        [
+            b"",  # headers trickle
+            b"HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n",  # body, no length
+            b"HTTP/1.1 200 OK\r\nContent-Length: 1000\r\n\r\n",  # body, a length
+        ],
+        ids=["slow-headers", "slow-body-close", "slow-body-length"],
+    )
+    def test_a_trickling_server_cannot_outlast_the_budget(self, head):
+        port, close = trickle_server(
+            head or b"HTTP/1.1 200 OK\r\nX: ", interval=0.05, total=1000
+        )
+        start = time.monotonic()
+        try:
+            with pytest.raises(FetchLimitExceeded, match="time budget"):
+                guarded_fetch(
+                    "http://slow.example/",
+                    resolver=fixed_resolver({"slow.example": [PUBLIC_IP]}),
+                    connector=to_port(port),
+                    timeout=0.5,
+                )
+        finally:
+            close()
+        assert time.monotonic() - start < 2
+
+    def test_many_unreachable_addresses_share_one_budget(self):
+        dialed = []
+
+        def hang(address, timeout):
+            dialed.append(address[0])
+            time.sleep(timeout)
+            raise TimeoutError("timed out")
+
+        addresses = [f"93.184.216.{i}" for i in range(1, 9)]
+        start = time.monotonic()
+        with pytest.raises(FetchLimitExceeded, match="time budget"):
+            guarded_fetch(
+                "http://many.example/",
+                resolver=fixed_resolver({"many.example": addresses}),
+                connector=hang,
+                timeout=0.3,
+            )
+        assert time.monotonic() - start < 1
+        assert len(dialed) < len(addresses)
+
+    def test_a_hanging_resolver_runs_out_of_time(self):
+        def hang(host, port):
+            time.sleep(2)
+            return [PUBLIC_IP]
+
+        start = time.monotonic()
+        with pytest.raises(FetchLimitExceeded, match="resolving"):
+            guarded_fetch("http://dns.example/", resolver=hang, timeout=0.2)
+        assert time.monotonic() - start < 1
 
 
 class TestStatusesAndSeams:
@@ -420,9 +565,12 @@ class TestStatusesAndSeams:
             def __init__(self):
                 self.server_hostnames = []
 
-            def wrap_socket(self, sock, server_hostname=None):
+            def wrap_socket(self, sock, server_hostname=None, **kwargs):
                 self.server_hostnames.append(server_hostname)
-                return sock
+                timeout = sock.gettimeout()  # detach() would drop it, as TLS doesn't
+                tls = _PlainAsTLS(fileno=sock.detach())
+                tls.settimeout(timeout)
+                return tls
 
         context = RecordingContext()
         resolver = fixed_resolver({"tls.example": [PUBLIC_IP]})
