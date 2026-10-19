@@ -506,6 +506,28 @@ def resolve_my_host(url):
 add_share_link_resolver("my_host", resolve_my_host)
 ```
 
+## Can I safely fetch a URL that someone else gave me?
+
+Yes, with `guarded_fetch`. A URL from a user, an LLM tool call or a webhook can point at `localhost`, a private network or cloud metadata (`169.254.169.254`): a server-side request forgery. `guarded_fetch` allows only `http`/`https` on ports 80/443, resolves the host **once**, refuses it unless **every** address is public, and then connects to exactly the address it checked (the `Host` header and TLS name stay the original). A DNS answer that changes between the check and the connect (DNS rebinding) therefore changes nothing. Every redirect hop goes through the same check, and the fetch has a wall-clock budget and a byte cap.
+
+```python
+from graze import guarded_fetch, guarded_open, graze
+
+body = guarded_fetch("https://example.com/data.json")  # bytes
+guarded_fetch("http://169.254.169.254/latest/meta-data/")  # raises UnsafeTarget
+
+# Stream a large body, and see where it actually came from
+with guarded_open(url, max_bytes=500 * 2**20, timeout=600) as response:
+    print(response.url, response.address, response.headers["Content-Type"])
+    for chunk in response.iter_chunks():
+        ...
+
+# It is a fetcher like any other, so graze can cache through it
+content = graze(url, source=guarded_fetch)
+```
+
+Everything is a keyword argument: `allow_schemes`, `allow_ports` (`None` for any), `max_redirects`, `timeout`, `max_bytes`, and the seams `is_allowed_address` (the address policy; pass an allow-list to reach a LAN host from a self-hosted deployment), `resolver` (a fake one makes tests offline) and `ssl_context`. It uses the standard library only and ignores proxy settings on purpose, since a proxy would resolve the host itself.
+
 ## How do I use tiny_url?
 
 `tiny_url` is a convenience utility that shortens long URLs, making them easier to work with in demos, notebooks, and testing. It's especially useful when you're working with GitHub raw content URLs or other lengthy URLs.
