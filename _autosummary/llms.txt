@@ -1,0 +1,18 @@
+# graze
+
+> Cache (a tiny part of) the internet
+
+
+## Pages in this subsection
+
+- [graze](graze.html.md): Getting stuff from the internet (and caching locally, automatically)
+- [graze.base](graze.base.html.md): Base functionality
+- [graze.content_kind](graze.content_kind.html.md): What the bytes actually turned out to be — magic-byte sniffing and kind assertion.
+- [graze.graze_exceptional](graze.graze_exceptional.html.md): Exceptional URLs for Graze
+- [graze.guarded](graze.guarded.html.md): Guarded fetch with a pinned transport — an SSRF-safe GET for caller-supplied URLs.
+- [graze.share_links](graze.share_links.html.md): Pure (network-free) resolution of cloud share links to direct-download URLs.
+- [graze.util](graze.util.html.md): | &#96;add_special_url_route&#96;(condition, ...)             | Add a special url route, i.e. a function tha...
+
+## Optional
+
+- [Top-level llms.txt](../llms.txt): Complete documentation index.

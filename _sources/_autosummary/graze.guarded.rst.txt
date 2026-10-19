@@ -1,0 +1,39 @@
+graze.guarded
+=============
+
+.. automodule:: graze.guarded
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      DFLT_ALLOWED_PORTS
+      DFLT_TIMEOUT_S
+      CROSS_ORIGIN_SAFE_HEADERS
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      guarded_fetch
+      guarded_open
+      default_public_only
+      system_resolver
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      GuardedResponse
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      GuardedFetchError
+      UnsafeTarget
+      FetchLimitExceeded
+      FetchFailed
+      HTTPStatusError
+   

@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "built_at": "2026-10-19T12:16:10Z",
+  "package": {
+    "name": "graze",
+    "version": "0.1.44",
+    "display_name": "graze",
+    "source": "pyproject.toml"
+  },
+  "git": {
+    "available": true,
+    "commit": "952ab1d6eb2b69de9553746631ba1e103a43163b",
+    "short_commit": "952ab1d",
+    "branch": "master",
+    "tags": [],
+    "dirty": false,
+    "remote_url": "https://github.com/thorwhalen/graze",
+    "commit_url": "https://github.com/thorwhalen/graze/commit/952ab1d6eb2b69de9553746631ba1e103a43163b",
+    "error": null
+  },
+  "ci": {
+    "provider": "github",
+    "repository": "thorwhalen/graze",
+    "sha": "952ab1d6eb2b69de9553746631ba1e103a43163b",
+    "sha_in_history": true,
+    "ref": "refs/heads/master",
+    "ref_name": "master",
+    "run_id": "39250540853",
+    "run_url": "https://github.com/thorwhalen/graze/actions/runs/39250540853",
+    "server_url": "https://github.com"
+  },
+  "tools": {
+    "epythet": "0.2.18",
+    "sphinx": "9.1.0",
+    "docutils": "0.22.4",
+    "python": "3.12.15"
+  },
+  "config": {
+    "theme": "auto",
+    "html_theme": "furo",
+    "accent": "#006096",
+    "mode": "auto",
+    "api_generator": "autosummary",
+    "ignore": [
+      "tests/",
+      "scrap/",
+      "examples/"
+    ],
+    "agent_outputs": true,
+    "aggregates": [
+      "md"
+    ],
+    "ai_artifacts": true,
+    "provenance": true,
+    "docs_dir": "docsrc"
+  },
+  "site": {
+    "modules_documented": 7,
+    "objects_documented": 82
+  },
+  "pypi": {
+    "checked": true,
+    "latest": "0.1.45",
+    "relation": "behind",
+    "error": null
+  },
+  "reproduce": "git clone https://github.com/thorwhalen/graze && cd graze\ngit checkout 952ab1d6eb2b69de9553746631ba1e103a43163b\npip install \"epythet==0.2.18\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "warnings": [],
+  "alignment": {
+    "aligned": false,
+    "notes": [
+      "The documented version (0.1.44) is behind the latest release on PyPI (0.1.45): `pip install graze` gives newer code than these docs describe."
+    ]
+  }
+}

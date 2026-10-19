@@ -1,0 +1,33 @@
+graze.util
+==========
+
+.. automodule:: graze.util
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      add_special_url_route
+      chks_of_url_contents
+      clog
+      download_from_google_drive
+      download_from_share_link
+      download_from_special_url
+      download_url_contents
+      get_content_size
+      google_drive_download_url
+      handle_missing_dir
+      human_readable_bytes
+      inner_most
+      is_dropbox_url
+      is_google_drive_url
+      is_onedrive_url
+      is_share_url_of
+      is_special_url
+      last_element
+      original_url_of_tiny_url
+      store_trans_path
+      tiny_url
+      url_with_virus_scan_confirmation_token
+   

@@ -1,0 +1,14 @@
+graze.graze\_exceptional
+========================
+
+.. automodule:: graze.graze_exceptional
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      graze_cache
+      add_exception
+      list_exceptions
+   

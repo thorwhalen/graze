@@ -1,0 +1,25 @@
+# graze
+
+> Cache (a tiny part of) the internet
+
+
+## Pages
+
+- [graze](index.html.md): Cache (a tiny part of) the internet.
+- [API reference](api.html.md): | &#96;graze&#96;   | Getting stuff from the internet (and caching locally, automatically)   |
+- [graze](_autosummary/graze.html.md): Getting stuff from the internet (and caching locally, automatically)
+- [graze.base](_autosummary/graze.base.html.md): Base functionality
+- [graze.content_kind](_autosummary/graze.content_kind.html.md): What the bytes actually turned out to be — magic-byte sniffing and kind assertion.
+- [graze.graze_exceptional](_autosummary/graze.graze_exceptional.html.md): Exceptional URLs for Graze
+- [graze.guarded](_autosummary/graze.guarded.html.md): Guarded fetch with a pinned transport — an SSRF-safe GET for caller-supplied URLs.
+- [graze.share_links](_autosummary/graze.share_links.html.md): Pure (network-free) resolution of cloud share links to direct-download URLs.
+- [graze.util](_autosummary/graze.util.html.md): | &#96;add_special_url_route&#96;(condition, ...)             | Add a special url route, i.e. a function tha...
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-10-19 12:16 UTC&#42;&#42; from commit &lt;a href="https://github.com/tho...
+
+## Optional
+
+- [graze.md](graze.md): Complete documentation in a single file.
+
+## Build
+
+- [build_info.json](build_info.json): build provenance (commit, version, tool versions, whether the docs match the package)

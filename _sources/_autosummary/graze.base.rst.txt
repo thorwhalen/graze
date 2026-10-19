@@ -1,0 +1,41 @@
+graze.base
+==========
+
+.. automodule:: graze.base
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      DFLT_URL_TO_CONTENT
+      graze
+      key_egress_print_downloading_message
+      key_egress_print_downloading_message_with_size
+      localpath_to_url
+      return_contents
+      return_filepath
+      selenium_url_to_contents
+      url_to_file_download
+      url_to_filepath
+      url_to_localpath
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Gettable
+      Graze
+      GrazeBase
+      GrazeWithDataRefresh
+      Internet
+      LocalFiles
+      LocalGrazed
+      url_to_contents
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      RequestFailure
+   

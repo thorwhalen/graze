@@ -1,0 +1,39 @@
+graze.share\_links
+==================
+
+.. automodule:: graze.share_links
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      ShareLinkResolver
+      DROPBOX_PATH_KINDS
+      share_link_resolvers
+      PASSTHROUGH_SCHEMES
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      add_share_link_resolver
+      direct_download_url
+      resolve_dropbox
+      resolve_google_drive
+      resolve_onedrive
+      resolve_share_url
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ResolvedShareLink
+      ShareLinkKind
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      ShareLinkResolutionError
+   

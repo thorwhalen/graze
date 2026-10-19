@@ -1,0 +1,26 @@
+graze.content\_kind
+===================
+
+.. automodule:: graze.content_kind
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      SNIFF_BYTES
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      sniff_content_family
+      assert_content_kind
+      kind_checked
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      ContentKindMismatch
+   

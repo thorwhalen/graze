@@ -1,108 +1,273 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+<link rel="alternate" type="text/markdown" href="content_kind.html.md">
+<link rel="describedby" href="../../llms.txt" type="text/markdown"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
+
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>graze.content_kind - graze</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
 
 
-<!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graze.content_kind &mdash; graze 0.1.43 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
-
+<style>
+  body {
+    --color-code-background: #f0f0f0;
+  --color-code-foreground: black;
+  --color-brand-primary: #006096;
+  --color-brand-content: #006096;
   
-      <script src="../../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=a183c34f"></script>
-      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
-      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
-</head>
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #58c4ff;
+  --color-brand-content: #58c4ff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #58c4ff;
+  --color-brand-content: #58c4ff;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
 
-          
-          
-          <a href="../../index.html" class="icon icon-home">
-            graze
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze.html">graze</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/_migration_tools.html">graze._migration_tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/base.html">graze.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/content_kind.html">graze.content_kind</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/graze_exceptional.html">graze.graze_exceptional</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/share_links.html">graze.share_links</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/graze/util.html">graze.util</a></li>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">graze</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">graze</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API reference</a><input aria-label="Toggle navigation of API reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../_autosummary/graze.html">graze</a><input aria-label="Toggle navigation of graze" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/graze.base.html">graze.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/graze.content_kind.html">graze.content_kind</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/graze.graze_exceptional.html">graze.graze_exceptional</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/graze.guarded.html">graze.guarded</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/graze.share_links.html">graze.share_links</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/graze.util.html">graze.util</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">graze</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">graze.content_kind</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
-  </ul>
-  <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <h1>Source code for graze.content_kind</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;What the bytes actually turned out to be — magic-byte sniffing and kind assertion.</span>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for graze.content_kind</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""What the bytes actually turned out to be — magic-byte sniffing and kind assertion.</span>
 
 <span class="sd">:mod:`graze.share_links` answers *what does this link denote* before a fetch. This module</span>
 <span class="sd">answers the question one step later: **what did these bytes turn out to be**, and is that</span>
 <span class="sd">what the caller asked for. Together they close the gap that makes cloud share links</span>
 <span class="sd">treacherous — a share URL commonly answers ``HTTP 200`` with a *web page* (a sign-in</span>
-<span class="sd">interstitial, a preview, a virus-scan warning), so an unguarded fetch &quot;succeeds&quot; and</span>
+<span class="sd">interstitial, a preview, a virus-scan warning), so an unguarded fetch "succeeds" and</span>
 <span class="sd">stores an HTML document as if it were media.</span>
 
 <span class="sd">Three things, in increasing order of usefulness:</span>
 
-<span class="sd">&gt;&gt;&gt; sniff_content_family(b&#39;\\xff\\xd8\\xff\\xe0&#39;)      # what is it?</span>
-<span class="sd">&#39;image&#39;</span>
+<span class="sd">&gt;&gt;&gt; sniff_content_family(b'\\xff\\xd8\\xff\\xe0')      # what is it?</span>
+<span class="sd">'image'</span>
 
-<span class="sd">&gt;&gt;&gt; assert_content_kind(b&#39;&lt;!doctype html&gt;&lt;html&gt;&#39;, expect_kind=&#39;video&#39;)</span>
+<span class="sd">&gt;&gt;&gt; assert_content_kind(b'&lt;!doctype html&gt;&lt;html&gt;', expect_kind='video')</span>
 <span class="sd">Traceback (most recent call last):</span>
 <span class="sd">    ...</span>
 <span class="sd">graze.content_kind.ContentKindMismatch: expected video bytes, got an HTML page...</span>
 
-<span class="sd">&gt;&gt;&gt; list(kind_checked([b&#39;\\x89PNG\\r\\n\\x1a\\n&#39;, b&#39;rest&#39;], expect_kind=&#39;image&#39;))</span>
-<span class="sd">[b&#39;\\x89PNG\\r\\n\\x1a\\nrest&#39;]</span>
+<span class="sd">&gt;&gt;&gt; list(kind_checked([b'\\x89PNG\\r\\n\\x1a\\n', b'rest'], expect_kind='image'))</span>
+<span class="sd">[b'\\x89PNG\\r\\n\\x1a\\nrest']</span>
 
-<span class="sd">:func:`kind_checked` is the one to reach for: it asserts a stream&#39;s head **before any</span>
+<span class="sd">:func:`kind_checked` is the one to reach for: it asserts a stream's head **before any</span>
 <span class="sd">chunk escapes**, so the guard holds for a consumer that writes incrementally, not only for</span>
 <span class="sd">one that buffers.</span>
 
@@ -113,31 +278,31 @@
 <span class="sd">  codec must not be refused merely because this table has not heard of it.</span>
 <span class="sd">- **Audio and video are not distinguished.** Magic bytes identify a *container*, and</span>
 <span class="sd">  ISO-BMFF, Matroska and Ogg all carry audio-only and video streams alike — an audio-only</span>
-<span class="sd">  ``.mp4`` opens with an ``ftyp`` a table cannot tell from a video&#39;s. Deciding needs the</span>
+<span class="sd">  ``.mp4`` opens with an ``ftyp`` a table cannot tell from a video's. Deciding needs the</span>
 <span class="sd">  track list. Refusing on that evidence would reject real audio, which is strictly worse</span>
 <span class="sd">  than declining to catch a mislabelled kind. Images are *not* in that pair; their</span>
 <span class="sd">  signatures are unambiguous.</span>
 
 <span class="sd">This module is dependency-free and network-free, like :mod:`graze.share_links`.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;ContentKindMismatch&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;SNIFF_BYTES&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;sniff_content_family&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;assert_content_kind&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;kind_checked&quot;</span><span class="p">,</span>
+    <span class="s2">"ContentKindMismatch"</span><span class="p">,</span>
+    <span class="s2">"SNIFF_BYTES"</span><span class="p">,</span>
+    <span class="s2">"sniff_content_family"</span><span class="p">,</span>
+    <span class="s2">"assert_content_kind"</span><span class="p">,</span>
+    <span class="s2">"kind_checked"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
 <div class="viewcode-block" id="ContentKindMismatch">
-<a class="viewcode-back" href="../../module_docs/graze/content_kind.html#graze.content_kind.ContentKindMismatch">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/graze.content_kind.html#graze.content_kind.ContentKindMismatch">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ContentKindMismatch</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The fetched bytes are not the kind of thing that was asked for.&quot;&quot;&quot;</span></div>
+<span class="w">    </span><span class="sd">"""The fetched bytes are not the kind of thing that was asked for."""</span></div>
 
 
 
@@ -148,44 +313,44 @@
 
 
 <span class="n">_MAGIC_PREFIXES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x89</span><span class="s2">PNG</span><span class="se">\r\n\x1a\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\xff\xd8\xff</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">),</span>  <span class="c1"># JPEG</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;GIF87a&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;GIF89a&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">),</span>
-    <span class="c1"># BMP is NOT here: its magic is the 2 bytes &quot;BM&quot;, too short to be evidence on its own</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\x89</span><span class="s2">PNG</span><span class="se">\r\n\x1a\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"image"</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\xff\xd8\xff</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"image"</span><span class="p">),</span>  <span class="c1"># JPEG</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"GIF87a"</span><span class="p">,</span> <span class="s2">"image"</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"GIF89a"</span><span class="p">,</span> <span class="s2">"image"</span><span class="p">),</span>
+    <span class="c1"># BMP is NOT here: its magic is the 2 bytes "BM", too short to be evidence on its own</span>
     <span class="c1"># (it matches ordinary prose). See _looks_like_bmp, which checks the size field too.</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;II*</span><span class="se">\x00</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">),</span>  <span class="c1"># TIFF little-endian</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;MM</span><span class="se">\x00</span><span class="s2">*&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">),</span>  <span class="c1"># TIFF big-endian</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x1a\x45\xdf\xa3</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;video&quot;</span><span class="p">),</span>  <span class="c1"># Matroska / WebM</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;FLV</span><span class="se">\x01</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;video&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;ID3&quot;</span><span class="p">,</span> <span class="s2">&quot;audio&quot;</span><span class="p">),</span>  <span class="c1"># MP3 with an ID3 tag</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;fLaC&quot;</span><span class="p">,</span> <span class="s2">&quot;audio&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;OggS&quot;</span><span class="p">,</span> <span class="s2">&quot;audio&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;PK</span><span class="se">\x03\x04</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;archive&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;PK</span><span class="se">\x05\x06</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;archive&quot;</span><span class="p">),</span>  <span class="c1"># empty ZIP</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;Rar!</span><span class="se">\x1a\x07</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;archive&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x1f\x8b</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;archive&quot;</span><span class="p">),</span>  <span class="c1"># gzip</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;7z</span><span class="se">\xbc\xaf\x27\x1c</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;archive&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"II*</span><span class="se">\x00</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"image"</span><span class="p">),</span>  <span class="c1"># TIFF little-endian</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"MM</span><span class="se">\x00</span><span class="s2">*"</span><span class="p">,</span> <span class="s2">"image"</span><span class="p">),</span>  <span class="c1"># TIFF big-endian</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\x1a\x45\xdf\xa3</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"video"</span><span class="p">),</span>  <span class="c1"># Matroska / WebM</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"FLV</span><span class="se">\x01</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"video"</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"ID3"</span><span class="p">,</span> <span class="s2">"audio"</span><span class="p">),</span>  <span class="c1"># MP3 with an ID3 tag</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"fLaC"</span><span class="p">,</span> <span class="s2">"audio"</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"OggS"</span><span class="p">,</span> <span class="s2">"audio"</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"PK</span><span class="se">\x03\x04</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"archive"</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"PK</span><span class="se">\x05\x06</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"archive"</span><span class="p">),</span>  <span class="c1"># empty ZIP</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"Rar!</span><span class="se">\x1a\x07</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"archive"</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\x1f\x8b</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"archive"</span><span class="p">),</span>  <span class="c1"># gzip</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"7z</span><span class="se">\xbc\xaf\x27\x1c</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"archive"</span><span class="p">),</span>
 <span class="p">)</span>
 
 <span class="c1"># ISO base media (``....ftyp&lt;brand&gt;``). The brand, not the container, decides the family:</span>
 <span class="c1"># an .m4a and an .mp4 are the same container.</span>
-<span class="n">_FTYP_AUDIO_BRANDS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="sa">b</span><span class="s2">&quot;M4A &quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;M4B &quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;M4P &quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;F4A &quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;F4B &quot;</span><span class="p">})</span>
+<span class="n">_FTYP_AUDIO_BRANDS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="sa">b</span><span class="s2">"M4A "</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"M4B "</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"M4P "</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"F4A "</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"F4B "</span><span class="p">})</span>
 <span class="n">_FTYP_IMAGE_BRANDS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
     <span class="p">{</span>
-        <span class="sa">b</span><span class="s2">&quot;avif&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;avis&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;heic&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;heix&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;heim&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;heis&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;hevc&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;hevx&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;heif&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;avio&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;mif1&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;msf1&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;crx &quot;</span><span class="p">,</span>  <span class="c1"># Canon CR3 raw photo</span>
+        <span class="sa">b</span><span class="s2">"avif"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"avis"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"heic"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"heix"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"heim"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"heis"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"hevc"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"hevx"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"heif"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"avio"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"mif1"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"msf1"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"crx "</span><span class="p">,</span>  <span class="c1"># Canon CR3 raw photo</span>
     <span class="p">}</span>
 <span class="p">)</span>
 <span class="c1">#: Video brands are listed EXPLICITLY rather than used as the fallback, because the ISO</span>
@@ -193,24 +358,24 @@
 <span class="c1">#: rather than be asserted to be video, which would hard-refuse a genuine image.</span>
 <span class="n">_FTYP_VIDEO_BRANDS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
     <span class="p">{</span>
-        <span class="sa">b</span><span class="s2">&quot;isom&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;iso2&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;iso4&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;iso5&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;iso6&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;mp41&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;mp42&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;avc1&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;qt  &quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;M4V &quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;M4VH&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;M4VP&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;mmp4&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;dash&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;3gp4&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;3gp5&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;3gp6&quot;</span><span class="p">,</span>
-        <span class="sa">b</span><span class="s2">&quot;3g2a&quot;</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"isom"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"iso2"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"iso4"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"iso5"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"iso6"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"mp41"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"mp42"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"avc1"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"qt  "</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"M4V "</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"M4VH"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"M4VP"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"mmp4"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"dash"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"3gp4"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"3gp5"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"3gp6"</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s2">"3g2a"</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">)</span>
 
@@ -219,78 +384,78 @@
 <span class="c1">#: ``&lt;title&gt;`` are all common — so the set is deliberately broader than the obvious two.</span>
 <span class="n">_HTML_ROOT_TAGS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
     <span class="p">{</span>
-        <span class="s2">&quot;html&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;head&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;body&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;meta&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;script&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;title&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;link&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;div&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;span&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;p&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;a&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;table&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;form&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;center&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;frameset&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;noscript&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;style&quot;</span><span class="p">,</span>
+        <span class="s2">"html"</span><span class="p">,</span>
+        <span class="s2">"head"</span><span class="p">,</span>
+        <span class="s2">"body"</span><span class="p">,</span>
+        <span class="s2">"meta"</span><span class="p">,</span>
+        <span class="s2">"script"</span><span class="p">,</span>
+        <span class="s2">"title"</span><span class="p">,</span>
+        <span class="s2">"link"</span><span class="p">,</span>
+        <span class="s2">"div"</span><span class="p">,</span>
+        <span class="s2">"span"</span><span class="p">,</span>
+        <span class="s2">"p"</span><span class="p">,</span>
+        <span class="s2">"a"</span><span class="p">,</span>
+        <span class="s2">"table"</span><span class="p">,</span>
+        <span class="s2">"form"</span><span class="p">,</span>
+        <span class="s2">"center"</span><span class="p">,</span>
+        <span class="s2">"frameset"</span><span class="p">,</span>
+        <span class="s2">"noscript"</span><span class="p">,</span>
+        <span class="s2">"style"</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">)</span>
 
 <span class="c1">#: Markup root elements that are *not* HTML pages, mapped to what they actually are. SVG is</span>
 <span class="c1">#: the load-bearing entry: it is a legitimate image, and classifying it as ``html`` would</span>
 <span class="c1">#: refuse a real asset with an actively misleading diagnosis.</span>
-<span class="n">_MARKUP_ROOT_FAMILIES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;svg&quot;</span><span class="p">:</span> <span class="s2">&quot;image&quot;</span><span class="p">}</span>
+<span class="n">_MARKUP_ROOT_FAMILIES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"svg"</span><span class="p">:</span> <span class="s2">"image"</span><span class="p">}</span>
 
 <span class="c1">#: Byte-order marks that prove a payload is *text*, and the codec to read it with. Checked</span>
 <span class="c1">#: before any binary signature: a UTF-16 BOM (``\xff\xfe``) otherwise trips the MP3</span>
 <span class="c1">#: frame-sync test, and because audio/video are mutually permissive that made a UTF-16</span>
 <span class="c1">#: sign-in page pass as media — defeating the entire point of this module.</span>
 <span class="n">_TEXT_BOMS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00\x00\xfe\xff</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;utf-32-be&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\xff\xfe\x00\x00</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;utf-32-le&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\xef\xbb\xbf</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\xfe\xff</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;utf-16-be&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\xff\xfe</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;utf-16-le&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\x00\x00\xfe\xff</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"utf-32-be"</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\xff\xfe\x00\x00</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"utf-32-le"</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\xef\xbb\xbf</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"utf-8"</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\xfe\xff</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"utf-16-be"</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\xff\xfe</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"utf-16-le"</span><span class="p">),</span>
 <span class="p">)</span>
 
 <span class="c1"># Deliberately only ``{`` and ``[``. A looser rule (``t`` for ``true``, digits for a bare</span>
 <span class="c1"># number) misfires on ordinary text and on binary payloads that happen to start with an</span>
 <span class="c1"># ASCII letter — and a top-level JSON scalar is not a plausible artifact. Under-detecting</span>
 <span class="c1"># JSON costs nothing here: unknown is permissive.</span>
-<span class="n">_JSON_FIRST_BYTES</span> <span class="o">=</span> <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;[&quot;</span><span class="p">)</span>
+<span class="n">_JSON_FIRST_BYTES</span> <span class="o">=</span> <span class="p">(</span><span class="sa">b</span><span class="s2">"{"</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"["</span><span class="p">)</span>
 
 <span class="c1">#: Families a *container* signature genuinely cannot tell apart — see the module docstring.</span>
-<span class="n">_CONTAINER_AMBIGUOUS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="s2">&quot;video&quot;</span><span class="p">})</span>
+<span class="n">_CONTAINER_AMBIGUOUS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"audio"</span><span class="p">,</span> <span class="s2">"video"</span><span class="p">})</span>
 
 
 <div class="viewcode-block" id="sniff_content_family">
-<a class="viewcode-back" href="../../module_docs/graze/content_kind.html#graze.content_kind.sniff_content_family">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/graze.content_kind.html#graze.content_kind.sniff_content_family">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sniff_content_family</span><span class="p">(</span><span class="n">head</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classify the leading bytes of a payload, or ``None`` when unrecognised.</span>
+<span class="w">    </span><span class="sd">"""Classify the leading bytes of a payload, or ``None`` when unrecognised.</span>
 
-<span class="sd">    Returns one of ``&#39;image&#39;``, ``&#39;video&#39;``, ``&#39;audio&#39;``, ``&#39;json&#39;``, ``&#39;html&#39;``,</span>
-<span class="sd">    ``&#39;archive&#39;`` — or ``None``, which means *unknown*, not *bad*.</span>
+<span class="sd">    Returns one of ``'image'``, ``'video'``, ``'audio'``, ``'json'``, ``'html'``,</span>
+<span class="sd">    ``'archive'`` — or ``None``, which means *unknown*, not *bad*.</span>
 
-<span class="sd">    &gt;&gt;&gt; sniff_content_family(b&#39;\\xff\\xd8\\xff\\xe0&#39;)</span>
-<span class="sd">    &#39;image&#39;</span>
-<span class="sd">    &gt;&gt;&gt; sniff_content_family(b&#39;\\x00\\x00\\x00\\x18ftypmp42&#39;)</span>
-<span class="sd">    &#39;video&#39;</span>
-<span class="sd">    &gt;&gt;&gt; sniff_content_family(b&#39;\\x00\\x00\\x00\\x18ftypM4A &#39;)</span>
-<span class="sd">    &#39;audio&#39;</span>
-<span class="sd">    &gt;&gt;&gt; sniff_content_family(b&#39;RIFF\\x24\\x08\\x00\\x00WAVE&#39;)</span>
-<span class="sd">    &#39;audio&#39;</span>
-<span class="sd">    &gt;&gt;&gt; sniff_content_family(b&#39;  \\n&lt;!DOCTYPE HTML PUBLIC&gt;&#39;)</span>
-<span class="sd">    &#39;html&#39;</span>
-<span class="sd">    &gt;&gt;&gt; sniff_content_family(b&#39;PK\\x03\\x04\\x14\\x00&#39;)</span>
-<span class="sd">    &#39;archive&#39;</span>
-<span class="sd">    &gt;&gt;&gt; sniff_content_family(b&#39;{&quot;a&quot;: 1}&#39;)</span>
-<span class="sd">    &#39;json&#39;</span>
-<span class="sd">    &gt;&gt;&gt; sniff_content_family(b&#39;\\x00\\x01\\x02\\x03&#39;) is None</span>
+<span class="sd">    &gt;&gt;&gt; sniff_content_family(b'\\xff\\xd8\\xff\\xe0')</span>
+<span class="sd">    'image'</span>
+<span class="sd">    &gt;&gt;&gt; sniff_content_family(b'\\x00\\x00\\x00\\x18ftypmp42')</span>
+<span class="sd">    'video'</span>
+<span class="sd">    &gt;&gt;&gt; sniff_content_family(b'\\x00\\x00\\x00\\x18ftypM4A ')</span>
+<span class="sd">    'audio'</span>
+<span class="sd">    &gt;&gt;&gt; sniff_content_family(b'RIFF\\x24\\x08\\x00\\x00WAVE')</span>
+<span class="sd">    'audio'</span>
+<span class="sd">    &gt;&gt;&gt; sniff_content_family(b'  \\n&lt;!DOCTYPE HTML PUBLIC&gt;')</span>
+<span class="sd">    'html'</span>
+<span class="sd">    &gt;&gt;&gt; sniff_content_family(b'PK\\x03\\x04\\x14\\x00')</span>
+<span class="sd">    'archive'</span>
+<span class="sd">    &gt;&gt;&gt; sniff_content_family(b'{"a": 1}')</span>
+<span class="sd">    'json'</span>
+<span class="sd">    &gt;&gt;&gt; sniff_content_family(b'\\x00\\x01\\x02\\x03') is None</span>
 <span class="sd">    True</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">head</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="c1"># A byte-order mark PROVES text, so it is checked before every binary signature. Doing</span>
@@ -300,53 +465,53 @@
     <span class="c1"># exists to prevent, so the BOM check goes first.</span>
     <span class="k">for</span> <span class="n">bom</span><span class="p">,</span> <span class="n">codec</span> <span class="ow">in</span> <span class="n">_TEXT_BOMS</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">head</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">bom</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">_classify_text</span><span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">bom</span><span class="p">)</span> <span class="p">:]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">codec</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">_classify_text</span><span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">bom</span><span class="p">)</span> <span class="p">:]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">codec</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"replace"</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">family</span> <span class="ow">in</span> <span class="n">_MAGIC_PREFIXES</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">head</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">family</span>
-    <span class="k">if</span> <span class="n">head</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;BM&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_looks_like_bmp</span><span class="p">(</span><span class="n">head</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;image&quot;</span>
+    <span class="k">if</span> <span class="n">head</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s2">"BM"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_looks_like_bmp</span><span class="p">(</span><span class="n">head</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"image"</span>
     <span class="c1"># RIFF containers carry the family in bytes 8..12.</span>
-    <span class="k">if</span> <span class="n">head</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;RIFF&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">head</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">12</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">head</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s2">"RIFF"</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">head</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">12</span><span class="p">:</span>
         <span class="n">form</span> <span class="o">=</span> <span class="n">head</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">form</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;WAVE&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;audio&quot;</span>
-        <span class="k">if</span> <span class="n">form</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;WEBP&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;image&quot;</span>
-        <span class="k">if</span> <span class="n">form</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;AVI &quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;video&quot;</span>
+        <span class="k">if</span> <span class="n">form</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">"WAVE"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"audio"</span>
+        <span class="k">if</span> <span class="n">form</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">"WEBP"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"image"</span>
+        <span class="k">if</span> <span class="n">form</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">"AVI "</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"video"</span>
     <span class="c1"># ISO base media: ``....ftyp&lt;brand&gt;``. An UNRECOGNISED brand returns None rather than</span>
-    <span class="c1"># guessing &#39;video&#39;: the brand registry is open-ended, images are excluded from the</span>
-    <span class="c1"># audio/video ambiguity exemption, and so a wrong guess of &#39;video&#39; HARD-REFUSES a</span>
+    <span class="c1"># guessing 'video': the brand registry is open-ended, images are excluded from the</span>
+    <span class="c1"># audio/video ambiguity exemption, and so a wrong guess of 'video' HARD-REFUSES a</span>
     <span class="c1"># genuine image (a Canon CR3 photo is `ftypcrx `). Unknown must stay permissive.</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">head</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">12</span> <span class="ow">and</span> <span class="n">head</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;ftyp&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">head</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">12</span> <span class="ow">and</span> <span class="n">head</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">"ftyp"</span><span class="p">:</span>
         <span class="n">brand</span> <span class="o">=</span> <span class="n">head</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">brand</span> <span class="ow">in</span> <span class="n">_FTYP_AUDIO_BRANDS</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;audio&quot;</span>
+            <span class="k">return</span> <span class="s2">"audio"</span>
         <span class="k">if</span> <span class="n">brand</span> <span class="ow">in</span> <span class="n">_FTYP_IMAGE_BRANDS</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;image&quot;</span>
+            <span class="k">return</span> <span class="s2">"image"</span>
         <span class="k">if</span> <span class="n">brand</span> <span class="ow">in</span> <span class="n">_FTYP_VIDEO_BRANDS</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;video&quot;</span>
+            <span class="k">return</span> <span class="s2">"video"</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">_looks_like_mp3_frame</span><span class="p">(</span><span class="n">head</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;audio&quot;</span>
-    <span class="k">return</span> <span class="n">_classify_text</span><span class="p">(</span><span class="n">head</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="s2">"audio"</span>
+    <span class="k">return</span> <span class="n">_classify_text</span><span class="p">(</span><span class="n">head</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"replace"</span><span class="p">))</span></div>
 
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_looks_like_bmp</span><span class="p">(</span><span class="n">head</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;True iff ``head`` is a BMP, checked past the 2-byte ``BM`` magic.</span>
+<span class="w">    </span><span class="sd">"""True iff ``head`` is a BMP, checked past the 2-byte ``BM`` magic.</span>
 
-<span class="sd">    ``BM`` alone is far too short to be evidence — it matches ordinary prose (&quot;BMW service</span>
-<span class="sd">    manual&quot;). The file-size field at 2..6 is not enough either: that phrase&#39;s bytes there</span>
+<span class="sd">    ``BM`` alone is far too short to be evidence — it matches ordinary prose ("BMW service</span>
+<span class="sd">    manual"). The file-size field at 2..6 is not enough either: that phrase's bytes there</span>
 <span class="sd">    decode to a perfectly plausible 1.7 GB. The **pixel-data offset** at 10..14 is what</span>
 <span class="sd">    settles it — in a real BMP it is a small header offset (54 for the common</span>
 <span class="sd">    BITMAPINFOHEADER, more with a palette), and text almost never lands in that range.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">head</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">14</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
-    <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="s2">&quot;little&quot;</span><span class="p">)</span>
-    <span class="n">data_offset</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">14</span><span class="p">],</span> <span class="s2">&quot;little&quot;</span><span class="p">)</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="s2">"little"</span><span class="p">)</span>
+    <span class="n">data_offset</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">14</span><span class="p">],</span> <span class="s2">"little"</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="mi">26</span> <span class="o">&lt;=</span> <span class="n">size</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">31</span><span class="p">)</span>  <span class="c1"># 26 = smallest possible BMP (header + 1 pixel)</span>
         <span class="ow">and</span> <span class="mi">14</span> <span class="o">&lt;=</span> <span class="n">data_offset</span> <span class="o">&lt;=</span> <span class="mi">4096</span>  <span class="c1"># header + at most a 1024-entry palette</span>
@@ -355,12 +520,12 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_looks_like_mp3_frame</span><span class="p">(</span><span class="n">head</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;True iff ``head`` opens with a plausible MPEG audio frame header.</span>
+<span class="w">    </span><span class="sd">"""True iff ``head`` opens with a plausible MPEG audio frame header.</span>
 
 <span class="sd">    The 11-bit sync word alone is not enough — it matches a UTF-16 BOM, among other things.</span>
 <span class="sd">    Reserved values in the version, layer, bitrate-index and sampling-rate-index fields are</span>
 <span class="sd">    all rejected, which is what separates a real frame from a coincidence.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">head</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">head</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mh">0xFF</span> <span class="ow">or</span> <span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0xE0</span><span class="p">)</span> <span class="o">!=</span> <span class="mh">0xE0</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="n">version</span> <span class="o">=</span> <span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mb">0b11</span>
@@ -370,81 +535,81 @@
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">version</span> <span class="o">!=</span> <span class="mb">0b01</span>  <span class="c1"># reserved MPEG version</span>
         <span class="ow">and</span> <span class="n">layer</span> <span class="o">!=</span> <span class="mb">0b00</span>  <span class="c1"># reserved layer</span>
-        <span class="ow">and</span> <span class="n">bitrate_index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mb">0b0000</span><span class="p">,</span> <span class="mb">0b1111</span><span class="p">)</span>  <span class="c1"># &#39;free&#39; and &#39;bad&#39;</span>
+        <span class="ow">and</span> <span class="n">bitrate_index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mb">0b0000</span><span class="p">,</span> <span class="mb">0b1111</span><span class="p">)</span>  <span class="c1"># 'free' and 'bad'</span>
         <span class="ow">and</span> <span class="n">sampling_index</span> <span class="o">!=</span> <span class="mb">0b11</span>  <span class="c1"># reserved sampling rate</span>
     <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_classify_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classify an already-decoded payload as ``&#39;html&#39;``, ``&#39;image&#39;``, ``&#39;json&#39;`` or None.</span>
+<span class="w">    </span><span class="sd">"""Classify an already-decoded payload as ``'html'``, ``'image'``, ``'json'`` or None.</span>
 
 <span class="sd">    Markup is classified by its **root element**, not by a fixed list of opening byte</span>
 <span class="sd">    strings. An XML declaration and comments are skipped first, so ``&lt;?xml ...?&gt;&lt;svg&gt;`` and</span>
 <span class="sd">    a bare ``&lt;svg&gt;`` agree — the older prefix rule called the former ``html`` and refused a</span>
 <span class="sd">    legitimate SVG image with a diagnosis about share-link permissions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">text</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;[&quot;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;json&quot;</span>
-    <span class="k">if</span> <span class="n">text</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&lt;&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">text</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"{"</span><span class="p">,</span> <span class="s2">"["</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"json"</span>
+    <span class="k">if</span> <span class="n">text</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">"&lt;"</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="n">text</span><span class="p">[:</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&lt;!doctype&quot;</span><span class="p">:</span>
-        <span class="c1"># Tolerant of any whitespace run, unlike a literal &#39;&lt;!doctype html&#39; prefix match.</span>
+    <span class="k">if</span> <span class="n">text</span><span class="p">[:</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"&lt;!doctype"</span><span class="p">:</span>
+        <span class="c1"># Tolerant of any whitespace run, unlike a literal '&lt;!doctype html' prefix match.</span>
         <span class="n">rest</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="k">return</span> <span class="s2">&quot;html&quot;</span> <span class="k">if</span> <span class="n">rest</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;html&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="s2">"html"</span> <span class="k">if</span> <span class="n">rest</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"html"</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
     <span class="n">body</span> <span class="o">=</span> <span class="n">_strip_markup_preamble</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="n">tag</span> <span class="o">=</span> <span class="n">_root_tag_name</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">tag</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">_MARKUP_ROOT_FAMILIES</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_MARKUP_ROOT_FAMILIES</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span>
-    <span class="k">return</span> <span class="s2">&quot;html&quot;</span> <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">_HTML_ROOT_TAGS</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="s2">"html"</span> <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">_HTML_ROOT_TAGS</span> <span class="k">else</span> <span class="kc">None</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_strip_markup_preamble</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Drop a leading XML declaration, processing instructions, comments and doctype.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Drop a leading XML declaration, processing instructions, comments and doctype."""</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&lt;?&quot;</span><span class="p">):</span>
-            <span class="n">end</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;?&gt;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"&lt;?"</span><span class="p">):</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"?&gt;"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">end</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">return</span> <span class="s2">""</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">end</span> <span class="o">+</span> <span class="mi">2</span> <span class="p">:]</span>
-        <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&lt;!--&quot;</span><span class="p">):</span>
-            <span class="n">end</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;--&gt;&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"&lt;!--"</span><span class="p">):</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"--&gt;"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">end</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">return</span> <span class="s2">""</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">end</span> <span class="o">+</span> <span class="mi">3</span> <span class="p">:]</span>
-        <span class="k">elif</span> <span class="n">text</span><span class="p">[:</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&lt;!doctype&quot;</span><span class="p">:</span>
-            <span class="n">end</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">text</span><span class="p">[:</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"&lt;!doctype"</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"&gt;"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">end</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">return</span> <span class="s2">""</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">text</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_root_tag_name</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The lowercased name of the first element in ``text``, or None.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The lowercased name of the first element in ``text``, or None."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"&lt;"</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="n">name</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">text</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-        <span class="k">if</span> <span class="n">ch</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()</span> <span class="ow">or</span> <span class="n">ch</span> <span class="ow">in</span> <span class="s2">&quot;-_:&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ch</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()</span> <span class="ow">or</span> <span class="n">ch</span> <span class="ow">in</span> <span class="s2">"-_:"</span><span class="p">:</span>
             <span class="n">name</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">break</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">rpartition</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># drop any namespace prefix</span>
+    <span class="k">return</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">rpartition</span><span class="p">(</span><span class="s2">":"</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># drop any namespace prefix</span>
 
 
 <div class="viewcode-block" id="assert_content_kind">
-<a class="viewcode-back" href="../../module_docs/graze/content_kind.html#graze.content_kind.assert_content_kind">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/graze.content_kind.html#graze.content_kind.assert_content_kind">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">assert_content_kind</span><span class="p">(</span>
     <span class="n">head</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">expect_kind</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise :class:`ContentKindMismatch` unless ``head`` looks like ``expect_kind``.</span>
+<span class="w">    </span><span class="sd">"""Raise :class:`ContentKindMismatch` unless ``head`` looks like ``expect_kind``.</span>
 
 <span class="sd">    The rule, branch by branch:</span>
 
@@ -454,7 +619,7 @@
 <span class="sd">    - an **archive** is refused with a message naming it, because that is what a *folder*</span>
 <span class="sd">      share link resolves to (see :class:`graze.share_links.ShareLinkKind` ``ARCHIVE``);</span>
 <span class="sd">    - a recognised media family that **disagrees** with ``expect_kind`` is refused — the</span>
-<span class="sd">      assertion is against what was asked for, not merely against &quot;not a web page&quot;;</span>
+<span class="sd">      assertion is against what was asked for, not merely against "not a web page";</span>
 <span class="sd">    - **except audio against video**, allowed both ways (see the module docstring);</span>
 <span class="sd">    - an **unrecognised** payload passes.</span>
 
@@ -464,46 +629,46 @@
 <span class="sd">        url: Included in the message when given, so an operator can tell *which* fetch was</span>
 <span class="sd">            refused without correlating logs.</span>
 
-<span class="sd">    &gt;&gt;&gt; assert_content_kind(b&#39;\\x89PNG\\r\\n\\x1a\\n&#39;, expect_kind=&#39;image&#39;)  # passes</span>
-<span class="sd">    &gt;&gt;&gt; assert_content_kind(b&#39;\\x00\\x00\\x00\\x18ftypisom&#39;, expect_kind=&#39;audio&#39;)  # ambiguous, passes</span>
-<span class="sd">    &gt;&gt;&gt; assert_content_kind(b&#39;PK\\x03\\x04&#39;, expect_kind=&#39;video&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; assert_content_kind(b'\\x89PNG\\r\\n\\x1a\\n', expect_kind='image')  # passes</span>
+<span class="sd">    &gt;&gt;&gt; assert_content_kind(b'\\x00\\x00\\x00\\x18ftypisom', expect_kind='audio')  # ambiguous, passes</span>
+<span class="sd">    &gt;&gt;&gt; assert_content_kind(b'PK\\x03\\x04', expect_kind='video')</span>
 <span class="sd">    Traceback (most recent call last):</span>
 <span class="sd">        ...</span>
 <span class="sd">    graze.content_kind.ContentKindMismatch: expected video bytes, got an archive...</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">family</span> <span class="o">=</span> <span class="n">sniff_content_family</span><span class="p">(</span><span class="n">head</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">family</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">family</span> <span class="o">==</span> <span class="n">expect_kind</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="k">if</span> <span class="n">family</span> <span class="ow">in</span> <span class="n">_CONTAINER_AMBIGUOUS</span> <span class="ow">and</span> <span class="n">expect_kind</span> <span class="ow">in</span> <span class="n">_CONTAINER_AMBIGUOUS</span><span class="p">:</span>
         <span class="k">return</span>
-    <span class="n">where</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; from </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">url</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">family</span> <span class="o">==</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span>
+    <span class="n">where</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" from </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">url</span> <span class="k">else</span> <span class="s2">""</span>
+    <span class="k">if</span> <span class="n">family</span> <span class="o">==</span> <span class="s2">"html"</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">ContentKindMismatch</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;expected </span><span class="si">{</span><span class="n">expect_kind</span><span class="si">}</span><span class="s2"> bytes</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">, got an HTML page. The server answered &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;with a web page (an error, login or preview page) rather than the media &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;itself — refusing to store it as a </span><span class="si">{</span><span class="n">expect_kind</span><span class="si">}</span><span class="s2">. The usual cause is a &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;share link that is not public: set it to anyone-with-the-link, or use a &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;direct-download URL.&quot;</span>
+            <span class="sa">f</span><span class="s2">"expected </span><span class="si">{</span><span class="n">expect_kind</span><span class="si">}</span><span class="s2"> bytes</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">, got an HTML page. The server answered "</span>
+            <span class="sa">f</span><span class="s2">"with a web page (an error, login or preview page) rather than the media "</span>
+            <span class="sa">f</span><span class="s2">"itself — refusing to store it as a </span><span class="si">{</span><span class="n">expect_kind</span><span class="si">}</span><span class="s2">. The usual cause is a "</span>
+            <span class="sa">f</span><span class="s2">"share link that is not public: set it to anyone-with-the-link, or use a "</span>
+            <span class="sa">f</span><span class="s2">"direct-download URL."</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="n">family</span> <span class="o">==</span> <span class="s2">&quot;archive&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">family</span> <span class="o">==</span> <span class="s2">"archive"</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">ContentKindMismatch</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;expected </span><span class="si">{</span><span class="n">expect_kind</span><span class="si">}</span><span class="s2"> bytes</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">, got an archive (ZIP/gzip). A folder &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;share link downloads as a single archive of many files — expand it into one &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;asset per member, or share the individual file instead.&quot;</span>
+            <span class="sa">f</span><span class="s2">"expected </span><span class="si">{</span><span class="n">expect_kind</span><span class="si">}</span><span class="s2"> bytes</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">, got an archive (ZIP/gzip). A folder "</span>
+            <span class="sa">f</span><span class="s2">"share link downloads as a single archive of many files — expand it into one "</span>
+            <span class="sa">f</span><span class="s2">"asset per member, or share the individual file instead."</span>
         <span class="p">)</span>
     <span class="k">raise</span> <span class="n">ContentKindMismatch</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;expected </span><span class="si">{</span><span class="n">expect_kind</span><span class="si">}</span><span class="s2"> bytes</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">family</span><span class="si">}</span><span class="s2"> — refusing to store it under &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;the wrong kind.&quot;</span>
+        <span class="sa">f</span><span class="s2">"expected </span><span class="si">{</span><span class="n">expect_kind</span><span class="si">}</span><span class="s2"> bytes</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">family</span><span class="si">}</span><span class="s2"> — refusing to store it under "</span>
+        <span class="sa">f</span><span class="s2">"the wrong kind."</span>
     <span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="kind_checked">
-<a class="viewcode-back" href="../../module_docs/graze/content_kind.html#graze.content_kind.kind_checked">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/graze.content_kind.html#graze.content_kind.kind_checked">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">kind_checked</span><span class="p">(</span>
     <span class="n">chunks</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">expect_kind</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap a byte stream so its head is asserted **before any chunk escapes**.</span>
+<span class="w">    </span><span class="sd">"""Wrap a byte stream so its head is asserted **before any chunk escapes**.</span>
 
 <span class="sd">    Buffers until it holds at least :data:`SNIFF_BYTES`, runs :func:`assert_content_kind`,</span>
 <span class="sd">    and only then starts yielding. Checking before yielding — rather than after the stream</span>
@@ -514,22 +679,22 @@
 <span class="sd">    the length is checked after appending, so a producer that hands over one enormous chunk</span>
 <span class="sd">    has it held whole. That is not avoidable (the bytes are already in memory by then) and</span>
 <span class="sd">    is harmless for the chunked readers this is meant for, but it means the bound is a</span>
-<span class="sd">    function of the producer&#39;s chunk size, not of :data:`SNIFF_BYTES` alone. A stream whose</span>
+<span class="sd">    function of the producer's chunk size, not of :data:`SNIFF_BYTES` alone. A stream whose</span>
 <span class="sd">    *total* is under :data:`SNIFF_BYTES` is likewise drained completely.</span>
 
 <span class="sd">    The bytes are preserved exactly; only the *chunking* changes, since the head is</span>
 <span class="sd">    re-emitted as one buffered piece:</span>
 
-<span class="sd">    &gt;&gt;&gt; list(kind_checked([b&#39;\\x89PNG\\r\\n\\x1a\\n&#39;, b&#39;rest&#39;], expect_kind=&#39;image&#39;))</span>
-<span class="sd">    [b&#39;\\x89PNG\\r\\n\\x1a\\nrest&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; list(kind_checked([b'\\x89PNG\\r\\n\\x1a\\n', b'rest'], expect_kind='image'))</span>
+<span class="sd">    [b'\\x89PNG\\r\\n\\x1a\\nrest']</span>
 
 <span class="sd">    A bad stream raises before anything is yielded, so a partial file is never written:</span>
 
-<span class="sd">    &gt;&gt;&gt; next(kind_checked([b&#39;&lt;html&gt;&lt;body&gt;nope&#39;], expect_kind=&#39;video&#39;))</span>
+<span class="sd">    &gt;&gt;&gt; next(kind_checked([b'&lt;html&gt;&lt;body&gt;nope'], expect_kind='video'))</span>
 <span class="sd">    Traceback (most recent call last):</span>
 <span class="sd">        ...</span>
 <span class="sd">    graze.content_kind.ContentKindMismatch: expected video bytes, got an HTML page...</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">head</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
     <span class="n">stream</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
@@ -542,32 +707,396 @@
     <span class="k">yield from</span> <span class="n">stream</span></div>
 
 </pre></div>
-
-           </div>
-          </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p></p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
-        </div>
+        </article>
       </div>
-    </section>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            Made with 
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
   </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+</div><script src="../../_static/documentation_options.js?v=aaf63c28"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
 
-</body>
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    </body>
 </html>

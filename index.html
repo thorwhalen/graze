@@ -1,209 +1,873 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="alternate" type="text/markdown" href="index.html.md">
+<link rel="describedby" href="llms.txt" type="text/markdown">
+<link rel="alternate" type="text/markdown" href="index.html.md">
+<link rel="describedby" href="llms.txt"><link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="API reference" href="api.html">
+
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>graze</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
 
 
-<!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to graze’s documentation! &mdash; graze 0.1.43 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
-
+<style>
+  body {
+    --color-code-background: #f0f0f0;
+  --color-code-foreground: black;
+  --color-brand-primary: #006096;
+  --color-brand-content: #006096;
   
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=a183c34f"></script>
-      <script src="_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
-      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="graze" href="module_docs/graze.html" /> 
-</head>
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #58c4ff;
+  --color-brand-content: #58c4ff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #58c4ff;
+  --color-brand-content: #58c4ff;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
 
-          
-          
-          <a href="#" class="icon icon-home">
-            graze
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze.html">graze</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze/_migration_tools.html">graze._migration_tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze/base.html">graze.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze/content_kind.html">graze.content_kind</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze/graze_exceptional.html">graze.graze_exceptional</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze/share_links.html">graze.share_links</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze/util.html">graze.util</a></li>
-</ul>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">graze</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Welcome to graze’s documentation!</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="welcome-to-graze-s-documentation">
-<h1>Welcome to graze’s documentation!<a class="headerlink" href="#welcome-to-graze-s-documentation" title="Link to this heading"></a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze.html">graze</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze/_migration_tools.html">graze._migration_tools</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/_migration_tools.html#graze._migration_tools.LocalGrazedVersion01"><code class="docutils literal notranslate"><span class="pre">LocalGrazedVersion01</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/_migration_tools.html#graze._migration_tools.LocalGrazedVersion02"><code class="docutils literal notranslate"><span class="pre">LocalGrazedVersion02</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/_migration_tools.html#graze._migration_tools.change_files_to_new_url_to_filepath_format"><code class="docutils literal notranslate"><span class="pre">change_files_to_new_url_to_filepath_format()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze/base.html">graze.base</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.Gettable"><code class="docutils literal notranslate"><span class="pre">Gettable</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.Graze"><code class="docutils literal notranslate"><span class="pre">Graze</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.GrazeBase"><code class="docutils literal notranslate"><span class="pre">GrazeBase</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.GrazeWithDataRefresh"><code class="docutils literal notranslate"><span class="pre">GrazeWithDataRefresh</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.LocalFiles"><code class="docutils literal notranslate"><span class="pre">LocalFiles</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.LocalGrazed"><code class="docutils literal notranslate"><span class="pre">LocalGrazed</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.RequestFailure"><code class="docutils literal notranslate"><span class="pre">RequestFailure</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.graze"><code class="docutils literal notranslate"><span class="pre">graze()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.localpath_to_url"><code class="docutils literal notranslate"><span class="pre">localpath_to_url()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.selenium_url_to_contents"><code class="docutils literal notranslate"><span class="pre">selenium_url_to_contents()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.url_to_contents"><code class="docutils literal notranslate"><span class="pre">url_to_contents</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.url_to_file_download"><code class="docutils literal notranslate"><span class="pre">url_to_file_download()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.url_to_filepath"><code class="docutils literal notranslate"><span class="pre">url_to_filepath()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/base.html#graze.base.url_to_localpath"><code class="docutils literal notranslate"><span class="pre">url_to_localpath()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze/content_kind.html">graze.content_kind</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/content_kind.html#graze.content_kind.ContentKindMismatch"><code class="docutils literal notranslate"><span class="pre">ContentKindMismatch</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/content_kind.html#graze.content_kind.SNIFF_BYTES"><code class="docutils literal notranslate"><span class="pre">SNIFF_BYTES</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/content_kind.html#graze.content_kind.assert_content_kind"><code class="docutils literal notranslate"><span class="pre">assert_content_kind()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/content_kind.html#graze.content_kind.kind_checked"><code class="docutils literal notranslate"><span class="pre">kind_checked()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/content_kind.html#graze.content_kind.sniff_content_family"><code class="docutils literal notranslate"><span class="pre">sniff_content_family()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze/graze_exceptional.html">graze.graze_exceptional</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/graze_exceptional.html#graze.graze_exceptional.add_exception"><code class="docutils literal notranslate"><span class="pre">add_exception()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/graze_exceptional.html#graze.graze_exceptional.graze_cache"><code class="docutils literal notranslate"><span class="pre">graze_cache()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/graze_exceptional.html#graze.graze_exceptional.list_exceptions"><code class="docutils literal notranslate"><span class="pre">list_exceptions()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze/share_links.html">graze.share_links</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/share_links.html#graze.share_links.DROPBOX_PATH_KINDS"><code class="docutils literal notranslate"><span class="pre">DROPBOX_PATH_KINDS</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/share_links.html#graze.share_links.PASSTHROUGH_SCHEMES"><code class="docutils literal notranslate"><span class="pre">PASSTHROUGH_SCHEMES</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/share_links.html#graze.share_links.ResolvedShareLink"><code class="docutils literal notranslate"><span class="pre">ResolvedShareLink</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/share_links.html#graze.share_links.ShareLinkKind"><code class="docutils literal notranslate"><span class="pre">ShareLinkKind</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/share_links.html#graze.share_links.ShareLinkResolutionError"><code class="docutils literal notranslate"><span class="pre">ShareLinkResolutionError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/share_links.html#graze.share_links.ShareLinkResolver"><code class="docutils literal notranslate"><span class="pre">ShareLinkResolver</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/share_links.html#graze.share_links.add_share_link_resolver"><code class="docutils literal notranslate"><span class="pre">add_share_link_resolver()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/share_links.html#graze.share_links.direct_download_url"><code class="docutils literal notranslate"><span class="pre">direct_download_url()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/share_links.html#graze.share_links.resolve_dropbox"><code class="docutils literal notranslate"><span class="pre">resolve_dropbox()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/share_links.html#graze.share_links.resolve_google_drive"><code class="docutils literal notranslate"><span class="pre">resolve_google_drive()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/share_links.html#graze.share_links.resolve_onedrive"><code class="docutils literal notranslate"><span class="pre">resolve_onedrive()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/share_links.html#graze.share_links.resolve_share_url"><code class="docutils literal notranslate"><span class="pre">resolve_share_url()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/share_links.html#graze.share_links.share_link_resolvers"><code class="docutils literal notranslate"><span class="pre">share_link_resolvers</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/graze/util.html">graze.util</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.add_special_url_route"><code class="docutils literal notranslate"><span class="pre">add_special_url_route()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.bytes_of_url_content"><code class="docutils literal notranslate"><span class="pre">bytes_of_url_content()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.chks_of_url_contents"><code class="docutils literal notranslate"><span class="pre">chks_of_url_contents()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.clog"><code class="docutils literal notranslate"><span class="pre">clog()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.download_from_google_drive"><code class="docutils literal notranslate"><span class="pre">download_from_google_drive()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.download_from_share_link"><code class="docutils literal notranslate"><span class="pre">download_from_share_link()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.download_from_special_url"><code class="docutils literal notranslate"><span class="pre">download_from_special_url()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.download_url_contents"><code class="docutils literal notranslate"><span class="pre">download_url_contents()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.get_content_size"><code class="docutils literal notranslate"><span class="pre">get_content_size()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.google_drive_download_url"><code class="docutils literal notranslate"><span class="pre">google_drive_download_url()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.human_readable_bytes"><code class="docutils literal notranslate"><span class="pre">human_readable_bytes()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.is_dropbox_url"><code class="docutils literal notranslate"><span class="pre">is_dropbox_url()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.is_google_drive_url"><code class="docutils literal notranslate"><span class="pre">is_google_drive_url()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.is_onedrive_url"><code class="docutils literal notranslate"><span class="pre">is_onedrive_url()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.is_share_url_of"><code class="docutils literal notranslate"><span class="pre">is_share_url_of()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.is_special_url"><code class="docutils literal notranslate"><span class="pre">is_special_url()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.last_element"><code class="docutils literal notranslate"><span class="pre">last_element()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.original_url_of_tiny_url"><code class="docutils literal notranslate"><span class="pre">original_url_of_tiny_url()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/graze/util.html#graze.util.tiny_url"><code class="docutils literal notranslate"><span class="pre">tiny_url()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
-<section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
-<p>Release: 0.1.43</p>
-<p>Last change: Aug 08, 2026</p>
-</section>
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
 
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="module_docs/graze.html" class="btn btn-neutral float-right" title="graze" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
     </div>
+    <div class="header-center">
+      <a href="#"><div class="brand">graze</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+  
+  <span class="sidebar-brand-text">graze</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API reference</a><input aria-label="Toggle navigation of API reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/graze.html">graze</a><input aria-label="Toggle navigation of graze" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/graze.base.html">graze.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/graze.content_kind.html">graze.content_kind</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/graze.graze_exceptional.html">graze.graze_exceptional</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/graze.guarded.html">graze.guarded</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/graze.share_links.html">graze.share_links</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/graze.util.html">graze.util</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
-  <hr/>
+</div>
+</div>
 
-  <div role="contentinfo">
-    <p></p>
-  </div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/index.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <!-- generated by epythet -->
+<section id="graze">
+<h1>graze<a class="headerlink" href="#graze" title="Link to this heading">¶</a></h1>
+<p>Cache (a tiny part of) the internet.</p>
+<p>(For the technically inclined, <code class="docutils literal notranslate"><span class="pre">graze</span></code> is meant to ease the separation of the concerns of getting and caching/persisting data from the internet.)</p>
+<section id="install">
+<h2>install<a class="headerlink" href="#install" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">graze</span></code></p>
+</section>
+</section>
+<section id="quick-example">
+<h1>Quick example<a class="headerlink" href="#quick-example" title="Link to this heading">¶</a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">Graze</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">Graze</span><span class="p">()</span>  <span class="c1"># caches under ~/.cache/graze by default</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If this is your first time, you got nothing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[]</span>
+</pre></div>
+</div>
+<p>So get something. For no particular reason let’s be self-referential and get myself:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">"https://raw.githubusercontent.com/thorwhalen/graze/master/README.md"</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
+<span class="nb">type</span><span class="p">(</span><span class="n">content</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Before I grew up, I had only 46 petty bytes (I have a lot more now):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="mi">46</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These were:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># graze</span>
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+<span class="n">Cache</span> <span class="p">(</span><span class="n">a</span> <span class="n">tiny</span> <span class="n">part</span> <span class="n">of</span><span class="p">)</span> <span class="n">the</span> <span class="n">internet</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>But now, here’s the deal. List your <code class="docutils literal notranslate"><span class="pre">g</span></code> keys now. Go ahead, don’t be shy!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">'https://raw.githubusercontent.com/thorwhalen/graze/master/README.md'</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>What does that mean?</p>
+<p>I means you have a local copy of these contents.</p>
+<p>The file path isn’t really <code class="docutils literal notranslate"><span class="pre">https://...</span></code>, it’s <code class="docutils literal notranslate"><span class="pre">rootdir/https/...</span></code>, but you
+only have to care about that if you actually have to go get the file with
+something else than graze. Because graze will give it to you.</p>
+<p>How? Same way you got it in the first place:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">content_2</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">content_2</span> <span class="o">==</span> <span class="n">content</span>
+</pre></div>
+</div>
+<p>But this time, it didn’t ask the internet. It just got it’s local copy.</p>
+<p>And if you want a fresh copy?</p>
+<p>No problem, just delete your local one. You guessed!
+The same way you would delete a key from a dict:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">del</span> <span class="n">g</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="understanding-graze-function-and-class">
+<h1>Understanding graze: Function and Class<a class="headerlink" href="#understanding-graze-function-and-class" title="Link to this heading">¶</a></h1>
+<p>Now that you’ve seen <code class="docutils literal notranslate"><span class="pre">graze</span></code> in action, let’s dive deeper into how it works and what options you have to tailor it to your needs.</p>
+<section id="the-graze-function-your-core-workhorse">
+<h2>The <code class="docutils literal notranslate"><span class="pre">graze()</span></code> function: Your core workhorse<a class="headerlink" href="#the-graze-function-your-core-workhorse" title="Link to this heading">¶</a></h2>
+<p>At the heart of the package is the <code class="docutils literal notranslate"><span class="pre">graze()</span></code> function. It’s simple: give it a URL, and it gives you back the contents as bytes. But here’s the clever bit—it caches those bytes locally so the next time you ask for the same URL, you get instant access without hitting the network again.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">graze</span>
 
-</footer>
+<span class="c1"># First call downloads and caches</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="s2">"https://example.com/data.json"</span><span class="p">)</span>
+
+<span class="c1"># Second call uses cached version - blazing fast!</span>
+<span class="n">content_again</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="s2">"https://example.com/data.json"</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="where-does-it-cache">
+<h3>Where does it cache?<a class="headerlink" href="#where-does-it-cache" title="Link to this heading">¶</a></h3>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">graze()</span></code> stores files in <code class="docutils literal notranslate"><span class="pre">~/.cache/graze</span></code> (honoring <code class="docutils literal notranslate"><span class="pre">$XDG_CACHE_HOME</span></code>), but you have full control over this through the <code class="docutils literal notranslate"><span class="pre">cache</span></code> parameter:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cache to a specific folder</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="s2">"~/my_project/cache"</span><span class="p">)</span>
+
+<span class="c1"># Or use a specific filepath (cache defaults to None automatically)</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">cache_key</span><span class="o">=</span><span class="s2">"~/data/specific_file.json"</span><span class="p">)</span>
+
+<span class="c1"># Or even use a dict for in-memory caching!</span>
+<span class="n">my_cache</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">my_cache</span><span class="p">,</span> <span class="n">cache_key</span><span class="o">=</span><span class="s2">"data.json"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">cache</span></code> parameter accepts:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> (default): Uses <code class="docutils literal notranslate"><span class="pre">~/.cache/graze</span></code> as the cache folder</p></li>
+<li><p>A string path: Any folder where you want files cached</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">MutableMapping</span></code> (like dict or <code class="docutils literal notranslate"><span class="pre">dol.Files</span></code>): Custom storage backend</p></li>
+</ul>
+</section>
+<section id="controlling-the-cache-key">
+<h3>Controlling the cache key<a class="headerlink" href="#controlling-the-cache-key" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">cache_key</span></code> parameter determines what key is used in your cache. By default, URLs are converted to safe filesystem paths, but you can customize this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Auto-generated key (default)</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="s2">"https://example.com/data.json"</span><span class="p">)</span>
+
+<span class="c1"># Explicit cache key</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="s2">"https://example.com/data.json"</span><span class="p">,</span> <span class="n">cache_key</span><span class="o">=</span><span class="s2">"my_data.json"</span><span class="p">)</span>
+
+
+<span class="c1"># Use a function to generate keys</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">url_to_key</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Just use filename</span>
+
+
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="s2">"https://example.com/data/file.json"</span><span class="p">,</span> <span class="n">cache_key</span><span class="o">=</span><span class="n">url_to_key</span><span class="p">)</span>
+
+<span class="c1"># Or provide a full filepath (makes cache default to None)</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="s2">"https://example.com/data.json"</span><span class="p">,</span> <span class="n">cache_key</span><span class="o">=</span><span class="s2">"~/my_data/important.json"</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="keeping-data-fresh">
+<h3>Keeping data fresh<a class="headerlink" href="#keeping-data-fresh" title="Link to this heading">¶</a></h3>
+<p>What if the data at your URL changes? <code class="docutils literal notranslate"><span class="pre">graze</span></code> offers two powerful refresh strategies:</p>
+<p><strong>Time-based refresh with <code class="docutils literal notranslate"><span class="pre">max_age</span></code>:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Re-download if cached data is older than 1 hour (3600 seconds)</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">max_age</span><span class="o">=</span><span class="mi">3600</span><span class="p">)</span>
+
+<span class="c1"># Or for a whole day</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">max_age</span><span class="o">=</span><span class="mi">86400</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Custom refresh logic with <code class="docutils literal notranslate"><span class="pre">refresh</span></code>:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Always re-download</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="c1"># Or use a function for complex logic</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">should_refresh</span><span class="p">(</span><span class="n">cache_key</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+    <span class="c1"># Your custom logic here</span>
+    <span class="k">return</span> <span class="n">some_condition</span>
+
+
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="n">should_refresh</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-data-sources">
+<h3>Custom data sources<a class="headerlink" href="#custom-data-sources" title="Link to this heading">¶</a></h3>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">graze</span></code> uses <code class="docutils literal notranslate"><span class="pre">requests</span></code> to fetch URLs, but you can plug in any data source:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">graze</span><span class="p">,</span> <span class="n">Internet</span>
+
+
+<span class="c1"># Use a custom fetcher function</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_fetcher</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="c1"># Your custom logic (must return bytes)</span>
+    <span class="k">return</span> <span class="n">response_bytes</span>
+
+
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">my_fetcher</span><span class="p">)</span>
+
+<span class="c1"># Or use an object with __getitem__</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="getting-notified-of-downloads">
+<h3>Getting notified of downloads<a class="headerlink" href="#getting-notified-of-downloads" title="Link to this heading">¶</a></h3>
+<p>Want to know when <code class="docutils literal notranslate"><span class="pre">graze</span></code> is actually hitting the network?</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simple notification</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">key_ingress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Downloading </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">..."</span><span class="p">))</span>
+
+<span class="c1"># Or get fancy with logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">key_ingress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fetching fresh data from </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="other-useful-parameters">
+<h3>Other useful parameters<a class="headerlink" href="#other-useful-parameters" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the cache key/filepath instead of contents</span>
+<span class="n">filepath</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">return_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="the-graze-class-your-dict-like-cache-interface">
+<h2>The <code class="docutils literal notranslate"><span class="pre">Graze</span></code> class: Your dict-like cache interface<a class="headerlink" href="#the-graze-class-your-dict-like-cache-interface" title="Link to this heading">¶</a></h2>
+<p>While the <code class="docutils literal notranslate"><span class="pre">graze()</span></code> function is great for one-off fetches, the <code class="docutils literal notranslate"><span class="pre">Graze</span></code> class gives you a convenient dict-like interface to browse and manage your cached data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">Graze</span>
+
+<span class="c1"># Create your cache interface</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">Graze</span><span class="p">(</span><span class="s2">"~/my_cache"</span><span class="p">)</span>
+
+<span class="c1"># It's a mapping - use it like a dict!</span>
+<span class="n">urls</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>  <span class="c1"># See what you've cached</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>  <span class="c1"># Get contents (downloads if not cached)</span>
+<span class="n">url</span> <span class="ow">in</span> <span class="n">g</span>  <span class="c1"># Check if cached</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>  <span class="c1"># Count cached items</span>
+<span class="k">del</span> <span class="n">g</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>  <span class="c1"># Remove from cache</span>
+</pre></div>
+</div>
+<p>The beauty of <code class="docutils literal notranslate"><span class="pre">Graze</span></code> is that it makes your cache feel like a dictionary where the keys are URLs and the values are the byte contents. Under the hood, it’s using the <code class="docutils literal notranslate"><span class="pre">graze()</span></code> function for all the heavy lifting.</p>
+<section id="configuring-your-graze-instance">
+<h3>Configuring your Graze instance<a class="headerlink" href="#configuring-your-graze-instance" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Graze</span></code> accepts similar parameters to <code class="docutils literal notranslate"><span class="pre">graze()</span></code>, but they apply to all operations:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">Graze</span><span class="p">,</span> <span class="n">Internet</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">Graze</span><span class="p">(</span>
+    <span class="n">rootdir</span><span class="o">=</span><span class="s2">"~/my_cache"</span><span class="p">,</span>  <span class="c1"># Where to cache</span>
+    <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>  <span class="c1"># Custom source</span>
+    <span class="n">key_ingress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fetching </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>  <span class="c1"># Download notifications</span>
+<span class="p">)</span>
+
+<span class="c1"># Now all operations use these settings</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="s2">"https://example.com/data.json"</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="working-with-filepaths">
+<h3>Working with filepaths<a class="headerlink" href="#working-with-filepaths" title="Link to this heading">¶</a></h3>
+<p>Sometimes you need the actual filepath where data is cached:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get filepaths instead of contents</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">Graze</span><span class="p">(</span><span class="s2">"~/cache"</span><span class="p">,</span> <span class="n">return_filepaths</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">filepath</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>  <span class="c1"># Returns path string instead of bytes</span>
+
+<span class="c1"># Or get filepath on demand</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">Graze</span><span class="p">(</span><span class="s2">"~/cache"</span><span class="p">)</span>
+<span class="n">filepath</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">filepath_of</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>  <span class="c1"># Still gets contents normally</span>
+</pre></div>
+</div>
+</section>
+<section id="when-you-need-ttl-time-to-live-caching">
+<h3>When you need TTL (time-to-live) caching<a class="headerlink" href="#when-you-need-ttl-time-to-live-caching" title="Link to this heading">¶</a></h3>
+<p>For data that changes periodically, use <code class="docutils literal notranslate"><span class="pre">GrazeWithDataRefresh</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">GrazeWithDataRefresh</span>
+
+<span class="c1"># Re-fetch if data is older than 1 hour</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">GrazeWithDataRefresh</span><span class="p">(</span>
+    <span class="n">rootdir</span><span class="o">=</span><span class="s2">"~/cache"</span><span class="p">,</span>
+    <span class="n">time_to_live</span><span class="o">=</span><span class="mi">3600</span><span class="p">,</span>  <span class="c1"># seconds</span>
+    <span class="n">on_error</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span>  <span class="c1"># Return stale data if refresh fails</span>
+<span class="p">)</span>
+
+<span class="n">content</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>  <span class="c1"># Fresh data (or cached if recent enough)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">on_error</span></code> parameter controls what happens when refresh fails:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'ignore'</span></code>: Silently return stale cached data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'warn'</span></code>: Warn but return stale data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'raise'</span></code>: Raise the error</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'warn_and_return_local'</span></code>: Warn and return stale data</p></li>
+</ul>
+</section>
+<section id="advanced-cache-backends">
+<h3>Advanced cache backends<a class="headerlink" href="#advanced-cache-backends" title="Link to this heading">¶</a></h3>
+<p>Want to cache to something other than files? Use any <code class="docutils literal notranslate"><span class="pre">MutableMapping</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dol</span><span class="w"> </span><span class="kn">import</span> <span class="n">Files</span>
+
+<span class="c1"># Files gives you a dict-like interface to a filesystem</span>
+<span class="n">cache</span> <span class="o">=</span> <span class="n">Files</span><span class="p">(</span><span class="s2">"~/cache"</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">Graze</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span>  <span class="c1"># Now using Files instead of plain folder</span>
+
+<span class="c1"># Or use an in-memory dict for temporary caching</span>
+<span class="n">cache</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">Graze</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="choosing-between-graze-and-graze">
+<h2>Choosing between <code class="docutils literal notranslate"><span class="pre">graze()</span></code> and <code class="docutils literal notranslate"><span class="pre">Graze</span></code><a class="headerlink" href="#choosing-between-graze-and-graze" title="Link to this heading">¶</a></h2>
+<p>Use the <strong><code class="docutils literal notranslate"><span class="pre">graze()</span></code> function</strong> when:</p>
+<ul class="simple">
+<li><p>You’re fetching a single URL</p></li>
+<li><p>You want different settings per fetch</p></li>
+<li><p>You prefer a functional style</p></li>
+</ul>
+<p>Use the <strong><code class="docutils literal notranslate"><span class="pre">Graze</span></code> class</strong> when:</p>
+<ul class="simple">
+<li><p>You want a dict-like interface to your cache</p></li>
+<li><p>You’re working with multiple URLs with consistent settings</p></li>
+<li><p>You need to browse, count, or manage cached items</p></li>
+<li><p>You want to check what’s cached before fetching</p></li>
+</ul>
+</section>
+</section>
+<section id="q-a">
+<h1>Q&amp;A<a class="headerlink" href="#q-a" title="Link to this heading">¶</a></h1>
+<section id="the-pages-i-need-to-slurp-need-to-be-rendered-can-i-use-selenium-of-other-such-engines">
+<h2>The pages I need to slurp need to be rendered, can I use selenium of other such engines?<a class="headerlink" href="#the-pages-i-need-to-slurp-need-to-be-rendered-can-i-use-selenium-of-other-such-engines" title="Link to this heading">¶</a></h2>
+<p>Sure!</p>
+<p>We understand that sometimes you might have special slurping needs – such
+as needing to let the JS render the page fully, and/or extract something
+specific, in a specific way, from the page.</p>
+<p>Selenium is a popular choice for these needs.</p>
+<p><code class="docutils literal notranslate"><span class="pre">graze</span></code> doesn’t install selenium for you, but if you’ve done that, you just
+need to specify a different <code class="docutils literal notranslate"><span class="pre">Internet</span></code> object for <code class="docutils literal notranslate"><span class="pre">Graze</span></code> to source from,
+and to make an internet object, you just need to specify what a
+<code class="docutils literal notranslate"><span class="pre">url_to_contents</span></code> function that does exactly what it says.</p>
+<p>Note that the contents need to be returned in bytes for <code class="docutils literal notranslate"><span class="pre">Graze</span></code> to work.</p>
+<p>If you want to use some of the default <code class="docutils literal notranslate"><span class="pre">selenium</span></code> <code class="docutils literal notranslate"><span class="pre">url_to_contents</span></code> functions
+to make an <code class="docutils literal notranslate"><span class="pre">Internet</span></code> (we got Chrome, Firefox, Safari, and Opera),
+you go ahead! here’s an example using the default Chrome driver
+(again, you need to have the driver installed already for this to work;
+see https://selenium-python.readthedocs.io/):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">Graze</span><span class="p">,</span> <span class="n">url_to_contents</span><span class="p">,</span> <span class="n">Internet</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">Graze</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">(</span><span class="n">url_to_contents</span><span class="o">=</span><span class="n">url_to_contents</span><span class="o">.</span><span class="n">selenium_chrome</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>And if you’ll be using it often, just do:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">Graze</span><span class="p">,</span> <span class="n">url_to_contents</span><span class="p">,</span> <span class="n">Internet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+
+<span class="n">my_graze</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+    <span class="n">Graze</span><span class="p">,</span>
+    <span class="n">rootdir</span><span class="o">=</span><span class="s2">"a_specific_root_dir_for_your_project"</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="n">Internet</span><span class="p">(</span><span class="n">url_to_contents</span><span class="o">=</span><span class="n">url_to_contents</span><span class="o">.</span><span class="n">selenium_chrome</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1"># and then you can just do</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">my_graze</span><span class="p">()</span>
+<span class="c1"># and get on with the fun...</span>
+</pre></div>
+</div>
+</section>
+<section id="what-if-i-want-a-fresh-copy-of-the-data">
+<h2>What if I want a fresh copy of the data?<a class="headerlink" href="#what-if-i-want-a-fresh-copy-of-the-data" title="Link to this heading">¶</a></h2>
+<p>Classic caching problem.
+You like the convenience of having a local copy, but then how do you keep in sync with the data source if it changes?</p>
+<p>See the “Keeping data fresh” section above for comprehensive coverage of refresh strategies. In brief:</p>
+<p>If you KNOW the source data changed and want to sync, it’s easy. You delete the local copy
+(like deleting a key from a dict: <code class="docutils literal notranslate"><span class="pre">del</span> <span class="pre">g[url]</span></code>)
+and you try to access it again.
+Since you don’t have a local copy, it will get one from the <code class="docutils literal notranslate"><span class="pre">url</span></code> source.</p>
+<p>For automatic refresh, you have several options:</p>
+<p><strong>Time-based (TTL) refresh:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">graze</span>
+
+<span class="c1"># Re-download if cached data is older than an hour</span>
+<span class="n">content_bytes</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">max_age</span><span class="o">=</span><span class="mi">3600</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Or use <code class="docutils literal notranslate"><span class="pre">GrazeWithDataRefresh</span></code> for dict-like TTL caching:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">GrazeWithDataRefresh</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">GrazeWithDataRefresh</span><span class="p">(</span><span class="n">time_to_live</span><span class="o">=</span><span class="mi">3600</span><span class="p">,</span> <span class="n">on_error</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">)</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>Custom refresh logic:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Always refresh</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="c1"># Or use a custom function</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">should_refresh</span><span class="p">(</span><span class="n">cache_key</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">your_logic_here</span>
+
+
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="n">should_refresh</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="can-i-make-graze-notify-me-when-it-gets-a-new-copy-of-the-data">
+<h2>Can I make graze notify me when it gets a new copy of the data?<a class="headerlink" href="#can-i-make-graze-notify-me-when-it-gets-a-new-copy-of-the-data" title="Link to this heading">¶</a></h2>
+<p>Sure! Just specify a <code class="docutils literal notranslate"><span class="pre">key_ingress</span></code> function when you make your <code class="docutils literal notranslate"><span class="pre">Graze</span></code> object, or
+call <code class="docutils literal notranslate"><span class="pre">graze</span></code>. This function will be called on the key (the url) just before contents
+are being downloaded from the internet. The typical function would be:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">key_ingress</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Getting </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> from the internet"</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="does-graze-work-for-dropbox-and-drive-and-onedrive-share-links">
+<h2>Does graze work for dropbox (and drive, and onedrive) share links?<a class="headerlink" href="#does-graze-work-for-dropbox-and-drive-and-onedrive-share-links" title="Link to this heading">¶</a></h2>
+<p>A <em>share link</em> is what you copy out of Dropbox or Google Drive. It is <strong>not</strong> a
+download URL — fetching it usually gets you an HTML preview page. <code class="docutils literal notranslate"><span class="pre">graze.share_links</span></code>
+turns one into a description of what it actually denotes, with no network access at all:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_share_url</span><span class="p">,</span> <span class="n">direct_download_url</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">resolve_share_url</span><span class="p">(</span><span class="s2">"https://www.dropbox.com/scl/fo/q7x/AAB?rlkey=zz&amp;dl=0"</span><span class="p">)</span>
+<span class="n">r</span><span class="o">.</span><span class="n">provider</span>  <span class="c1"># 'dropbox'</span>
+<span class="n">r</span><span class="o">.</span><span class="n">kind</span>  <span class="c1"># &lt;ShareLinkKind.ARCHIVE: 'archive'&gt;  -- a folder, i.e. a ZIP</span>
+<span class="n">r</span><span class="o">.</span><span class="n">direct_url</span>  <span class="c1"># '...?rlkey=zz&amp;dl=1'  (dl=1 forced; every other param kept verbatim)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">dl=1</span></code> is forced because <code class="docutils literal notranslate"><span class="pre">dl=0</span></code> is <strong>User-Agent dependent</strong> — the same folder link
+served a 31 KB zip to one client and 224 KB of HTML to another. Normalizing is a
+correctness requirement, not a nicety.</p>
+<p><code class="docutils literal notranslate"><span class="pre">graze</span></code> uses this automatically: a Dropbox link is resolved before it is fetched.</p>
+<p>Two things worth knowing:</p>
+<p><strong>A folder link is a ZIP</strong> — dropbox sends the data as an archive, <strong>even if there’s
+only one file in it</strong> — so <code class="docutils literal notranslate"><span class="pre">kind</span> <span class="pre">==</span> <span class="pre">'archive'</span></code> means “expand me”, not “here’s your
+asset”:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">zip_store_of_dropbox_url</span><span class="p">(</span><span class="n">dropbox_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Get a key-value perspective of the (folder) contents</span>
+<span class="sd">    of the zip a dropbox url gets you"""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">graze</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">dol</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilesOfZip</span>
+
+    <span class="k">return</span> <span class="n">FilesOfZip</span><span class="p">(</span><span class="n">graze</span><span class="p">(</span><span class="n">dropbox_url</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">filebytes_of_dropbox_url</span><span class="p">(</span><span class="n">dropbox_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">assert_only_one_file</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Get the bytes of the first file in a zip that a dropbox url gives you"""</span>
+    <span class="n">zip_store</span> <span class="o">=</span> <span class="n">zip_store_of_dropbox_url</span><span class="p">(</span><span class="n">dropbox_url</span><span class="p">)</span>
+    <span class="n">zip_filepaths</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">zip_store</span><span class="p">)</span>
+    <span class="n">first_filepath</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">zip_filepaths</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">assert_only_one_file</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">next</span><span class="p">(</span><span class="n">zip_filepaths</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"More than one file in </span><span class="si">{</span><span class="n">dropbox_url</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">return</span> <span class="n">zip_store</span><span class="p">[</span><span class="n">first_filepath</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>Some links have no download URL at all, and graze says so</strong> rather than guessing —
+a Google Drive <em>folder</em> needs the Drive API, a Google Workspace document has to be
+exported (in a format only you can choose), and OneDrive’s contract hasn’t been
+measured yet. Those raise <code class="docutils literal notranslate"><span class="pre">ShareLinkResolutionError</span></code>, carrying the reason:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">direct_download_url</span><span class="p">(</span><span class="s2">"https://drive.google.com/drive/folders/1AbCdEf"</span><span class="p">)</span>
+<span class="c1"># ShareLinkResolutionError: Cannot resolve this google_drive link ... enumerating a</span>
+<span class="c1"># folder needs the Drive API (files.list with q="'1AbCdEf' in parents") and a credential.</span>
+</pre></div>
+</div>
+<p>Adding a provider takes no core edits — register an adapter:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_share_link_resolver</span><span class="p">,</span> <span class="n">ResolvedShareLink</span><span class="p">,</span> <span class="n">ShareLinkKind</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_my_host</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"https://my.host/dl/"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ResolvedShareLink</span><span class="p">(</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">provider</span><span class="o">=</span><span class="s2">"my_host"</span><span class="p">,</span>
+            <span class="n">kind</span><span class="o">=</span><span class="n">ShareLinkKind</span><span class="o">.</span><span class="n">FILE</span><span class="p">,</span>
+            <span class="n">direct_url</span><span class="o">=</span><span class="n">url</span> <span class="o">+</span> <span class="s2">"?raw=1"</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="c1"># returning None means "not mine" -- the next adapter gets a turn</span>
+
+
+<span class="n">add_share_link_resolver</span><span class="p">(</span><span class="s2">"my_host"</span><span class="p">,</span> <span class="n">resolve_my_host</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="can-i-safely-fetch-a-url-that-someone-else-gave-me">
+<h2>Can I safely fetch a URL that someone else gave me?<a class="headerlink" href="#can-i-safely-fetch-a-url-that-someone-else-gave-me" title="Link to this heading">¶</a></h2>
+<p>Yes, with <code class="docutils literal notranslate"><span class="pre">guarded_fetch</span></code>. A URL from a user, an LLM tool call or a webhook can point at <code class="docutils literal notranslate"><span class="pre">localhost</span></code>, a private network or cloud metadata (<code class="docutils literal notranslate"><span class="pre">169.254.169.254</span></code>): a server-side request forgery. <code class="docutils literal notranslate"><span class="pre">guarded_fetch</span></code> allows only <code class="docutils literal notranslate"><span class="pre">http</span></code>/<code class="docutils literal notranslate"><span class="pre">https</span></code> on ports 80/443, resolves the host <strong>once</strong>, refuses it unless <strong>every</strong> address is public, and then connects to exactly the address it checked (the <code class="docutils literal notranslate"><span class="pre">Host</span></code> header and TLS name stay the original). A DNS answer that changes between the check and the connect (DNS rebinding) therefore changes nothing. Every redirect hop goes through the same check, and the fetch has a wall-clock budget and a byte cap.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">guarded_fetch</span><span class="p">,</span> <span class="n">guarded_open</span><span class="p">,</span> <span class="n">graze</span>
+
+<span class="n">body</span> <span class="o">=</span> <span class="n">guarded_fetch</span><span class="p">(</span><span class="s2">"https://example.com/data.json"</span><span class="p">)</span>  <span class="c1"># bytes</span>
+<span class="n">guarded_fetch</span><span class="p">(</span><span class="s2">"http://169.254.169.254/latest/meta-data/"</span><span class="p">)</span>  <span class="c1"># raises UnsafeTarget</span>
+
+<span class="c1"># Stream a large body, and see where it actually came from</span>
+<span class="k">with</span> <span class="n">guarded_open</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">max_bytes</span><span class="o">=</span><span class="mi">500</span> <span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">address</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"Content-Type"</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iter_chunks</span><span class="p">():</span>
+        <span class="o">...</span>
+
+<span class="c1"># It is a fetcher like any other, so graze can cache through it</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">guarded_fetch</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Everything is a keyword argument: <code class="docutils literal notranslate"><span class="pre">allow_schemes</span></code>, <code class="docutils literal notranslate"><span class="pre">allow_ports</span></code> (<code class="docutils literal notranslate"><span class="pre">None</span></code> for any), <code class="docutils literal notranslate"><span class="pre">max_redirects</span></code>, <code class="docutils literal notranslate"><span class="pre">timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">max_bytes</span></code>, and the seams <code class="docutils literal notranslate"><span class="pre">is_allowed_address</span></code> (the address policy; pass an allow-list to reach a LAN host from a self-hosted deployment), <code class="docutils literal notranslate"><span class="pre">resolver</span></code> (a fake one makes tests offline) and <code class="docutils literal notranslate"><span class="pre">ssl_context</span></code>. It uses the standard library only and ignores proxy settings on purpose, since a proxy would resolve the host itself.</p>
+</section>
+<section id="how-do-i-use-tiny-url">
+<h2>How do I use tiny_url?<a class="headerlink" href="#how-do-i-use-tiny-url" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">tiny_url</span></code> is a convenience utility that shortens long URLs, making them easier to work with in demos, notebooks, and testing. It’s especially useful when you’re working with GitHub raw content URLs or other lengthy URLs.</p>
+<p><strong>Basic usage:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">tiny_url</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">"https://raw.githubusercontent.com/thorwhalen/graze/refs/heads/master/README.md"</span>
+<span class="n">short_url</span> <span class="o">=</span> <span class="n">tiny_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">short_url</span><span class="p">)</span>  <span class="c1"># Much shorter!</span>
+</pre></div>
+</div>
+<p><strong>Encoding and decoding:</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">tiny_url</span></code> works like a codec with <code class="docutils literal notranslate"><span class="pre">encode</span></code> and <code class="docutils literal notranslate"><span class="pre">decode</span></code> methods:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Encoding (shortening)</span>
+<span class="n">encoded_url</span> <span class="o">=</span> <span class="n">tiny_url</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>  <span class="c1"># Same as tiny_url(url)</span>
+
+<span class="c1"># Decoding (getting original URL back)</span>
+<span class="n">original_url</span> <span class="o">=</span> <span class="n">tiny_url</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoded_url</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">original_url</span> <span class="o">==</span> <span class="n">url</span>
+</pre></div>
+</div>
+<p>This is particularly useful when:</p>
+<ul class="simple">
+<li><p>Working in Jupyter notebooks with long URLs</p></li>
+<li><p>Creating cleaner demos and examples</p></li>
+<li><p>Testing with URLs that would clutter your code</p></li>
+<li><p>Sharing code snippets where URL readability matters</p></li>
+</ul>
+</section>
+</section>
+<section id="further-notes">
+<h1>Further Notes<a class="headerlink" href="#further-notes" title="Link to this heading">¶</a></h1>
+<section id="new-url-to-path-mapping">
+<h2>New url-to-path mapping<a class="headerlink" href="#new-url-to-path-mapping" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">graze</span></code> used to have a more straightforward url-to-local_filepath mapping,
+but it ended up being problematic: In a nutshell,
+if you slurp <code class="docutils literal notranslate"><span class="pre">abc.com</span></code> and it goes to a file of that name,
+where is <code class="docutils literal notranslate"><span class="pre">abc.com/data.zip</span></code> supposed to go (<code class="docutils literal notranslate"><span class="pre">abc.com</span></code> needs to be a folder
+in that case).<br />
+See <a class="reference external" href="https://github.com/thorwhalen/graze/issues/1">issue</a>.</p>
+<p>It’s with a heavy heart that I changed the mapping to one that was still
+straightforward, but has the disadvantage of mapping all files to the
+same file name, without extension.</p>
+<p>Hopefully a better solution will show up soon.</p>
+<p>If you already have graze files from the old way, you can
+use the <code class="docutils literal notranslate"><span class="pre">change_files_to_new_url_to_filepath_format</span></code> function to change these
+to the new format.</p>
+<p class="epythet-aggregates">This documentation as a single file: <a href="graze.md">graze.md</a> (Markdown, for agents).</p>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-19 12:16 UTC from <a href="https://github.com/thorwhalen/graze/commit/952ab1d6eb2b69de9553746631ba1e103a43163b">952ab1d</a> (master) · graze 0.1.44 · <a href="about-this-build.html">about this build</a></p>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="api.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">API reference</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            Made with 
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">graze</a><ul>
+<li><a class="reference internal" href="#install">install</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#quick-example">Quick example</a></li>
+<li><a class="reference internal" href="#understanding-graze-function-and-class">Understanding graze: Function and Class</a><ul>
+<li><a class="reference internal" href="#the-graze-function-your-core-workhorse">The <code class="docutils literal notranslate"><span class="pre">graze()</span></code> function: Your core workhorse</a><ul>
+<li><a class="reference internal" href="#where-does-it-cache">Where does it cache?</a></li>
+<li><a class="reference internal" href="#controlling-the-cache-key">Controlling the cache key</a></li>
+<li><a class="reference internal" href="#keeping-data-fresh">Keeping data fresh</a></li>
+<li><a class="reference internal" href="#custom-data-sources">Custom data sources</a></li>
+<li><a class="reference internal" href="#getting-notified-of-downloads">Getting notified of downloads</a></li>
+<li><a class="reference internal" href="#other-useful-parameters">Other useful parameters</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-graze-class-your-dict-like-cache-interface">The <code class="docutils literal notranslate"><span class="pre">Graze</span></code> class: Your dict-like cache interface</a><ul>
+<li><a class="reference internal" href="#configuring-your-graze-instance">Configuring your Graze instance</a></li>
+<li><a class="reference internal" href="#working-with-filepaths">Working with filepaths</a></li>
+<li><a class="reference internal" href="#when-you-need-ttl-time-to-live-caching">When you need TTL (time-to-live) caching</a></li>
+<li><a class="reference internal" href="#advanced-cache-backends">Advanced cache backends</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#choosing-between-graze-and-graze">Choosing between <code class="docutils literal notranslate"><span class="pre">graze()</span></code> and <code class="docutils literal notranslate"><span class="pre">Graze</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#q-a">Q&amp;A</a><ul>
+<li><a class="reference internal" href="#the-pages-i-need-to-slurp-need-to-be-rendered-can-i-use-selenium-of-other-such-engines">The pages I need to slurp need to be rendered, can I use selenium of other such engines?</a></li>
+<li><a class="reference internal" href="#what-if-i-want-a-fresh-copy-of-the-data">What if I want a fresh copy of the data?</a></li>
+<li><a class="reference internal" href="#can-i-make-graze-notify-me-when-it-gets-a-new-copy-of-the-data">Can I make graze notify me when it gets a new copy of the data?</a></li>
+<li><a class="reference internal" href="#does-graze-work-for-dropbox-and-drive-and-onedrive-share-links">Does graze work for dropbox (and drive, and onedrive) share links?</a></li>
+<li><a class="reference internal" href="#can-i-safely-fetch-a-url-that-someone-else-gave-me">Can I safely fetch a URL that someone else gave me?</a></li>
+<li><a class="reference internal" href="#how-do-i-use-tiny-url">How do I use tiny_url?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#further-notes">Further Notes</a><ul>
+<li><a class="reference internal" href="#new-url-to-path-mapping">New url-to-path mapping</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
         </div>
       </div>
-    </section>
+      
+      
+    </aside>
   </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+</div><script src="_static/documentation_options.js?v=aaf63c28"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=fd10adb8"></script>
+    </body>
 </html>
