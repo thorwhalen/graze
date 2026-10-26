@@ -9,7 +9,7 @@
 <link rel="alternate" type="text/markdown" href="index.html.md">
 <link rel="describedby" href="llms.txt"><link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="API reference" href="api.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
         <title>graze</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
@@ -717,6 +717,10 @@ measured yet. Those raise <code class="docutils literal notranslate"><span class
 
 <span class="c1"># It is a fetcher like any other, so graze can cache through it</span>
 <span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">guarded_fetch</span><span class="p">)</span>
+
+<span class="c1"># Only the check, no connection: for a URL you validate when stored, or hand to another fetcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_target</span>
+<span class="n">check_target</span><span class="p">(</span><span class="s2">"https://example.com/data.json"</span><span class="p">)</span>  <span class="c1"># the checked addresses, or raises UnsafeTarget</span>
 </pre></div>
 </div>
 <p>Everything is a keyword argument: <code class="docutils literal notranslate"><span class="pre">allow_schemes</span></code>, <code class="docutils literal notranslate"><span class="pre">allow_ports</span></code> (<code class="docutils literal notranslate"><span class="pre">None</span></code> for any), <code class="docutils literal notranslate"><span class="pre">max_redirects</span></code>, <code class="docutils literal notranslate"><span class="pre">timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">max_bytes</span></code>, and the seams <code class="docutils literal notranslate"><span class="pre">is_allowed_address</span></code> (the address policy; pass an allow-list to reach a LAN host from a self-hosted deployment), <code class="docutils literal notranslate"><span class="pre">resolver</span></code> (a fake one makes tests offline) and <code class="docutils literal notranslate"><span class="pre">ssl_context</span></code>. It uses the standard library only and ignores proxy settings on purpose, since a proxy would resolve the host itself.</p>
@@ -774,7 +778,7 @@ to the new format.</p>
 </section>
 </section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-19 12:16 UTC from <a href="https://github.com/thorwhalen/graze/commit/952ab1d6eb2b69de9553746631ba1e103a43163b">952ab1d</a> (master) · graze 0.1.44 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-26 13:47 UTC from <a href="https://github.com/thorwhalen/graze/commit/1889b24f55ff542737143dd6d1a636acc1341105">1889b24</a> (master) · graze 0.1.45 · <a href="about-this-build.html">about this build</a></p>
         </article>
       </div>
       <footer>
@@ -863,7 +867,7 @@ to the new format.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=aaf63c28"></script>
+</div><script src="_static/documentation_options.js?v=03b6484e"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

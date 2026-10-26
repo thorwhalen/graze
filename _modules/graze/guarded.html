@@ -6,7 +6,7 @@
 <link rel="alternate" type="text/markdown" href="guarded.html.md">
 <link rel="describedby" href="../../llms.txt" type="text/markdown"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
         <title>graze.guarded - graze</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
@@ -308,6 +308,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">queue</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urljoin</span><span class="p">,</span> <span class="n">urlsplit</span>
@@ -321,6 +322,7 @@
     <span class="s2">"GuardedResponse"</span><span class="p">,</span>
     <span class="s2">"guarded_fetch"</span><span class="p">,</span>
     <span class="s2">"guarded_open"</span><span class="p">,</span>
+    <span class="s2">"check_target"</span><span class="p">,</span>
     <span class="s2">"default_public_only"</span><span class="p">,</span>
     <span class="s2">"system_resolver"</span><span class="p">,</span>
     <span class="s2">"DFLT_ALLOWED_SCHEMES"</span><span class="p">,</span>
@@ -362,6 +364,11 @@
         <span class="s2">"if-modified-since"</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">)</span>
+
+<span class="c1">#: What parsers disagree on: backslashes, whitespace and controls (and userinfo, below).</span>
+<span class="c1">#: ``urlsplit`` reads ``http://169.254.169.254\\@a.example/`` as host ``a.example``;</span>
+<span class="c1">#: urllib3 reads it as the metadata address.</span>
+<span class="n">_AMBIGUOUS_URL</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[</span><span class="se">\\</span><span class="s2">\s\x00-\x1f\x7f]"</span><span class="p">)</span>
 
 <span class="n">_DEFAULT_PORTS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"http"</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="s2">"https"</span><span class="p">:</span> <span class="mi">443</span><span class="p">}</span>
 <span class="n">_REDIRECT_STATUSES</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="mi">301</span><span class="p">,</span> <span class="mi">302</span><span class="p">,</span> <span class="mi">303</span><span class="p">,</span> <span class="mi">307</span><span class="p">,</span> <span class="mi">308</span><span class="p">})</span>
@@ -796,6 +803,100 @@
         <span class="k">raise</span> <span class="n">UnsafeTarget</span><span class="p">(</span><span class="sa">f</span><span class="s2">"refusing redirect from </span><span class="si">{</span><span class="n">current</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">location</span><span class="si">!r}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_hop</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">allow_schemes</span><span class="p">,</span> <span class="n">allow_ports</span><span class="p">,</span> <span class="n">is_allowed_address</span><span class="p">,</span> <span class="n">resolver</span><span class="p">,</span> <span class="n">deadline</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">_Target</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">IPAddress</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""One hop's whole check: the URL itself, then its host's resolved addresses."""</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">_check_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">allow_schemes</span><span class="o">=</span><span class="n">allow_schemes</span><span class="p">,</span> <span class="n">allow_ports</span><span class="o">=</span><span class="n">allow_ports</span><span class="p">)</span>
+    <span class="n">addresses</span> <span class="o">=</span> <span class="n">_resolve_and_check</span><span class="p">(</span>
+        <span class="n">url</span><span class="p">,</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+        <span class="n">resolver</span><span class="o">=</span><span class="n">resolver</span><span class="p">,</span>
+        <span class="n">is_allowed_address</span><span class="o">=</span><span class="n">is_allowed_address</span><span class="p">,</span>
+        <span class="n">deadline</span><span class="o">=</span><span class="n">deadline</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">target</span><span class="p">,</span> <span class="n">addresses</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_timeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
+        <span class="ow">and</span> <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">timeout</span> <span class="o">&lt;=</span> <span class="n">threading</span><span class="o">.</span><span class="n">TIMEOUT_MAX</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"timeout must be a finite number of seconds &gt; 0, not </span><span class="si">{</span><span class="n">timeout</span><span class="si">!r}</span><span class="s2">"</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalized_policy</span><span class="p">(</span><span class="n">allow_schemes</span><span class="p">,</span> <span class="n">allow_ports</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""``(allow_schemes, allow_ports)`` as the tuple and frozenset the checks expect."""</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="nb">tuple</span><span class="p">(</span><span class="n">sch</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">sch</span> <span class="ow">in</span> <span class="n">allow_schemes</span><span class="p">),</span>
+        <span class="kc">None</span> <span class="k">if</span> <span class="n">allow_ports</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">allow_ports</span><span class="p">),</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="check_target">
+<a class="viewcode-back" href="../../_autosummary/graze.guarded.html#graze.guarded.check_target">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_target</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">allow_schemes</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">DFLT_ALLOWED_SCHEMES</span><span class="p">,</span>
+    <span class="n">allow_ports</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">DFLT_ALLOWED_PORTS</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DFLT_TIMEOUT_S</span><span class="p">,</span>
+    <span class="n">is_allowed_address</span><span class="p">:</span> <span class="n">AddressPolicy</span> <span class="o">=</span> <span class="n">default_public_only</span><span class="p">,</span>
+    <span class="n">resolver</span><span class="p">:</span> <span class="n">Resolver</span> <span class="o">=</span> <span class="n">system_resolver</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">IPAddress</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""The guard's check on ``url`` alone, without connecting: its resolved addresses.</span>
+
+<span class="sd">    For callers that hand the URL to another fetcher (so cannot pin) or that validate a</span>
+<span class="sd">    URL when it is stored. It is the very check :func:`guarded_open` makes on its first</span>
+<span class="sd">    hop, so "allowed target" has one definition and its defaults cannot drift. Only that</span>
+<span class="sd">    hop, and this is a validation of the *URL*, not a safe fetch: the other fetcher</span>
+<span class="sd">    resolves the host again (DNS rebinding) and follows redirects unchecked. Pin the</span>
+<span class="sd">    returned addresses if it lets you. Because that fetcher may parse the URL differently</span>
+<span class="sd">    from :func:`urllib.parse.urlsplit`, a URL with userinfo (``@``), a backslash,</span>
+<span class="sd">    whitespace or control characters is refused outright.</span>
+
+<span class="sd">    Raises :class:`UnsafeTarget` for a bad scheme, port, host or address,</span>
+<span class="sd">    :class:`FetchFailed` if the host does not resolve, and :class:`FetchLimitExceeded`</span>
+<span class="sd">    if resolving takes longer than ``timeout``.</span>
+
+<span class="sd">    &gt;&gt;&gt; check_target('http://169.254.169.254/')</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">    graze.guarded.UnsafeTarget: refusing http://169.254.169.254/: address 169.254.169.254 is not allowed</span>
+<span class="sd">    &gt;&gt;&gt; check_target('https://example.com/', resolver=lambda host, port: ['93.184.216.34'])</span>
+<span class="sd">    [IPv4Address('93.184.216.34')]</span>
+<span class="sd">    """</span>
+    <span class="n">_check_timeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">allow_schemes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"allow_schemes must be a collection, not </span><span class="si">{</span><span class="n">allow_schemes</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">allow_schemes</span><span class="p">,</span> <span class="n">allow_ports</span> <span class="o">=</span> <span class="n">_normalized_policy</span><span class="p">(</span><span class="n">allow_schemes</span><span class="p">,</span> <span class="n">allow_ports</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"url must be a str, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1"># '@' is ambiguous only before the first '/' after '//' (a path like '/@user' is fine);</span>
+    <span class="c1"># '#' and '?' do not end that span, since some parsers do not stop at them.</span>
+    <span class="n">authority_span</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">"//"</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">_AMBIGUOUS_URL</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"@"</span> <span class="ow">in</span> <span class="n">authority_span</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">UnsafeTarget</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"refusing </span><span class="si">{</span><span class="n">url</span><span class="si">!r}</span><span class="s2">: userinfo, backslash, whitespace or control characters "</span>
+            <span class="s2">"are parsed differently by different fetchers"</span>
+        <span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">addresses</span> <span class="o">=</span> <span class="n">_check_hop</span><span class="p">(</span>
+        <span class="n">url</span><span class="p">,</span>
+        <span class="n">allow_schemes</span><span class="o">=</span><span class="n">allow_schemes</span><span class="p">,</span>
+        <span class="n">allow_ports</span><span class="o">=</span><span class="n">allow_ports</span><span class="p">,</span>
+        <span class="n">is_allowed_address</span><span class="o">=</span><span class="n">is_allowed_address</span><span class="p">,</span>
+        <span class="n">resolver</span><span class="o">=</span><span class="n">resolver</span><span class="p">,</span>
+        <span class="n">deadline</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">addresses</span></div>
+
+
+
 <div class="viewcode-block" id="guarded_open">
 <a class="viewcode-back" href="../../_autosummary/graze.guarded.html#graze.guarded.guarded_open">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">guarded_open</span><span class="p">(</span>
@@ -827,18 +928,10 @@
 <span class="sd">    a body). When a redirect leaves the original origin, only the caller headers in</span>
 <span class="sd">    :data:`CROSS_ORIGIN_SAFE_HEADERS` go with it.</span>
 <span class="sd">    """</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
-        <span class="nb">isinstance</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
-        <span class="ow">and</span> <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
-        <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">timeout</span> <span class="o">&lt;=</span> <span class="n">threading</span><span class="o">.</span><span class="n">TIMEOUT_MAX</span>
-    <span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"timeout must be a finite number of seconds &gt; 0, not </span><span class="si">{</span><span class="n">timeout</span><span class="si">!r}</span><span class="s2">"</span>
-        <span class="p">)</span>
+    <span class="n">_check_timeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">max_redirects</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"max_redirects must be &gt;= 0, not </span><span class="si">{</span><span class="n">max_redirects</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="n">allow_schemes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">allow_schemes</span><span class="p">)</span>
-    <span class="n">allow_ports</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">allow_ports</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">allow_ports</span><span class="p">)</span>
+    <span class="n">allow_schemes</span><span class="p">,</span> <span class="n">allow_ports</span> <span class="o">=</span> <span class="n">_normalized_policy</span><span class="p">(</span><span class="n">allow_schemes</span><span class="p">,</span> <span class="n">allow_ports</span><span class="p">)</span>
     <span class="n">request_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Accept-Encoding"</span><span class="p">:</span> <span class="s2">"identity"</span><span class="p">,</span> <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">headers</span> <span class="ow">or</span> <span class="p">{})}</span>
     <span class="n">watchdog</span> <span class="o">=</span> <span class="n">_Watchdog</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
@@ -888,15 +981,12 @@
         <span class="k">return</span> <span class="n">FetchLimitExceeded</span><span class="p">(</span><span class="sa">f</span><span class="s2">"fetching </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> ran over its time budget"</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_redirects</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">_check_url</span><span class="p">(</span>
-            <span class="n">current</span><span class="p">,</span> <span class="n">allow_schemes</span><span class="o">=</span><span class="n">allow_schemes</span><span class="p">,</span> <span class="n">allow_ports</span><span class="o">=</span><span class="n">allow_ports</span>
-        <span class="p">)</span>
-        <span class="n">addresses</span> <span class="o">=</span> <span class="n">_resolve_and_check</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">addresses</span> <span class="o">=</span> <span class="n">_check_hop</span><span class="p">(</span>
             <span class="n">current</span><span class="p">,</span>
-            <span class="n">target</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
-            <span class="n">target</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
-            <span class="n">resolver</span><span class="o">=</span><span class="n">resolver</span><span class="p">,</span>
+            <span class="n">allow_schemes</span><span class="o">=</span><span class="n">allow_schemes</span><span class="p">,</span>
+            <span class="n">allow_ports</span><span class="o">=</span><span class="n">allow_ports</span><span class="p">,</span>
             <span class="n">is_allowed_address</span><span class="o">=</span><span class="n">is_allowed_address</span><span class="p">,</span>
+            <span class="n">resolver</span><span class="o">=</span><span class="n">resolver</span><span class="p">,</span>
             <span class="n">deadline</span><span class="o">=</span><span class="n">watchdog</span><span class="o">.</span><span class="n">deadline</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">watchdog</span><span class="o">.</span><span class="n">remaining</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -1025,7 +1115,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=aaf63c28"></script>
+</div><script src="../../_static/documentation_options.js?v=03b6484e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

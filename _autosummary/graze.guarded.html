@@ -9,7 +9,7 @@
 <link rel="alternate" type="text/markdown" href="graze.guarded.html.md">
 <link rel="describedby" href="llms.txt"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="graze.share_links" href="graze.share_links.html"><link rel="prev" title="graze.graze_exceptional" href="graze.graze_exceptional.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
         <title>graze.guarded - graze</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
@@ -328,10 +328,13 @@ and the pin would be meaningless.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#graze.guarded.guarded_open" title="graze.guarded.guarded_open"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guarded_open</span></code></a>(url, *[, method, headers, ...])</p></td>
 <td><p>Open <code class="docutils literal notranslate"><span class="pre">url</span></code> through the guard and return the response, body not yet read.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#graze.guarded.default_public_only" title="graze.guarded.default_public_only"><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_public_only</span></code></a>(ip)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graze.guarded.check_target" title="graze.guarded.check_target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_target</span></code></a>(url, *[, allow_schemes, ...])</p></td>
+<td><p>The guard's check on <code class="docutils literal notranslate"><span class="pre">url</span></code> alone, without connecting: its resolved addresses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#graze.guarded.default_public_only" title="graze.guarded.default_public_only"><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_public_only</span></code></a>(ip)</p></td>
 <td><p>True iff <code class="docutils literal notranslate"><span class="pre">ip</span></code> is a globally routable unicast address.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#graze.guarded.system_resolver" title="graze.guarded.system_resolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">system_resolver</span></code></a>(host, port)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graze.guarded.system_resolver" title="graze.guarded.system_resolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">system_resolver</span></code></a>(host, port)</p></td>
 <td><p>Every address <code class="docutils literal notranslate"><span class="pre">host</span></code> resolves to, via the system's <code class="docutils literal notranslate"><span class="pre">getaddrinfo</span></code>.</p></td>
 </tr>
 </tbody>
@@ -476,6 +479,36 @@ disk, say) should ask for a <code class="docutils literal notranslate"><span cla
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="graze.guarded.check_target">
+<span class="sig-prename descclassname"><span class="pre">graze.guarded.</span></span><span class="sig-name descname"><span class="pre">check_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_schemes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('https'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'http')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_ports</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(443</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">80)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_allowed_address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">default_public_only&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">system_resolver&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/guarded.html#check_target"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.guarded.check_target" title="Link to this definition">¶</a></dt>
+<dd><p>The guard’s check on <code class="docutils literal notranslate"><span class="pre">url</span></code> alone, without connecting: its resolved addresses.</p>
+<p>For callers that hand the URL to another fetcher (so cannot pin) or that validate a
+URL when it is stored. It is the very check <a class="reference internal" href="#graze.guarded.guarded_open" title="graze.guarded.guarded_open"><code class="xref py py-func docutils literal notranslate"><span class="pre">guarded_open()</span></code></a> makes on its first
+hop, so “allowed target” has one definition and its defaults cannot drift. Only that
+hop, and this is a validation of the <em>URL</em>, not a safe fetch: the other fetcher
+resolves the host again (DNS rebinding) and follows redirects unchecked. Pin the
+returned addresses if it lets you. Because that fetcher may parse the URL differently
+from <a class="reference external" href="https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlsplit" title="(in Python v3.15)"><code class="xref py py-func docutils literal notranslate"><span class="pre">urllib.parse.urlsplit()</span></code></a>, a URL with userinfo (<code class="docutils literal notranslate"><span class="pre">&#64;</span></code>), a backslash,
+whitespace or control characters is refused outright.</p>
+<p>Raises <a class="reference internal" href="#graze.guarded.UnsafeTarget" title="graze.guarded.UnsafeTarget"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnsafeTarget</span></code></a> for a bad scheme, port, host or address,
+<a class="reference internal" href="#graze.guarded.FetchFailed" title="graze.guarded.FetchFailed"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchFailed</span></code></a> if the host does not resolve, and <a class="reference internal" href="#graze.guarded.FetchLimitExceeded" title="graze.guarded.FetchLimitExceeded"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchLimitExceeded</span></code></a>
+if resolving takes longer than <code class="docutils literal notranslate"><span class="pre">timeout</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">check_target</span><span class="p">(</span><span class="s1">'http://169.254.169.254/'</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">graze.guarded.UnsafeTarget</span>: <span class="n">refusing http://169.254.169.254/: address 169.254.169.254 is not allowed</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">check_target</span><span class="p">(</span><span class="s1">'https://example.com/'</span><span class="p">,</span> <span class="n">resolver</span><span class="o">=</span><span class="k">lambda</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="p">[</span><span class="s1">'93.184.216.34'</span><span class="p">])</span>
+<span class="go">[IPv4Address('93.184.216.34')]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/ipaddress.html#ipaddress.IPv4Address" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">IPv4Address</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/ipaddress.html#ipaddress.IPv6Address" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">IPv6Address</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="graze.guarded.default_public_only">
 <span class="sig-prename descclassname"><span class="pre">graze.guarded.</span></span><span class="sig-name descname"><span class="pre">default_public_only</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/guarded.html#default_public_only"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.guarded.default_public_only" title="Link to this definition">¶</a></dt>
 <dd><p>True iff <code class="docutils literal notranslate"><span class="pre">ip</span></code> is a globally routable unicast address.</p>
@@ -611,6 +644,7 @@ a body). When a redirect leaves the original origin, only the caller headers in
 </li>
 <li><a class="reference internal" href="#graze.guarded.HTTPStatusError"><code class="docutils literal notranslate"><span class="pre">HTTPStatusError</span></code></a></li>
 <li><a class="reference internal" href="#graze.guarded.UnsafeTarget"><code class="docutils literal notranslate"><span class="pre">UnsafeTarget</span></code></a></li>
+<li><a class="reference internal" href="#graze.guarded.check_target"><code class="docutils literal notranslate"><span class="pre">check_target()</span></code></a></li>
 <li><a class="reference internal" href="#graze.guarded.default_public_only"><code class="docutils literal notranslate"><span class="pre">default_public_only()</span></code></a></li>
 <li><a class="reference internal" href="#graze.guarded.guarded_fetch"><code class="docutils literal notranslate"><span class="pre">guarded_fetch()</span></code></a></li>
 <li><a class="reference internal" href="#graze.guarded.guarded_open"><code class="docutils literal notranslate"><span class="pre">guarded_open()</span></code></a></li>
@@ -626,7 +660,7 @@ a body). When a redirect leaves the original origin, only the caller headers in
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=aaf63c28"></script>
+</div><script src="../_static/documentation_options.js?v=03b6484e"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -62,11 +62,12 @@ and the pin would be meaningless.
 
 ### Functions
 
-| [`guarded_fetch`](#graze.guarded.guarded_fetch)(url, \*[, method, headers, ...])   | The body of `url` as bytes, fetched through the guard.                   |
-|---------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
-| [`guarded_open`](#graze.guarded.guarded_open)(url, \*[, method, headers, ...])    | Open `url` through the guard and return the response, body not yet read. |
-| [`default_public_only`](#graze.guarded.default_public_only)(ip)                          | True iff `ip` is a globally routable unicast address.                    |
-| [`system_resolver`](#graze.guarded.system_resolver)(host, port)                      | Every address `host` resolves to, via the system's `getaddrinfo`.        |
+| [`guarded_fetch`](#graze.guarded.guarded_fetch)(url, \*[, method, headers, ...])   | The body of `url` as bytes, fetched through the guard.                        |
+|---------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| [`guarded_open`](#graze.guarded.guarded_open)(url, \*[, method, headers, ...])    | Open `url` through the guard and return the response, body not yet read.      |
+| [`check_target`](#graze.guarded.check_target)(url, \*[, allow_schemes, ...])      | The guard's check on `url` alone, without connecting: its resolved addresses. |
+| [`default_public_only`](#graze.guarded.default_public_only)(ip)                          | True iff `ip` is a globally routable unicast address.                         |
+| [`system_resolver`](#graze.guarded.system_resolver)(host, port)                      | Every address `host` resolves to, via the system's `getaddrinfo`.             |
 
 ### Classes
 
@@ -160,6 +161,35 @@ The server answered with an error status (4xx or 5xx).
 Bases: [`GuardedFetchError`](#graze.guarded.GuardedFetchError), [`ValueError`](https://docs.python.org/3/builtins/exceptions.html#ValueError)
 
 The URL, or a redirect hop of it, points somewhere a fetch must not go.
+
+### graze.guarded.check_target(url, \*, allow_schemes=('https', 'http'), allow_ports=(443, 80), timeout=30.0, is_allowed_address=<function default_public_only>, resolver=<function system_resolver>)
+
+The guard’s check on `url` alone, without connecting: its resolved addresses.
+
+For callers that hand the URL to another fetcher (so cannot pin) or that validate a
+URL when it is stored. It is the very check [`guarded_open()`](#graze.guarded.guarded_open) makes on its first
+hop, so “allowed target” has one definition and its defaults cannot drift. Only that
+hop, and this is a validation of the *URL*, not a safe fetch: the other fetcher
+resolves the host again (DNS rebinding) and follows redirects unchecked. Pin the
+returned addresses if it lets you. Because that fetcher may parse the URL differently
+from [`urllib.parse.urlsplit()`](https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlsplit), a URL with userinfo (`@`), a backslash,
+whitespace or control characters is refused outright.
+
+Raises [`UnsafeTarget`](#graze.guarded.UnsafeTarget) for a bad scheme, port, host or address,
+[`FetchFailed`](#graze.guarded.FetchFailed) if the host does not resolve, and [`FetchLimitExceeded`](#graze.guarded.FetchLimitExceeded)
+if resolving takes longer than `timeout`.
+
+```pycon
+>>> check_target('http://169.254.169.254/')
+Traceback (most recent call last):
+    ...
+graze.guarded.UnsafeTarget: refusing http://169.254.169.254/: address 169.254.169.254 is not allowed
+>>> check_target('https://example.com/', resolver=lambda host, port: ['93.184.216.34'])
+[IPv4Address('93.184.216.34')]
+```
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`IPv4Address`](https://docs.python.org/3/library/ipaddress.html#ipaddress.IPv4Address) | [`IPv6Address`](https://docs.python.org/3/library/ipaddress.html#ipaddress.IPv6Address)]
 
 ### graze.guarded.default_public_only(ip)
 

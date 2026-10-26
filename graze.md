@@ -1,4 +1,4 @@
-> built 2026-10-19 12:16 UTC from 952ab1d (master) · graze 0.1.44. Details: build_info.json
+> built 2026-10-26 13:47 UTC from 1889b24 (master) · graze 0.1.45. Details: build_info.json
 
 # index.html.md
 
@@ -533,6 +533,10 @@ with guarded_open(url, max_bytes=500 * 2**20, timeout=600) as response:
 
 # It is a fetcher like any other, so graze can cache through it
 content = graze(url, source=guarded_fetch)
+
+# Only the check, no connection: for a URL you validate when stored, or hand to another fetcher
+from graze import check_target
+check_target("https://example.com/data.json")  # the checked addresses, or raises UnsafeTarget
 ```
 
 Everything is a keyword argument: `allow_schemes`, `allow_ports` (`None` for any), `max_redirects`, `timeout`, `max_bytes`, and the seams `is_allowed_address` (the address policy; pass an allow-list to reach a LAN host from a self-hosted deployment), `resolver` (a fake one makes tests offline) and `ssl_context`. It uses the standard library only and ignores proxy settings on purpose, since a proxy would resolve the host itself.
@@ -1518,11 +1522,12 @@ and the pin would be meaningless.
 
 ### Functions
 
-| [`guarded_fetch`](_autosummary/graze.guarded.html.md#graze.guarded.guarded_fetch)(url, \*[, method, headers, ...])   | The body of `url` as bytes, fetched through the guard.                   |
-|---------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
-| [`guarded_open`](_autosummary/graze.guarded.html.md#graze.guarded.guarded_open)(url, \*[, method, headers, ...])    | Open `url` through the guard and return the response, body not yet read. |
-| [`default_public_only`](_autosummary/graze.guarded.html.md#graze.guarded.default_public_only)(ip)                          | True iff `ip` is a globally routable unicast address.                    |
-| [`system_resolver`](_autosummary/graze.guarded.html.md#graze.guarded.system_resolver)(host, port)                      | Every address `host` resolves to, via the system's `getaddrinfo`.        |
+| [`guarded_fetch`](_autosummary/graze.guarded.html.md#graze.guarded.guarded_fetch)(url, \*[, method, headers, ...])   | The body of `url` as bytes, fetched through the guard.                        |
+|---------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| [`guarded_open`](_autosummary/graze.guarded.html.md#graze.guarded.guarded_open)(url, \*[, method, headers, ...])    | Open `url` through the guard and return the response, body not yet read.      |
+| [`check_target`](_autosummary/graze.guarded.html.md#graze.guarded.check_target)(url, \*[, allow_schemes, ...])      | The guard's check on `url` alone, without connecting: its resolved addresses. |
+| [`default_public_only`](_autosummary/graze.guarded.html.md#graze.guarded.default_public_only)(ip)                          | True iff `ip` is a globally routable unicast address.                         |
+| [`system_resolver`](_autosummary/graze.guarded.html.md#graze.guarded.system_resolver)(host, port)                      | Every address `host` resolves to, via the system's `getaddrinfo`.             |
 
 ### Classes
 
@@ -1616,6 +1621,35 @@ The server answered with an error status (4xx or 5xx).
 Bases: [`GuardedFetchError`](_autosummary/graze.guarded.html.md#graze.guarded.GuardedFetchError), [`ValueError`](https://docs.python.org/3/builtins/exceptions.html#ValueError)
 
 The URL, or a redirect hop of it, points somewhere a fetch must not go.
+
+### graze.guarded.check_target(url, \*, allow_schemes=('https', 'http'), allow_ports=(443, 80), timeout=30.0, is_allowed_address=<function default_public_only>, resolver=<function system_resolver>)
+
+The guard’s check on `url` alone, without connecting: its resolved addresses.
+
+For callers that hand the URL to another fetcher (so cannot pin) or that validate a
+URL when it is stored. It is the very check [`guarded_open()`](_autosummary/graze.guarded.html.md#graze.guarded.guarded_open) makes on its first
+hop, so “allowed target” has one definition and its defaults cannot drift. Only that
+hop, and this is a validation of the *URL*, not a safe fetch: the other fetcher
+resolves the host again (DNS rebinding) and follows redirects unchecked. Pin the
+returned addresses if it lets you. Because that fetcher may parse the URL differently
+from [`urllib.parse.urlsplit()`](https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlsplit), a URL with userinfo (`@`), a backslash,
+whitespace or control characters is refused outright.
+
+Raises [`UnsafeTarget`](_autosummary/graze.guarded.html.md#graze.guarded.UnsafeTarget) for a bad scheme, port, host or address,
+[`FetchFailed`](_autosummary/graze.guarded.html.md#graze.guarded.FetchFailed) if the host does not resolve, and [`FetchLimitExceeded`](_autosummary/graze.guarded.html.md#graze.guarded.FetchLimitExceeded)
+if resolving takes longer than `timeout`.
+
+```pycon
+>>> check_target('http://169.254.169.254/')
+Traceback (most recent call last):
+    ...
+graze.guarded.UnsafeTarget: refusing http://169.254.169.254/: address 169.254.169.254 is not allowed
+>>> check_target('https://example.com/', resolver=lambda host, port: ['93.184.216.34'])
+[IPv4Address('93.184.216.34')]
+```
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`IPv4Address`](https://docs.python.org/3/library/ipaddress.html#ipaddress.IPv4Address) | [`IPv6Address`](https://docs.python.org/3/library/ipaddress.html#ipaddress.IPv6Address)]
 
 ### graze.guarded.default_public_only(ip)
 
@@ -2323,18 +2357,18 @@ Shortens a long URL by directly calling the TinyURL API endpoint.
 
 # About this build
 
-This documentation was built on **2026-10-19 12:16 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/952ab1d6eb2b69de9553746631ba1e103a43163b"><code>952ab1d</code></a> on branch <code>master</code>, for **graze 0.1.44** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-26 13:47 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/1889b24f55ff542737143dd6d1a636acc1341105"><code>1889b24</code></a> on branch <code>master</code>, for **graze 0.1.45** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.44) is behind the latest release on PyPI (0.1.45): `pip install graze` gives newer code than these docs describe.
+- The documented version (0.1.45) is behind the latest release on PyPI (0.1.46): `pip install graze` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/graze/commit/952ab1d6eb2b69de9553746631ba1e103a43163b"><code>952ab1d6eb2b69de9553746631ba1e103a43163b</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/graze/commit/1889b24f55ff542737143dd6d1a636acc1341105"><code>1889b24f55ff542737143dd6d1a636acc1341105</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -2345,16 +2379,16 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/graze</code>                                                              |
-| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/39250540853">39250540853</a>     |
+| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/40333413236">40333413236</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>952ab1d6eb2b69de9553746631ba1e103a43163b</code> (in the history of the built commit) |
+| Event commit | <code>1889b24f55ff542737143dd6d1a636acc1341105</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.18  |
-| Sphinx   | 9.1.0   |
+| epythet  | 0.2.22  |
+| Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.15 |
 
@@ -2372,14 +2406,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/graze/0.1.45/">0.1.45</a>, newer than the documented version (0.1.44).
+Latest release: <a href="https://pypi.org/project/graze/0.1.46/">0.1.46</a>, newer than the documented version (0.1.45).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout 952ab1d6eb2b69de9553746631ba1e103a43163b
-pip install "epythet==0.2.18"
+git checkout 1889b24f55ff542737143dd6d1a636acc1341105
+pip install "epythet==0.2.22"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 
