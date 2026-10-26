@@ -61,6 +61,7 @@ import threading
 import time
 import math
 import queue
+import re
 from dataclasses import dataclass, field
 from typing import Callable, Iterable, Iterator, Mapping, Optional
 from urllib.parse import urljoin, urlsplit
@@ -116,6 +117,11 @@ CROSS_ORIGIN_SAFE_HEADERS = frozenset(
         "if-modified-since",
     }
 )
+
+#: What parsers disagree on: userinfo (``@``), backslashes, whitespace and controls.
+#: ``urlsplit`` reads ``http://169.254.169.254\\@a.example/`` as host ``a.example``;
+#: urllib3 reads it as the metadata address.
+_AMBIGUOUS_URL = re.compile(r"[\\@\s\x00-\x1f\x7f]")
 
 _DEFAULT_PORTS = {"http": 80, "https": 443}
 _REDIRECT_STATUSES = frozenset({301, 302, 303, 307, 308})
@@ -520,6 +526,22 @@ def _redirect_target(current: str, location: str) -> str:
         raise UnsafeTarget(f"refusing redirect from {current} to {location!r}: {e}")
 
 
+def _check_hop(
+    url: str, *, allow_schemes, allow_ports, is_allowed_address, resolver, deadline
+) -> tuple[_Target, list[IPAddress]]:
+    """One hop's whole check: the URL itself, then its host's resolved addresses."""
+    target = _check_url(url, allow_schemes=allow_schemes, allow_ports=allow_ports)
+    addresses = _resolve_and_check(
+        url,
+        target.host,
+        target.port,
+        resolver=resolver,
+        is_allowed_address=is_allowed_address,
+        deadline=deadline,
+    )
+    return target, addresses
+
+
 def _check_timeout(timeout) -> None:
     if not (
         isinstance(timeout, (int, float))
@@ -553,7 +575,11 @@ def check_target(
     For callers that hand the URL to another fetcher (so cannot pin) or that validate a
     URL when it is stored. It is the very check :func:`guarded_open` makes on its first
     hop, so "allowed target" has one definition and its defaults cannot drift. Only that
-    hop: redirects are the fetcher's business, and a later fetch may resolve differently.
+    hop, and this is a validation of the *URL*, not a safe fetch: the other fetcher
+    resolves the host again (DNS rebinding) and follows redirects unchecked. Pin the
+    returned addresses if it lets you. Because that fetcher may parse the URL differently
+    from :func:`urllib.parse.urlsplit`, a URL with userinfo (``@``), a backslash,
+    whitespace or control characters is refused outright.
 
     Raises :class:`UnsafeTarget` for a bad scheme, port, host or address,
     :class:`FetchFailed` if the host does not resolve, and :class:`FetchLimitExceeded`
@@ -567,16 +593,25 @@ def check_target(
     [IPv4Address('93.184.216.34')]
     """
     _check_timeout(timeout)
+    if isinstance(allow_schemes, str):
+        raise TypeError(f"allow_schemes must be a collection, not {allow_schemes!r}")
     allow_schemes, allow_ports = _normalized_policy(allow_schemes, allow_ports)
-    target = _check_url(url, allow_schemes=allow_schemes, allow_ports=allow_ports)
-    return _resolve_and_check(
+    if not isinstance(url, str):
+        raise TypeError(f"url must be a str, not {type(url).__name__}")
+    if _AMBIGUOUS_URL.search(url):
+        raise UnsafeTarget(
+            f"refusing {url!r}: userinfo, backslash, whitespace or control characters "
+            "are parsed differently by different fetchers"
+        )
+    _, addresses = _check_hop(
         url,
-        target.host,
-        target.port,
-        resolver=resolver,
+        allow_schemes=allow_schemes,
+        allow_ports=allow_ports,
         is_allowed_address=is_allowed_address,
+        resolver=resolver,
         deadline=time.monotonic() + timeout,
     )
+    return addresses
 
 
 def guarded_open(
@@ -660,15 +695,12 @@ def _open_following_redirects(
         return FetchLimitExceeded(f"fetching {url} ran over its time budget")
 
     for _ in range(max_redirects + 1):
-        target = _check_url(
-            current, allow_schemes=allow_schemes, allow_ports=allow_ports
-        )
-        addresses = _resolve_and_check(
+        target, addresses = _check_hop(
             current,
-            target.host,
-            target.port,
-            resolver=resolver,
+            allow_schemes=allow_schemes,
+            allow_ports=allow_ports,
             is_allowed_address=is_allowed_address,
+            resolver=resolver,
             deadline=watchdog.deadline,
         )
         if watchdog.remaining() <= 0:

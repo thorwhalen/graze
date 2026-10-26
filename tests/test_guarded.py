@@ -625,6 +625,10 @@ class TestCheckTarget:
             "http://169.254.169.254/",
             "http://[::1]/",
             "http://a.example:notaport/",
+            "http://169.254.169.254\\@a.example/",
+            "http://user@a.example/",
+            "http://a.example#@169.254.169.254/",
+            "http://a.ex\nample/",
         ],
     )
     def test_refuses_what_the_fetch_refuses(self, url):
@@ -636,6 +640,12 @@ class TestCheckTarget:
         resolver = fixed_resolver({"m.example": [PUBLIC_IP, "10.0.0.1"]})
         with pytest.raises(UnsafeTarget, match="10.0.0.1"):
             check_target("http://m.example/", resolver=resolver)
+
+    def test_bad_argument_types(self):
+        with pytest.raises(TypeError):
+            check_target(None)
+        with pytest.raises(TypeError):
+            check_target("http://a.example/", allow_schemes="https")
 
     def test_agrees_with_guarded_open(self, recorder):
         resolver = fixed_resolver(
