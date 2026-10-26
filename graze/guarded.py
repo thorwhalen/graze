@@ -61,6 +61,7 @@ import threading
 import time
 import math
 import queue
+import re
 from dataclasses import dataclass, field
 from typing import Callable, Iterable, Iterator, Mapping, Optional
 from urllib.parse import urljoin, urlsplit
@@ -74,6 +75,7 @@ __all__ = [
     "GuardedResponse",
     "guarded_fetch",
     "guarded_open",
+    "check_target",
     "default_public_only",
     "system_resolver",
     "DFLT_ALLOWED_SCHEMES",
@@ -115,6 +117,11 @@ CROSS_ORIGIN_SAFE_HEADERS = frozenset(
         "if-modified-since",
     }
 )
+
+#: What parsers disagree on: backslashes, whitespace and controls (and userinfo, below).
+#: ``urlsplit`` reads ``http://169.254.169.254\\@a.example/`` as host ``a.example``;
+#: urllib3 reads it as the metadata address.
+_AMBIGUOUS_URL = re.compile(r"[\\\s\x00-\x1f\x7f]")
 
 _DEFAULT_PORTS = {"http": 80, "https": 443}
 _REDIRECT_STATUSES = frozenset({301, 302, 303, 307, 308})
@@ -519,6 +526,97 @@ def _redirect_target(current: str, location: str) -> str:
         raise UnsafeTarget(f"refusing redirect from {current} to {location!r}: {e}")
 
 
+def _check_hop(
+    url: str, *, allow_schemes, allow_ports, is_allowed_address, resolver, deadline
+) -> tuple[_Target, list[IPAddress]]:
+    """One hop's whole check: the URL itself, then its host's resolved addresses."""
+    target = _check_url(url, allow_schemes=allow_schemes, allow_ports=allow_ports)
+    addresses = _resolve_and_check(
+        url,
+        target.host,
+        target.port,
+        resolver=resolver,
+        is_allowed_address=is_allowed_address,
+        deadline=deadline,
+    )
+    return target, addresses
+
+
+def _check_timeout(timeout) -> None:
+    if not (
+        isinstance(timeout, (int, float))
+        and math.isfinite(timeout)
+        and 0 < timeout <= threading.TIMEOUT_MAX
+    ):
+        raise ValueError(
+            f"timeout must be a finite number of seconds > 0, not {timeout!r}"
+        )
+
+
+def _normalized_policy(allow_schemes, allow_ports):
+    """``(allow_schemes, allow_ports)`` as the tuple and frozenset the checks expect."""
+    return (
+        tuple(sch.lower() for sch in allow_schemes),
+        None if allow_ports is None else frozenset(allow_ports),
+    )
+
+
+def check_target(
+    url: str,
+    *,
+    allow_schemes: Iterable[str] = DFLT_ALLOWED_SCHEMES,
+    allow_ports: Optional[Iterable[int]] = DFLT_ALLOWED_PORTS,
+    timeout: float = DFLT_TIMEOUT_S,
+    is_allowed_address: AddressPolicy = default_public_only,
+    resolver: Resolver = system_resolver,
+) -> list[IPAddress]:
+    """The guard's check on ``url`` alone, without connecting: its resolved addresses.
+
+    For callers that hand the URL to another fetcher (so cannot pin) or that validate a
+    URL when it is stored. It is the very check :func:`guarded_open` makes on its first
+    hop, so "allowed target" has one definition and its defaults cannot drift. Only that
+    hop, and this is a validation of the *URL*, not a safe fetch: the other fetcher
+    resolves the host again (DNS rebinding) and follows redirects unchecked. Pin the
+    returned addresses if it lets you. Because that fetcher may parse the URL differently
+    from :func:`urllib.parse.urlsplit`, a URL with userinfo (``@``), a backslash,
+    whitespace or control characters is refused outright.
+
+    Raises :class:`UnsafeTarget` for a bad scheme, port, host or address,
+    :class:`FetchFailed` if the host does not resolve, and :class:`FetchLimitExceeded`
+    if resolving takes longer than ``timeout``.
+
+    >>> check_target('http://169.254.169.254/')
+    Traceback (most recent call last):
+        ...
+    graze.guarded.UnsafeTarget: refusing http://169.254.169.254/: address 169.254.169.254 is not allowed
+    >>> check_target('https://example.com/', resolver=lambda host, port: ['93.184.216.34'])
+    [IPv4Address('93.184.216.34')]
+    """
+    _check_timeout(timeout)
+    if isinstance(allow_schemes, str):
+        raise TypeError(f"allow_schemes must be a collection, not {allow_schemes!r}")
+    allow_schemes, allow_ports = _normalized_policy(allow_schemes, allow_ports)
+    if not isinstance(url, str):
+        raise TypeError(f"url must be a str, not {type(url).__name__}")
+    # '@' is ambiguous only before the first '/' after '//' (a path like '/@user' is fine);
+    # '#' and '?' do not end that span, since some parsers do not stop at them.
+    authority_span = url.partition("//")[2].partition("/")[0]
+    if _AMBIGUOUS_URL.search(url) or "@" in authority_span:
+        raise UnsafeTarget(
+            f"refusing {url!r}: userinfo, backslash, whitespace or control characters "
+            "are parsed differently by different fetchers"
+        )
+    _, addresses = _check_hop(
+        url,
+        allow_schemes=allow_schemes,
+        allow_ports=allow_ports,
+        is_allowed_address=is_allowed_address,
+        resolver=resolver,
+        deadline=time.monotonic() + timeout,
+    )
+    return addresses
+
+
 def guarded_open(
     url: str,
     *,
@@ -548,18 +646,10 @@ def guarded_open(
     a body). When a redirect leaves the original origin, only the caller headers in
     :data:`CROSS_ORIGIN_SAFE_HEADERS` go with it.
     """
-    if not (
-        isinstance(timeout, (int, float))
-        and math.isfinite(timeout)
-        and 0 < timeout <= threading.TIMEOUT_MAX
-    ):
-        raise ValueError(
-            f"timeout must be a finite number of seconds > 0, not {timeout!r}"
-        )
+    _check_timeout(timeout)
     if max_redirects < 0:
         raise ValueError(f"max_redirects must be >= 0, not {max_redirects}")
-    allow_schemes = tuple(s.lower() for s in allow_schemes)
-    allow_ports = None if allow_ports is None else frozenset(allow_ports)
+    allow_schemes, allow_ports = _normalized_policy(allow_schemes, allow_ports)
     request_headers = {"Accept-Encoding": "identity", **dict(headers or {})}
     watchdog = _Watchdog(time.monotonic() + timeout)
     try:
@@ -608,15 +698,12 @@ def _open_following_redirects(
         return FetchLimitExceeded(f"fetching {url} ran over its time budget")
 
     for _ in range(max_redirects + 1):
-        target = _check_url(
-            current, allow_schemes=allow_schemes, allow_ports=allow_ports
-        )
-        addresses = _resolve_and_check(
+        target, addresses = _check_hop(
             current,
-            target.host,
-            target.port,
-            resolver=resolver,
+            allow_schemes=allow_schemes,
+            allow_ports=allow_ports,
             is_allowed_address=is_allowed_address,
+            resolver=resolver,
             deadline=watchdog.deadline,
         )
         if watchdog.remaining() <= 0:
