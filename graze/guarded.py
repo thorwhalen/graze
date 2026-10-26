@@ -118,10 +118,10 @@ CROSS_ORIGIN_SAFE_HEADERS = frozenset(
     }
 )
 
-#: What parsers disagree on: userinfo (``@``), backslashes, whitespace and controls.
+#: What parsers disagree on: backslashes, whitespace and controls (and userinfo, below).
 #: ``urlsplit`` reads ``http://169.254.169.254\\@a.example/`` as host ``a.example``;
 #: urllib3 reads it as the metadata address.
-_AMBIGUOUS_URL = re.compile(r"[\\@\s\x00-\x1f\x7f]")
+_AMBIGUOUS_URL = re.compile(r"[\\\s\x00-\x1f\x7f]")
 
 _DEFAULT_PORTS = {"http": 80, "https": 443}
 _REDIRECT_STATUSES = frozenset({301, 302, 303, 307, 308})
@@ -598,7 +598,10 @@ def check_target(
     allow_schemes, allow_ports = _normalized_policy(allow_schemes, allow_ports)
     if not isinstance(url, str):
         raise TypeError(f"url must be a str, not {type(url).__name__}")
-    if _AMBIGUOUS_URL.search(url):
+    # '@' is ambiguous only before the first '/' after '//' (a path like '/@user' is fine);
+    # '#' and '?' do not end that span, since some parsers do not stop at them.
+    authority_span = url.partition("//")[2].partition("/")[0]
+    if _AMBIGUOUS_URL.search(url) or "@" in authority_span:
         raise UnsafeTarget(
             f"refusing {url!r}: userinfo, backslash, whitespace or control characters "
             "are parsed differently by different fetchers"

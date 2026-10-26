@@ -641,6 +641,10 @@ class TestCheckTarget:
         with pytest.raises(UnsafeTarget, match="10.0.0.1"):
             check_target("http://m.example/", resolver=resolver)
 
+    def test_an_at_sign_in_the_path_is_fine(self):
+        resolver = fixed_resolver({"medium.example": [PUBLIC_IP]})
+        assert check_target("https://medium.example/@user?x=a@b", resolver=resolver)
+
     def test_bad_argument_types(self):
         with pytest.raises(TypeError):
             check_target(None)
