@@ -27,6 +27,7 @@ from graze.guarded import (
     default_public_only,
     guarded_fetch,
     guarded_open,
+    check_target,
 )
 
 PUBLIC_IP = "93.184.216.34"
@@ -602,6 +603,90 @@ class TestStatusesAndSeams:
         assert body == b"hello"
         assert context.server_hostnames == ["tls.example"]
         assert recorder.dialed == [PUBLIC_IP]
+
+
+class TestCheckTarget:
+    def test_returns_the_checked_addresses(self):
+        resolver = fixed_resolver({"a.example": [PUBLIC_IP, OTHER_PUBLIC_IP]})
+        got = check_target("https://a.example/x", resolver=resolver)
+        assert got == [
+            ipaddress.ip_address(PUBLIC_IP),
+            ipaddress.ip_address(OTHER_PUBLIC_IP),
+        ]
+        assert resolver.calls == ["a.example"]
+
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "file:///etc/passwd",
+            "ftp://a.example/",
+            "http://a.example:8080/",
+            "http:///nohost",
+            "http://169.254.169.254/",
+            "http://[::1]/",
+            "http://a.example:notaport/",
+        ],
+    )
+    def test_refuses_what_the_fetch_refuses(self, url):
+        resolver = fixed_resolver({"a.example": [PUBLIC_IP]})
+        with pytest.raises(UnsafeTarget):
+            check_target(url, resolver=resolver)
+
+    def test_one_private_address_refuses_the_host(self):
+        resolver = fixed_resolver({"m.example": [PUBLIC_IP, "10.0.0.1"]})
+        with pytest.raises(UnsafeTarget, match="10.0.0.1"):
+            check_target("http://m.example/", resolver=resolver)
+
+    def test_agrees_with_guarded_open(self, recorder):
+        resolver = fixed_resolver(
+            {"p.example": [PUBLIC_IP], "q.example": ["127.0.0.1"]}
+        )
+        for url, ok in [("http://p.example/ok", True), ("http://q.example/ok", False)]:
+            if ok:
+                check_target(url, resolver=resolver)
+                guarded_fetch(url, resolver=resolver, connector=recorder)
+            else:
+                with pytest.raises(UnsafeTarget):
+                    check_target(url, resolver=resolver)
+                with pytest.raises(UnsafeTarget):
+                    guarded_fetch(url, resolver=resolver, connector=recorder)
+
+    def test_policy_seams(self):
+        resolver = fixed_resolver({"lan.example": ["10.0.0.1"]})
+        got = check_target(
+            "http://lan.example:8080/",
+            allow_ports=None,
+            allow_schemes=["HTTP"],
+            is_allowed_address=lambda ip: True,
+            resolver=resolver,
+        )
+        assert got == [ipaddress.ip_address("10.0.0.1")]
+
+    def test_unresolvable_and_malformed_hosts_raise_graze_errors(self):
+        def failing(host, port):
+            raise socket.gaierror("no such host")
+
+        with pytest.raises(FetchFailed):
+            check_target("http://gone.example/", resolver=failing)
+
+        def bad_label(host, port):
+            raise UnicodeError("label empty or too long")
+
+        with pytest.raises(FetchFailed):
+            check_target("http://a..b/", resolver=bad_label)
+
+    def test_resolver_over_the_timeout_is_a_budget_error(self):
+        def slow(host, port):
+            time.sleep(1)
+            return [PUBLIC_IP]
+
+        with pytest.raises(FetchLimitExceeded):
+            check_target("http://s.example/", resolver=slow, timeout=0.05)
+
+    @pytest.mark.parametrize("timeout", [0, -1, float("nan"), float("inf"), "5"])
+    def test_bad_timeout_is_a_value_error(self, timeout):
+        with pytest.raises(ValueError):
+            check_target("http://a.example/", timeout=timeout)
 
 
 def test_module_doctests():

@@ -74,6 +74,7 @@ __all__ = [
     "GuardedResponse",
     "guarded_fetch",
     "guarded_open",
+    "check_target",
     "default_public_only",
     "system_resolver",
     "DFLT_ALLOWED_SCHEMES",
@@ -519,6 +520,65 @@ def _redirect_target(current: str, location: str) -> str:
         raise UnsafeTarget(f"refusing redirect from {current} to {location!r}: {e}")
 
 
+def _check_timeout(timeout) -> None:
+    if not (
+        isinstance(timeout, (int, float))
+        and math.isfinite(timeout)
+        and 0 < timeout <= threading.TIMEOUT_MAX
+    ):
+        raise ValueError(
+            f"timeout must be a finite number of seconds > 0, not {timeout!r}"
+        )
+
+
+def _normalized_policy(allow_schemes, allow_ports):
+    """``(allow_schemes, allow_ports)`` as the tuple and frozenset the checks expect."""
+    return (
+        tuple(sch.lower() for sch in allow_schemes),
+        None if allow_ports is None else frozenset(allow_ports),
+    )
+
+
+def check_target(
+    url: str,
+    *,
+    allow_schemes: Iterable[str] = DFLT_ALLOWED_SCHEMES,
+    allow_ports: Optional[Iterable[int]] = DFLT_ALLOWED_PORTS,
+    timeout: float = DFLT_TIMEOUT_S,
+    is_allowed_address: AddressPolicy = default_public_only,
+    resolver: Resolver = system_resolver,
+) -> list[IPAddress]:
+    """The guard's check on ``url`` alone, without connecting: its resolved addresses.
+
+    For callers that hand the URL to another fetcher (so cannot pin) or that validate a
+    URL when it is stored. It is the very check :func:`guarded_open` makes on its first
+    hop, so "allowed target" has one definition and its defaults cannot drift. Only that
+    hop: redirects are the fetcher's business, and a later fetch may resolve differently.
+
+    Raises :class:`UnsafeTarget` for a bad scheme, port, host or address,
+    :class:`FetchFailed` if the host does not resolve, and :class:`FetchLimitExceeded`
+    if resolving takes longer than ``timeout``.
+
+    >>> check_target('http://169.254.169.254/')
+    Traceback (most recent call last):
+        ...
+    graze.guarded.UnsafeTarget: refusing http://169.254.169.254/: address 169.254.169.254 is not allowed
+    >>> check_target('https://example.com/', resolver=lambda host, port: ['93.184.216.34'])
+    [IPv4Address('93.184.216.34')]
+    """
+    _check_timeout(timeout)
+    allow_schemes, allow_ports = _normalized_policy(allow_schemes, allow_ports)
+    target = _check_url(url, allow_schemes=allow_schemes, allow_ports=allow_ports)
+    return _resolve_and_check(
+        url,
+        target.host,
+        target.port,
+        resolver=resolver,
+        is_allowed_address=is_allowed_address,
+        deadline=time.monotonic() + timeout,
+    )
+
+
 def guarded_open(
     url: str,
     *,
@@ -548,18 +608,10 @@ def guarded_open(
     a body). When a redirect leaves the original origin, only the caller headers in
     :data:`CROSS_ORIGIN_SAFE_HEADERS` go with it.
     """
-    if not (
-        isinstance(timeout, (int, float))
-        and math.isfinite(timeout)
-        and 0 < timeout <= threading.TIMEOUT_MAX
-    ):
-        raise ValueError(
-            f"timeout must be a finite number of seconds > 0, not {timeout!r}"
-        )
+    _check_timeout(timeout)
     if max_redirects < 0:
         raise ValueError(f"max_redirects must be >= 0, not {max_redirects}")
-    allow_schemes = tuple(s.lower() for s in allow_schemes)
-    allow_ports = None if allow_ports is None else frozenset(allow_ports)
+    allow_schemes, allow_ports = _normalized_policy(allow_schemes, allow_ports)
     request_headers = {"Accept-Encoding": "identity", **dict(headers or {})}
     watchdog = _Watchdog(time.monotonic() + timeout)
     try:

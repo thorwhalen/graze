@@ -524,6 +524,10 @@ with guarded_open(url, max_bytes=500 * 2**20, timeout=600) as response:
 
 # It is a fetcher like any other, so graze can cache through it
 content = graze(url, source=guarded_fetch)
+
+# Only the check, no connection: for a URL you validate when stored, or hand to another fetcher
+from graze import check_target
+check_target("https://example.com/data.json")  # the checked addresses, or raises UnsafeTarget
 ```
 
 Everything is a keyword argument: `allow_schemes`, `allow_ports` (`None` for any), `max_redirects`, `timeout`, `max_bytes`, and the seams `is_allowed_address` (the address policy; pass an allow-list to reach a LAN host from a self-hosted deployment), `resolver` (a fake one makes tests offline) and `ssl_context`. It uses the standard library only and ignores proxy settings on purpose, since a proxy would resolve the host itself.

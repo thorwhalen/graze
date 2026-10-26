@@ -40,6 +40,7 @@ from graze.guarded import (
     GuardedResponse,
     guarded_fetch,
     guarded_open,
+    check_target,
     default_public_only,
     system_resolver,
 )
