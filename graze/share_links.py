@@ -6,7 +6,8 @@ and — worse — what you get can depend on your ``User-Agent`` rather than on 
 link. This module maps a pasted share link to a description of what it actually
 denotes::
 
-    share link  ->  ResolvedShareLink(provider, kind, direct_url, reason)
+    share link  ->  ResolvedShareLink(provider, kind, direct_url, reason,
+                                      download_endpoint)
 
 Everything here is a ``str -> description`` mapping. **No function in this module
 opens a socket**, which is the whole point: resolution is deterministic and
@@ -124,6 +125,13 @@ class ResolvedShareLink:
         direct_url: A URL whose response body is the content -- or ``None`` when
             the link cannot be resolved without a provider API.
         reason: Why ``direct_url`` is ``None``. Required whenever it is.
+        download_endpoint: ``direct_url`` is the provider's raw-download
+            endpoint (Drive ``uc?export=download``, Dropbox ``dl=1``,
+            ``dl.dropboxusercontent.com``) rather than a page the provider serves
+            on purpose (Docs ``/pub``, ``/export``, or any plain URL). On a
+            download endpoint an HTML body is never the content: it is the
+            sign-in, preview or virus-scan page. Set by the adapter, which knows
+            the forms; ``False`` means "not known to be one", not "is a page".
 
     ``direct_url`` and ``kind`` are independent: a Google Workspace document is a
     ``FILE`` that still has no resolvable download URL.
@@ -145,11 +153,16 @@ class ResolvedShareLink:
     kind: ShareLinkKind
     direct_url: Optional[str] = None
     reason: Optional[str] = None
+    download_endpoint: bool = False
 
     def __post_init__(self):
         if self.direct_url is None and not self.reason:
             raise ValueError(
                 f"An unresolved ResolvedShareLink must carry a reason (url: {self.url})"
+            )
+        if self.download_endpoint and self.direct_url is None:
+            raise ValueError(
+                f"Only a resolved link has a download endpoint (url: {self.url})"
             )
 
     @property
@@ -232,6 +245,10 @@ def _host_of(url: str) -> str:
 
 DROPBOX_HOSTS = ("www.dropbox.com", "dropbox.com")
 
+#: The content host every share link redirects to (``dl.`` itself, or a
+#: ``<token>.dl.`` subdomain). A URL here *is* the download: never rewritten.
+DROPBOX_CONTENT_HOST = "dl.dropboxusercontent.com"
+
 #: Share-link path prefixes -> what they denote. ``/s/`` + ``/sh/`` are the legacy
 #: forms; ``/scl/fi/`` + ``/scl/fo/`` are the ones Dropbox issues today.
 DROPBOX_PATH_KINDS = (
@@ -261,6 +278,16 @@ def resolve_dropbox(url: str) -> Optional[ResolvedShareLink]:
     >>> r.kind.value, r.direct_url
     ('archive', 'https://www.dropbox.com/scl/fo/q7/z?rlkey=abc&st=t1&dl=1')
 
+    Every resolved Dropbox link is the raw download, and so is a link pasted
+    already on the content host, which passes through untouched:
+
+    >>> r.download_endpoint
+    True
+    >>> u = 'https://uc4a.dl.dropboxusercontent.com/cd/0/get/Ab/file'
+    >>> r = resolve_dropbox(u)
+    >>> r.direct_url == u, r.download_endpoint
+    (True, True)
+
     Non-share Dropbox URLs are not this adapter's business:
 
     >>> resolve_dropbox('https://www.dropbox.com/home') is None
@@ -268,7 +295,16 @@ def resolve_dropbox(url: str) -> Optional[ResolvedShareLink]:
     >>> resolve_dropbox('https://example.com/s/a1/data.csv?dl=0') is None
     True
     """
-    if _host_of(url) not in DROPBOX_HOSTS:
+    host = _host_of(url)
+    if host == DROPBOX_CONTENT_HOST or host.endswith("." + DROPBOX_CONTENT_HOST):
+        return ResolvedShareLink(
+            url=url,
+            provider="dropbox",
+            kind=ShareLinkKind.FILE,
+            direct_url=url,
+            download_endpoint=True,
+        )
+    if host not in DROPBOX_HOSTS:
         return None
     path = urlsplit(url).path
     for prefix, kind in DROPBOX_PATH_KINDS:
@@ -278,6 +314,7 @@ def resolve_dropbox(url: str) -> Optional[ResolvedShareLink]:
                 provider="dropbox",
                 kind=kind,
                 direct_url=_force_query_param(url, "dl", "1"),
+                download_endpoint=True,
             )
     if any(path.startswith(namespace) for namespace in _DROPBOX_SHARE_NAMESPACES):
         return ResolvedShareLink(
@@ -300,7 +337,7 @@ def resolve_dropbox(url: str) -> Optional[ResolvedShareLink]:
 GOOGLE_DRIVE_HOSTS = ("drive.google.com", "drive.usercontent.google.com")
 GOOGLE_WORKSPACE_HOST = "docs.google.com"
 
-_gdrive_file_path_re = re.compile(r"^/file/d/([\w-]+)")
+_gdrive_file_path_re = re.compile(r"^/(?:u/\d+/)?file/d/([\w-]+)")
 _gdrive_folder_path_re = re.compile(r"^/drive/(?:u/\d+/)?folders/([\w-]+)")
 _gworkspace_app_re = re.compile(r"^/(document|spreadsheets|presentation|forms)/d/")
 
@@ -341,6 +378,13 @@ def resolve_google_drive(url: str) -> Optional[ResolvedShareLink]:
     >>> resolve_google_drive('https://drive.google.com/file/d/1AbC/view').direct_url
     'https://drive.google.com/uc?export=download&id=1AbC'
 
+    So does an account-indexed link (``/u/<n>/``, from a multi-account browser),
+    and the result is Drive's raw-download endpoint:
+
+    >>> r = resolve_google_drive('https://drive.google.com/u/1/file/d/1AbC/view')
+    >>> r.direct_url, r.download_endpoint
+    ('https://drive.google.com/uc?export=download&id=1AbC', True)
+
     A ``resourcekey`` (required by link-shared files created before 2021) is kept:
 
     >>> r = resolve_google_drive('https://drive.google.com/file/d/1AbC/view?resourcekey=0-x')
@@ -367,6 +411,12 @@ def resolve_google_drive(url: str) -> Optional[ResolvedShareLink]:
     >>> u = 'https://docs.google.com/spreadsheets/d/1Sh/export?format=csv&gid=0'
     >>> resolve_google_drive(u).direct_url == u
     True
+
+    An export or published page is served on purpose, so it is *not* a download
+    endpoint -- an HTML body there may be the document itself:
+
+    >>> resolve_google_drive(u).download_endpoint
+    False
 
     >>> resolve_google_drive('https://example.com/file/d/1AbC/view') is None
     True
@@ -414,6 +464,7 @@ def resolve_google_drive(url: str) -> Optional[ResolvedShareLink]:
             provider="google_drive",
             kind=ShareLinkKind.FILE,
             direct_url=url,  # already a download endpoint; keep its parameters
+            download_endpoint=True,
         )
 
     folder_match = _gdrive_folder_path_re.match(parts.path)
@@ -445,6 +496,7 @@ def resolve_google_drive(url: str) -> Optional[ResolvedShareLink]:
         direct_url=_google_drive_file_url(
             file_id, resource_key=_query_value(parts.query, "resourcekey")
         ),
+        download_endpoint=True,
     )
 
 

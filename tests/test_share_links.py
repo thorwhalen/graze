@@ -234,6 +234,8 @@ def test_google_drive_download_url_rejects_a_non_drive_url():
         "https://drive.google.com.evil.example.com/file/d/1AbC/view",
         "https://example.com/s/a1b2/data.csv?dl=0",
         "https://www.dropbox.com.evil.example.com/scl/fi/a1/x?dl=0",
+        "https://dl.dropboxusercontent.com.evil.example.com/cd/0/get/x",
+        "https://evildl.dropboxusercontent.com/cd/0/get/x",
     ],
 )
 def test_a_lookalike_host_is_never_treated_as_the_provider(url):
@@ -446,3 +448,60 @@ def test_util_share_link_doctests():
         optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE,
     )
     assert results.failed == 0, f"{results.failed} doctest failure(s)"
+
+
+# --- download_endpoint (graze#19) ----------------------------------------------------
+# A host fetching a pasted link must know whether an HTML body can be the content.
+# On the provider's raw-download endpoint it never is (it is the sign-in, preview or
+# virus-scan page) -- whether or not graze rewrote the link to get there.
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        # rewritten by graze
+        "https://www.dropbox.com/scl/fi/a1/x.pdf?rlkey=k&dl=0",
+        "https://drive.google.com/file/d/1AbC/view",
+        "https://drive.google.com/u/2/file/d/1AbC/view?usp=sharing",
+        "https://drive.google.com/open?id=1AbC",
+        # pasted already in download form: not rewritten, still an endpoint
+        "https://www.dropbox.com/scl/fi/a1/x.pdf?rlkey=k&dl=1",
+        "https://www.dropbox.com/scl/fi/a1/x.pdf?dl=1&rlkey=k",
+        "https://www.dropbox.com/s/a1/x.pdf?raw=1",
+        "https://dl.dropboxusercontent.com/s/a1/x.pdf",
+        "https://uc4a.dl.dropboxusercontent.com/cd/0/get/Ab/file",
+        "https://drive.google.com/uc?export=download&id=1AbC",
+        "https://drive.usercontent.google.com/download?id=1AbC&export=download",
+    ],
+)
+def test_a_raw_download_endpoint_is_flagged_rewritten_or_not(url):
+    resolved = resolve_share_url(url)
+    assert resolved.download_endpoint is True
+    assert resolved.direct_url is not None
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://docs.google.com/document/d/1Doc/pub",
+        "https://docs.google.com/spreadsheets/d/1Sh/pubhtml",
+        "https://docs.google.com/document/d/1Doc/export?format=html",
+        "https://example.com/report.html",
+        # refused links have nothing to fetch, so nothing is an endpoint
+        "https://drive.google.com/drive/folders/1FoLd",
+        "https://1drv.ms/u/s!AbCd",
+    ],
+)
+def test_a_page_served_on_purpose_is_not_a_download_endpoint(url):
+    assert resolve_share_url(url).download_endpoint is False
+
+
+def test_an_unresolved_link_cannot_claim_a_download_endpoint():
+    with pytest.raises(ValueError, match="download endpoint"):
+        ResolvedShareLink(
+            "https://x/y",
+            "p",
+            ShareLinkKind.FILE,
+            reason="nope",
+            download_endpoint=True,
+        )
