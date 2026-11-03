@@ -1,4 +1,4 @@
-> built 2026-10-26 13:47 UTC from 1889b24 (master) · graze 0.1.45. Details: build_info.json
+> built 2026-11-03 11:06 UTC from f28c627 (master) · graze 0.1.46. Details: build_info.json
 
 # index.html.md
 
@@ -536,7 +536,10 @@ content = graze(url, source=guarded_fetch)
 
 # Only the check, no connection: for a URL you validate when stored, or hand to another fetcher
 from graze import check_target
-check_target("https://example.com/data.json")  # the checked addresses, or raises UnsafeTarget
+
+check_target(
+    "https://example.com/data.json"
+)  # the checked addresses, or raises UnsafeTarget
 ```
 
 Everything is a keyword argument: `allow_schemes`, `allow_ports` (`None` for any), `max_redirects`, `timeout`, `max_bytes`, and the seams `is_allowed_address` (the address policy; pass an allow-list to reach a LAN host from a self-hosted deployment), `resolver` (a fake one makes tests offline) and `ssl_context`. It uses the standard library only and ignores proxy settings on purpose, since a proxy would resolve the host itself.
@@ -1738,7 +1741,8 @@ link. This module maps a pasted share link to a description of what it actually
 denotes:
 
 ```default
-share link  ->  ResolvedShareLink(provider, kind, direct_url, reason)
+share link  ->  ResolvedShareLink(provider, kind, direct_url, reason,
+                                  download_endpoint)
 ```
 
 Everything here is a `str -> description` mapping. \*\*No function in this module
@@ -1812,11 +1816,12 @@ hop is the transport layer’s job.
 
 ### Module Attributes
 
-| [`ShareLinkResolver`](_autosummary/graze.share_links.html.md#graze.share_links.ShareLinkResolver)    | given a URL, return its resolution, or `None` for "not mine".                      |
-|-----------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| [`DROPBOX_PATH_KINDS`](_autosummary/graze.share_links.html.md#graze.share_links.DROPBOX_PATH_KINDS)   | Share-link path prefixes -> what they denote.                                      |
-| [`share_link_resolvers`](_autosummary/graze.share_links.html.md#graze.share_links.share_link_resolvers) | Provider adapters, tried in order; the first non-`None` result wins.               |
-| [`PASSTHROUGH_SCHEMES`](_autosummary/graze.share_links.html.md#graze.share_links.PASSTHROUGH_SCHEMES)  | this module describes *fetchable web resources*, and unknown schemes are not that. |
+| [`ShareLinkResolver`](_autosummary/graze.share_links.html.md#graze.share_links.ShareLinkResolver)    | given a URL, return its resolution, or `None` for "not mine".                                |
+|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| [`DROPBOX_CONTENT_HOST`](_autosummary/graze.share_links.html.md#graze.share_links.DROPBOX_CONTENT_HOST) | The content host every share link redirects to (`dl.` itself, or a `<token>.dl.` subdomain). |
+| [`DROPBOX_PATH_KINDS`](_autosummary/graze.share_links.html.md#graze.share_links.DROPBOX_PATH_KINDS)   | Share-link path prefixes -> what they denote.                                                |
+| [`share_link_resolvers`](_autosummary/graze.share_links.html.md#graze.share_links.share_link_resolvers) | Provider adapters, tried in order; the first non-`None` result wins.                         |
+| [`PASSTHROUGH_SCHEMES`](_autosummary/graze.share_links.html.md#graze.share_links.PASSTHROUGH_SCHEMES)  | this module describes *fetchable web resources*, and unknown schemes are not that.           |
 
 ### Functions
 
@@ -1839,6 +1844,11 @@ hop is the transport layer’s job.
 | [`ShareLinkResolutionError`](_autosummary/graze.share_links.html.md#graze.share_links.ShareLinkResolutionError)   | Raised when a share link cannot be resolved to a direct-download URL.   |
 |-----------------------------------------------------------------------------|-------------------------------------------------------------------------|
 
+### graze.share_links.DROPBOX_CONTENT_HOST *= 'dl.dropboxusercontent.com'*
+
+The content host every share link redirects to (`dl.` itself, or a
+`<token>.dl.` subdomain). A URL here *is* the download: never rewritten.
+
 ### graze.share_links.DROPBOX_PATH_KINDS *= (('/scl/fi/', ShareLinkKind.FILE), ('/scl/fo/', ShareLinkKind.ARCHIVE), ('/s/', ShareLinkKind.FILE), ('/sh/', ShareLinkKind.ARCHIVE))*
 
 Share-link path prefixes -> what they denote. `/s/` + `/sh/` are the legacy
@@ -1852,7 +1862,7 @@ describes *fetchable web resources*, and unknown schemes are not that.
 * **Type:**
   Schemes a plain URL may pass through with. Anything else is refused
 
-### *class* graze.share_links.ResolvedShareLink(url, provider, kind, direct_url=None, reason=None)
+### *class* graze.share_links.ResolvedShareLink(url, provider, kind, direct_url=None, reason=None, download_endpoint=False)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -1867,6 +1877,14 @@ What a share URL denotes, and how (or whether) to fetch it.
   * **direct_url** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – A URL whose response body is the content – or `None` when
     the link cannot be resolved without a provider API.
   * **reason** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Why `direct_url` is `None`. Required whenever it is.
+  * **download_endpoint** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – `direct_url` is the provider’s raw-download
+    endpoint (Drive `uc?export=download`, Dropbox `dl=1`,
+    `dl.dropboxusercontent.com`) rather than a page the provider serves
+    on purpose (Docs `/pub`, `/export`, or any plain URL). On a
+    download endpoint an HTML body is almost never the content: it is the
+    sign-in, preview or virus-scan page (the exception is a shared file
+    that is itself `.html`). Set by the adapter, which knows
+    the forms; `False` means “not known to be one”, not “is a page”.
 
 `direct_url` and `kind` are independent: a Google Workspace document is a
 `FILE` that still has no resolvable download URL.
@@ -1933,6 +1951,10 @@ Register (or replace) a provider adapter.
 to mean “not mine, try the next one”. Replacing an existing provider keeps its
 position in the try-order; a new one is appended (so it is tried last).
 
+Set `download_endpoint=True` on what your adapter returns when its
+`direct_url` is the provider’s raw download: the default, `False`, tells
+a host that an HTML body there may be the content.
+
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
@@ -1974,6 +1996,18 @@ A folder link is an *archive* – one ZIP holding N members:
 ('archive', 'https://www.dropbox.com/scl/fo/q7/z?rlkey=abc&st=t1&dl=1')
 ```
 
+Every resolved Dropbox link is the raw download, and so is a link pasted
+already on the content host, which passes through untouched:
+
+```pycon
+>>> r.download_endpoint
+True
+>>> u = 'https://uc4a.dl.dropboxusercontent.com/cd/0/get/Ab/file'
+>>> r = resolve_dropbox(u)
+>>> r.direct_url == u, r.download_endpoint
+(True, True)
+```
+
 Non-share Dropbox URLs are not this adapter’s business:
 
 ```pycon
@@ -1997,6 +2031,15 @@ ends up in a file-download URL.
 ```pycon
 >>> resolve_google_drive('https://drive.google.com/file/d/1AbC/view').direct_url
 'https://drive.google.com/uc?export=download&id=1AbC'
+```
+
+So does an account-indexed link (`/u/<n>/`, from a multi-account browser),
+and the result is Drive’s raw-download endpoint:
+
+```pycon
+>>> r = resolve_google_drive('https://drive.google.com/u/1/file/d/1AbC/view')
+>>> r.direct_url, r.download_endpoint
+('https://drive.google.com/uc?export=download&id=1AbC', True)
 ```
 
 A `resourcekey` (required by link-shared files created before 2021) is kept:
@@ -2032,6 +2075,14 @@ refusal above was ever about:
 >>> u = 'https://docs.google.com/spreadsheets/d/1Sh/export?format=csv&gid=0'
 >>> resolve_google_drive(u).direct_url == u
 True
+```
+
+An export or published page is served on purpose, so it is *not* a download
+endpoint – an HTML body there may be the document itself:
+
+```pycon
+>>> resolve_google_drive(u).download_endpoint
+False
 ```
 
 ```pycon
@@ -2357,18 +2408,18 @@ Shortens a long URL by directly calling the TinyURL API endpoint.
 
 # About this build
 
-This documentation was built on **2026-10-26 13:47 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/1889b24f55ff542737143dd6d1a636acc1341105"><code>1889b24</code></a> on branch <code>master</code>, for **graze 0.1.45** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-03 11:06 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/f28c62760cb4097a99d8016022b372f53653c0cb"><code>f28c627</code></a> on branch <code>master</code>, for **graze 0.1.46** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.45) is behind the latest release on PyPI (0.1.46): `pip install graze` gives newer code than these docs describe.
+- The documented version (0.1.46) is behind the latest release on PyPI (0.1.47): `pip install graze` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/graze/commit/1889b24f55ff542737143dd6d1a636acc1341105"><code>1889b24f55ff542737143dd6d1a636acc1341105</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/graze/commit/f28c62760cb4097a99d8016022b372f53653c0cb"><code>f28c62760cb4097a99d8016022b372f53653c0cb</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -2379,9 +2430,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/graze</code>                                                              |
-| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/40333413236">40333413236</a>     |
+| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/41624571192">41624571192</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>1889b24f55ff542737143dd6d1a636acc1341105</code> (in the history of the built commit) |
+| Event commit | <code>f28c62760cb4097a99d8016022b372f53653c0cb</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -2406,13 +2457,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/graze/0.1.46/">0.1.46</a>, newer than the documented version (0.1.45).
+Latest release: <a href="https://pypi.org/project/graze/0.1.47/">0.1.47</a>, newer than the documented version (0.1.46).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout 1889b24f55ff542737143dd6d1a636acc1341105
+git checkout f28c62760cb4097a99d8016022b372f53653c0cb
 pip install "epythet==0.2.22"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

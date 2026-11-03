@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-26T13:47:11Z",
+  "built_at": "2026-11-03T11:06:28Z",
   "package": {
     "name": "graze",
-    "version": "0.1.45",
+    "version": "0.1.46",
     "display_name": "graze",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "1889b24f55ff542737143dd6d1a636acc1341105",
-    "short_commit": "1889b24",
+    "commit": "f28c62760cb4097a99d8016022b372f53653c0cb",
+    "short_commit": "f28c627",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/thorwhalen/graze",
-    "commit_url": "https://github.com/thorwhalen/graze/commit/1889b24f55ff542737143dd6d1a636acc1341105",
+    "commit_url": "https://github.com/thorwhalen/graze/commit/f28c62760cb4097a99d8016022b372f53653c0cb",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "thorwhalen/graze",
-    "sha": "1889b24f55ff542737143dd6d1a636acc1341105",
+    "sha": "f28c62760cb4097a99d8016022b372f53653c0cb",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "40333413236",
-    "run_url": "https://github.com/thorwhalen/graze/actions/runs/40333413236",
+    "run_id": "41624571192",
+    "run_url": "https://github.com/thorwhalen/graze/actions/runs/41624571192",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -56,20 +56,20 @@
   },
   "site": {
     "modules_documented": 7,
-    "objects_documented": 83
+    "objects_documented": 84
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.46",
+    "latest": "0.1.47",
     "relation": "behind",
     "error": null
   },
-  "reproduce": "git clone https://github.com/thorwhalen/graze && cd graze\ngit checkout 1889b24f55ff542737143dd6d1a636acc1341105\npip install \"epythet==0.2.22\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/thorwhalen/graze && cd graze\ngit checkout f28c62760cb4097a99d8016022b372f53653c0cb\npip install \"epythet==0.2.22\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": false,
     "notes": [
-      "The documented version (0.1.45) is behind the latest release on PyPI (0.1.46): `pip install graze` gives newer code than these docs describe."
+      "The documented version (0.1.46) is behind the latest release on PyPI (0.1.47): `pip install graze` gives newer code than these docs describe."
     ]
   }
 }

@@ -261,7 +261,8 @@ It is <strong>not</strong> a download URL: fetching it usually gets you an HTML 
 and — worse — what you get can depend on your <code class="docutils literal notranslate"><span class="pre">User-Agent</span></code> rather than on the
 link. This module maps a pasted share link to a description of what it actually
 denotes:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">share</span> <span class="n">link</span>  <span class="o">-&gt;</span>  <span class="n">ResolvedShareLink</span><span class="p">(</span><span class="n">provider</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">direct_url</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">share</span> <span class="n">link</span>  <span class="o">-&gt;</span>  <span class="n">ResolvedShareLink</span><span class="p">(</span><span class="n">provider</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">direct_url</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span>
+                                  <span class="n">download_endpoint</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Everything here is a <code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">-&gt;</span> <span class="pre">description</span></code> mapping. **No function in this module
@@ -330,13 +331,16 @@ hop is the transport layer’s job.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#graze.share_links.ShareLinkResolver" title="graze.share_links.ShareLinkResolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ShareLinkResolver</span></code></a></p></td>
 <td><p>given a URL, return its resolution, or <code class="docutils literal notranslate"><span class="pre">None</span></code> for &quot;not mine&quot;.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#graze.share_links.DROPBOX_PATH_KINDS" title="graze.share_links.DROPBOX_PATH_KINDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DROPBOX_PATH_KINDS</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#graze.share_links.DROPBOX_CONTENT_HOST" title="graze.share_links.DROPBOX_CONTENT_HOST"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DROPBOX_CONTENT_HOST</span></code></a></p></td>
+<td><p>The content host every share link redirects to (<code class="docutils literal notranslate"><span class="pre">dl.</span></code> itself, or a <code class="docutils literal notranslate"><span class="pre">&lt;token&gt;.dl.</span></code> subdomain).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graze.share_links.DROPBOX_PATH_KINDS" title="graze.share_links.DROPBOX_PATH_KINDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DROPBOX_PATH_KINDS</span></code></a></p></td>
 <td><p>Share-link path prefixes -&gt; what they denote.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#graze.share_links.share_link_resolvers" title="graze.share_links.share_link_resolvers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">share_link_resolvers</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#graze.share_links.share_link_resolvers" title="graze.share_links.share_link_resolvers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">share_link_resolvers</span></code></a></p></td>
 <td><p>Provider adapters, tried in order; the first non-<code class="docutils literal notranslate"><span class="pre">None</span></code> result wins.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#graze.share_links.PASSTHROUGH_SCHEMES" title="graze.share_links.PASSTHROUGH_SCHEMES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PASSTHROUGH_SCHEMES</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graze.share_links.PASSTHROUGH_SCHEMES" title="graze.share_links.PASSTHROUGH_SCHEMES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PASSTHROUGH_SCHEMES</span></code></a></p></td>
 <td><p>this module describes <em>fetchable web resources</em>, and unknown schemes are not that.</p></td>
 </tr>
 </tbody>
@@ -391,6 +395,13 @@ hop is the transport layer’s job.</p>
 </table>
 </div>
 <dl class="py data">
+<dt class="sig sig-object py" id="graze.share_links.DROPBOX_CONTENT_HOST">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">DROPBOX_CONTENT_HOST</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dl.dropboxusercontent.com'</span></span><a class="headerlink" href="#graze.share_links.DROPBOX_CONTENT_HOST" title="Link to this definition">¶</a></dt>
+<dd><p>The content host every share link redirects to (<code class="docutils literal notranslate"><span class="pre">dl.</span></code> itself, or a
+<code class="docutils literal notranslate"><span class="pre">&lt;token&gt;.dl.</span></code> subdomain). A URL here <em>is</em> the download: never rewritten.</p>
+</dd></dl>
+
+<dl class="py data">
 <dt class="sig sig-object py" id="graze.share_links.DROPBOX_PATH_KINDS">
 <span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">DROPBOX_PATH_KINDS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(('/scl/fi/',</span> <span class="pre">ShareLinkKind.FILE),</span> <span class="pre">('/scl/fo/',</span> <span class="pre">ShareLinkKind.ARCHIVE),</span> <span class="pre">('/s/',</span> <span class="pre">ShareLinkKind.FILE),</span> <span class="pre">('/sh/',</span> <span class="pre">ShareLinkKind.ARCHIVE))</span></span><a class="headerlink" href="#graze.share_links.DROPBOX_PATH_KINDS" title="Link to this definition">¶</a></dt>
 <dd><p>Share-link path prefixes -&gt; what they denote. <code class="docutils literal notranslate"><span class="pre">/s/</span></code> + <code class="docutils literal notranslate"><span class="pre">/sh/</span></code> are the legacy
@@ -411,7 +422,7 @@ describes <em>fetchable web resources</em>, and unknown schemes are not that.</p
 
 <dl class="py class">
 <dt class="sig sig-object py" id="graze.share_links.ResolvedShareLink">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">ResolvedShareLink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direct_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/share_links.html#ResolvedShareLink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.share_links.ResolvedShareLink" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">ResolvedShareLink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direct_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_endpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/share_links.html#ResolvedShareLink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.share_links.ResolvedShareLink" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>What a share URL denotes, and how (or whether) to fetch it.</p>
 <dl class="field-list simple">
@@ -425,6 +436,14 @@ or <code class="docutils literal notranslate"><span class="pre">'unknown'</span>
 <li><p><strong>direct_url</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>) – A URL whose response body is the content – or <code class="docutils literal notranslate"><span class="pre">None</span></code> when
 the link cannot be resolved without a provider API.</p></li>
 <li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>) – Why <code class="docutils literal notranslate"><span class="pre">direct_url</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>. Required whenever it is.</p></li>
+<li><p><strong>download_endpoint</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – <code class="docutils literal notranslate"><span class="pre">direct_url</span></code> is the provider’s raw-download
+endpoint (Drive <code class="docutils literal notranslate"><span class="pre">uc?export=download</span></code>, Dropbox <code class="docutils literal notranslate"><span class="pre">dl=1</span></code>,
+<code class="docutils literal notranslate"><span class="pre">dl.dropboxusercontent.com</span></code>) rather than a page the provider serves
+on purpose (Docs <code class="docutils literal notranslate"><span class="pre">/pub</span></code>, <code class="docutils literal notranslate"><span class="pre">/export</span></code>, or any plain URL). On a
+download endpoint an HTML body is almost never the content: it is the
+sign-in, preview or virus-scan page (the exception is a shared file
+that is itself <code class="docutils literal notranslate"><span class="pre">.html</span></code>). Set by the adapter, which knows
+the forms; <code class="docutils literal notranslate"><span class="pre">False</span></code> means “not known to be one”, not “is a page”.</p></li>
 </ul>
 </dd>
 </dl>
@@ -494,6 +513,9 @@ offers <strong>no</strong> URL that downloads it – listing it needs an API cre
 <p><code class="docutils literal notranslate"><span class="pre">resolver</span></code> takes a URL and returns a <a class="reference internal" href="#graze.share_links.ResolvedShareLink" title="graze.share_links.ResolvedShareLink"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResolvedShareLink</span></code></a>, or <code class="docutils literal notranslate"><span class="pre">None</span></code>
 to mean “not mine, try the next one”. Replacing an existing provider keeps its
 position in the try-order; a new one is appended (so it is tried last).</p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">download_endpoint=True</span></code> on what your adapter returns when its
+<code class="docutils literal notranslate"><span class="pre">direct_url</span></code> is the provider’s raw download: the default, <code class="docutils literal notranslate"><span class="pre">False</span></code>, tells
+a host that an HTML body there may be the content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span></span></p>
@@ -538,6 +560,16 @@ byte-for-byte.</p>
 <span class="go">('archive', 'https://www.dropbox.com/scl/fo/q7/z?rlkey=abc&amp;st=t1&amp;dl=1')</span>
 </pre></div>
 </div>
+<p>Every resolved Dropbox link is the raw download, and so is a link pasted
+already on the content host, which passes through untouched:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">download_endpoint</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="s1">'https://uc4a.dl.dropboxusercontent.com/cd/0/get/Ab/file'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">resolve_dropbox</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">direct_url</span> <span class="o">==</span> <span class="n">u</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">download_endpoint</span>
+<span class="go">(True, True)</span>
+</pre></div>
+</div>
 <p>Non-share Dropbox URLs are not this adapter’s business:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_dropbox</span><span class="p">(</span><span class="s1">'https://www.dropbox.com/home'</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
 <span class="go">True</span>
@@ -561,6 +593,13 @@ neither has a plain-URL download and pretending otherwise is how a folder id
 ends up in a file-download URL.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_google_drive</span><span class="p">(</span><span class="s1">'https://drive.google.com/file/d/1AbC/view'</span><span class="p">)</span><span class="o">.</span><span class="n">direct_url</span>
 <span class="go">'https://drive.google.com/uc?export=download&amp;id=1AbC'</span>
+</pre></div>
+</div>
+<p>So does an account-indexed link (<code class="docutils literal notranslate"><span class="pre">/u/&lt;n&gt;/</span></code>, from a multi-account browser),
+and the result is Drive’s raw-download endpoint:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">resolve_google_drive</span><span class="p">(</span><span class="s1">'https://drive.google.com/u/1/file/d/1AbC/view'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">direct_url</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">download_endpoint</span>
+<span class="go">('https://drive.google.com/uc?export=download&amp;id=1AbC', True)</span>
 </pre></div>
 </div>
 <p>A <code class="docutils literal notranslate"><span class="pre">resourcekey</span></code> (required by link-shared files created before 2021) is kept:</p>
@@ -588,6 +627,12 @@ refusal above was ever about:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="s1">'https://docs.google.com/spreadsheets/d/1Sh/export?format=csv&amp;gid=0'</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_google_drive</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="o">.</span><span class="n">direct_url</span> <span class="o">==</span> <span class="n">u</span>
 <span class="go">True</span>
+</pre></div>
+</div>
+<p>An export or published page is served on purpose, so it is <em>not</em> a download
+endpoint – an HTML body there may be the document itself:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_google_drive</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="o">.</span><span class="n">download_endpoint</span>
+<span class="go">False</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_google_drive</span><span class="p">(</span><span class="s1">'https://example.com/file/d/1AbC/view'</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
@@ -719,6 +764,7 @@ extend it with <a class="reference internal" href="#graze.share_links.add_share_
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">graze.share_links</a><ul>
+<li><a class="reference internal" href="#graze.share_links.DROPBOX_CONTENT_HOST"><code class="docutils literal notranslate"><span class="pre">DROPBOX_CONTENT_HOST</span></code></a></li>
 <li><a class="reference internal" href="#graze.share_links.DROPBOX_PATH_KINDS"><code class="docutils literal notranslate"><span class="pre">DROPBOX_PATH_KINDS</span></code></a></li>
 <li><a class="reference internal" href="#graze.share_links.PASSTHROUGH_SCHEMES"><code class="docutils literal notranslate"><span class="pre">PASSTHROUGH_SCHEMES</span></code></a></li>
 <li><a class="reference internal" href="#graze.share_links.ResolvedShareLink"><code class="docutils literal notranslate"><span class="pre">ResolvedShareLink</span></code></a><ul>
@@ -746,7 +792,7 @@ extend it with <a class="reference internal" href="#graze.share_links.add_share_
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=03b6484e"></script>
+</div><script src="../_static/documentation_options.js?v=2307d2a5"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

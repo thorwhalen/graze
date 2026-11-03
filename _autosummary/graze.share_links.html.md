@@ -9,7 +9,8 @@ link. This module maps a pasted share link to a description of what it actually
 denotes:
 
 ```default
-share link  ->  ResolvedShareLink(provider, kind, direct_url, reason)
+share link  ->  ResolvedShareLink(provider, kind, direct_url, reason,
+                                  download_endpoint)
 ```
 
 Everything here is a `str -> description` mapping. \*\*No function in this module
@@ -83,11 +84,12 @@ hop is the transport layer’s job.
 
 ### Module Attributes
 
-| [`ShareLinkResolver`](#graze.share_links.ShareLinkResolver)    | given a URL, return its resolution, or `None` for "not mine".                      |
-|-----------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| [`DROPBOX_PATH_KINDS`](#graze.share_links.DROPBOX_PATH_KINDS)   | Share-link path prefixes -> what they denote.                                      |
-| [`share_link_resolvers`](#graze.share_links.share_link_resolvers) | Provider adapters, tried in order; the first non-`None` result wins.               |
-| [`PASSTHROUGH_SCHEMES`](#graze.share_links.PASSTHROUGH_SCHEMES)  | this module describes *fetchable web resources*, and unknown schemes are not that. |
+| [`ShareLinkResolver`](#graze.share_links.ShareLinkResolver)    | given a URL, return its resolution, or `None` for "not mine".                                |
+|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| [`DROPBOX_CONTENT_HOST`](#graze.share_links.DROPBOX_CONTENT_HOST) | The content host every share link redirects to (`dl.` itself, or a `<token>.dl.` subdomain). |
+| [`DROPBOX_PATH_KINDS`](#graze.share_links.DROPBOX_PATH_KINDS)   | Share-link path prefixes -> what they denote.                                                |
+| [`share_link_resolvers`](#graze.share_links.share_link_resolvers) | Provider adapters, tried in order; the first non-`None` result wins.                         |
+| [`PASSTHROUGH_SCHEMES`](#graze.share_links.PASSTHROUGH_SCHEMES)  | this module describes *fetchable web resources*, and unknown schemes are not that.           |
 
 ### Functions
 
@@ -110,6 +112,11 @@ hop is the transport layer’s job.
 | [`ShareLinkResolutionError`](#graze.share_links.ShareLinkResolutionError)   | Raised when a share link cannot be resolved to a direct-download URL.   |
 |-----------------------------------------------------------------------------|-------------------------------------------------------------------------|
 
+### graze.share_links.DROPBOX_CONTENT_HOST *= 'dl.dropboxusercontent.com'*
+
+The content host every share link redirects to (`dl.` itself, or a
+`<token>.dl.` subdomain). A URL here *is* the download: never rewritten.
+
 ### graze.share_links.DROPBOX_PATH_KINDS *= (('/scl/fi/', ShareLinkKind.FILE), ('/scl/fo/', ShareLinkKind.ARCHIVE), ('/s/', ShareLinkKind.FILE), ('/sh/', ShareLinkKind.ARCHIVE))*
 
 Share-link path prefixes -> what they denote. `/s/` + `/sh/` are the legacy
@@ -123,7 +130,7 @@ describes *fetchable web resources*, and unknown schemes are not that.
 * **Type:**
   Schemes a plain URL may pass through with. Anything else is refused
 
-### *class* graze.share_links.ResolvedShareLink(url, provider, kind, direct_url=None, reason=None)
+### *class* graze.share_links.ResolvedShareLink(url, provider, kind, direct_url=None, reason=None, download_endpoint=False)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -138,6 +145,14 @@ What a share URL denotes, and how (or whether) to fetch it.
   * **direct_url** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – A URL whose response body is the content – or `None` when
     the link cannot be resolved without a provider API.
   * **reason** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Why `direct_url` is `None`. Required whenever it is.
+  * **download_endpoint** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – `direct_url` is the provider’s raw-download
+    endpoint (Drive `uc?export=download`, Dropbox `dl=1`,
+    `dl.dropboxusercontent.com`) rather than a page the provider serves
+    on purpose (Docs `/pub`, `/export`, or any plain URL). On a
+    download endpoint an HTML body is almost never the content: it is the
+    sign-in, preview or virus-scan page (the exception is a shared file
+    that is itself `.html`). Set by the adapter, which knows
+    the forms; `False` means “not known to be one”, not “is a page”.
 
 `direct_url` and `kind` are independent: a Google Workspace document is a
 `FILE` that still has no resolvable download URL.
@@ -204,6 +219,10 @@ Register (or replace) a provider adapter.
 to mean “not mine, try the next one”. Replacing an existing provider keeps its
 position in the try-order; a new one is appended (so it is tried last).
 
+Set `download_endpoint=True` on what your adapter returns when its
+`direct_url` is the provider’s raw download: the default, `False`, tells
+a host that an HTML body there may be the content.
+
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
@@ -245,6 +264,18 @@ A folder link is an *archive* – one ZIP holding N members:
 ('archive', 'https://www.dropbox.com/scl/fo/q7/z?rlkey=abc&st=t1&dl=1')
 ```
 
+Every resolved Dropbox link is the raw download, and so is a link pasted
+already on the content host, which passes through untouched:
+
+```pycon
+>>> r.download_endpoint
+True
+>>> u = 'https://uc4a.dl.dropboxusercontent.com/cd/0/get/Ab/file'
+>>> r = resolve_dropbox(u)
+>>> r.direct_url == u, r.download_endpoint
+(True, True)
+```
+
 Non-share Dropbox URLs are not this adapter’s business:
 
 ```pycon
@@ -268,6 +299,15 @@ ends up in a file-download URL.
 ```pycon
 >>> resolve_google_drive('https://drive.google.com/file/d/1AbC/view').direct_url
 'https://drive.google.com/uc?export=download&id=1AbC'
+```
+
+So does an account-indexed link (`/u/<n>/`, from a multi-account browser),
+and the result is Drive’s raw-download endpoint:
+
+```pycon
+>>> r = resolve_google_drive('https://drive.google.com/u/1/file/d/1AbC/view')
+>>> r.direct_url, r.download_endpoint
+('https://drive.google.com/uc?export=download&id=1AbC', True)
 ```
 
 A `resourcekey` (required by link-shared files created before 2021) is kept:
@@ -303,6 +343,14 @@ refusal above was ever about:
 >>> u = 'https://docs.google.com/spreadsheets/d/1Sh/export?format=csv&gid=0'
 >>> resolve_google_drive(u).direct_url == u
 True
+```
+
+An export or published page is served on purpose, so it is *not* a download
+endpoint – an HTML body there may be the document itself:
+
+```pycon
+>>> resolve_google_drive(u).download_endpoint
+False
 ```
 
 ```pycon

@@ -9,6 +9,7 @@ graze.share\_links
    .. autosummary::
    
       ShareLinkResolver
+      DROPBOX_CONTENT_HOST
       DROPBOX_PATH_KINDS
       share_link_resolvers
       PASSTHROUGH_SCHEMES

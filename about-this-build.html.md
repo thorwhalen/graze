@@ -2,18 +2,18 @@
 
 # About this build
 
-This documentation was built on **2026-10-26 13:47 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/1889b24f55ff542737143dd6d1a636acc1341105"><code>1889b24</code></a> on branch <code>master</code>, for **graze 0.1.45** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-03 11:06 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/f28c62760cb4097a99d8016022b372f53653c0cb"><code>f28c627</code></a> on branch <code>master</code>, for **graze 0.1.46** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.45) is behind the latest release on PyPI (0.1.46): `pip install graze` gives newer code than these docs describe.
+- The documented version (0.1.46) is behind the latest release on PyPI (0.1.47): `pip install graze` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/graze/commit/1889b24f55ff542737143dd6d1a636acc1341105"><code>1889b24f55ff542737143dd6d1a636acc1341105</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/graze/commit/f28c62760cb4097a99d8016022b372f53653c0cb"><code>f28c62760cb4097a99d8016022b372f53653c0cb</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -24,9 +24,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/graze</code>                                                              |
-| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/40333413236">40333413236</a>     |
+| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/41624571192">41624571192</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>1889b24f55ff542737143dd6d1a636acc1341105</code> (in the history of the built commit) |
+| Event commit | <code>f28c62760cb4097a99d8016022b372f53653c0cb</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -51,13 +51,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/graze/0.1.46/">0.1.46</a>, newer than the documented version (0.1.45).
+Latest release: <a href="https://pypi.org/project/graze/0.1.47/">0.1.47</a>, newer than the documented version (0.1.46).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout 1889b24f55ff542737143dd6d1a636acc1341105
+git checkout f28c62760cb4097a99d8016022b372f53653c0cb
 pip install "epythet==0.2.22"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
