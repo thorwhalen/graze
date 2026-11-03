@@ -472,6 +472,14 @@ def test_util_share_link_doctests():
         "https://uc4a.dl.dropboxusercontent.com/cd/0/get/Ab/file",
         "https://drive.google.com/uc?export=download&id=1AbC",
         "https://drive.usercontent.google.com/download?id=1AbC&export=download",
+        "https://drive.usercontent.google.com/u/0/uc?id=1AbC&export=download",
+        "https://drive.usercontent.google.com/uc?id=1AbC",
+        "https://drive.google.com/u/0/open?id=1AbC",
+        "https://docs.google.com/uc?export=download&id=1AbC",
+        # a fully-qualified host (trailing dot) is the same host
+        "https://dl.dropboxusercontent.com./s/a1/x.pdf",
+        "https://www.dropbox.com./s/a1/x.pdf?dl=0",
+        "https://drive.google.com./file/d/1AbC/view",
     ],
 )
 def test_a_raw_download_endpoint_is_flagged_rewritten_or_not(url):

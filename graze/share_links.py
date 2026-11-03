@@ -129,8 +129,9 @@ class ResolvedShareLink:
             endpoint (Drive ``uc?export=download``, Dropbox ``dl=1``,
             ``dl.dropboxusercontent.com``) rather than a page the provider serves
             on purpose (Docs ``/pub``, ``/export``, or any plain URL). On a
-            download endpoint an HTML body is never the content: it is the
-            sign-in, preview or virus-scan page. Set by the adapter, which knows
+            download endpoint an HTML body is almost never the content: it is the
+            sign-in, preview or virus-scan page (the exception is a shared file
+            that is itself ``.html``). Set by the adapter, which knows
             the forms; ``False`` means "not known to be one", not "is a page".
 
     ``direct_url`` and ``kind`` are independent: a Google Workspace document is a
@@ -228,8 +229,13 @@ def _host_of(url: str) -> str:
     'drive.google.com'
     >>> _host_of('https://evil.example/?u=drive.google.com/file/d/x')
     'evil.example'
+
+    A fully-qualified host's trailing dot names the same host:
+
+    >>> _host_of('https://www.dropbox.com./s/a1/x.csv')
+    'www.dropbox.com'
     """
-    return (urlsplit(url).hostname or "").lower()
+    return (urlsplit(url).hostname or "").lower().rstrip(".")
 
 
 # --------------------------------------------------------------------------------------
@@ -350,8 +356,13 @@ _gworkspace_direct_re = re.compile(r"/(?:export|pub[a-z]*|gviz)(?:/|$)")
 #: rather than rebuild them, so any extra parameters they carry survive.
 _GDRIVE_DIRECT_PATH_RES = {
     "drive.google.com": re.compile(r"^/(?:u/\d+/)?uc$"),
-    "drive.usercontent.google.com": re.compile(r"^/download$"),
+    "drive.usercontent.google.com": re.compile(r"^/(?:u/\d+/)?(?:download|uc)$"),
+    # legacy, still redirects to the same download
+    GOOGLE_WORKSPACE_HOST: re.compile(r"^/(?:u/\d+/)?uc$"),
 }
+
+#: Drive's ``open?id=<id>`` form, account-indexed or not.
+_gdrive_open_path_re = re.compile(r"^/(?:u/\d+/)?open$")
 
 
 def _google_drive_file_url(file_id: str, *, resource_key: Optional[str] = None) -> str:
@@ -424,6 +435,20 @@ def resolve_google_drive(url: str) -> Optional[ResolvedShareLink]:
     host = _host_of(url)
     parts = urlsplit(url)
 
+    direct_path_re = _GDRIVE_DIRECT_PATH_RES.get(host)
+    if (
+        direct_path_re
+        and direct_path_re.match(parts.path)
+        and _query_value(parts.query, "id")
+    ):
+        return ResolvedShareLink(
+            url=url,
+            provider="google_drive",
+            kind=ShareLinkKind.FILE,
+            direct_url=url,  # already a download endpoint; keep its parameters
+            download_endpoint=True,
+        )
+
     if host == GOOGLE_WORKSPACE_HOST:
         app_match = _gworkspace_app_re.match(parts.path)
         if app_match is None:
@@ -455,18 +480,6 @@ def resolve_google_drive(url: str) -> Optional[ResolvedShareLink]:
     if host not in GOOGLE_DRIVE_HOSTS:
         return None
 
-    # Total: every host in GOOGLE_DRIVE_HOSTS is a key, and we returned above otherwise.
-    if _GDRIVE_DIRECT_PATH_RES[host].match(parts.path) and _query_value(
-        parts.query, "id"
-    ):
-        return ResolvedShareLink(
-            url=url,
-            provider="google_drive",
-            kind=ShareLinkKind.FILE,
-            direct_url=url,  # already a download endpoint; keep its parameters
-            download_endpoint=True,
-        )
-
     folder_match = _gdrive_folder_path_re.match(parts.path)
     if folder_match:
         folder_id = folder_match.group(1)
@@ -484,7 +497,7 @@ def resolve_google_drive(url: str) -> Optional[ResolvedShareLink]:
 
     file_match = _gdrive_file_path_re.match(parts.path)
     file_id = file_match.group(1) if file_match else None
-    if file_id is None and parts.path == "/open":
+    if file_id is None and _gdrive_open_path_re.match(parts.path):
         file_id = _query_value(parts.query, "id")
     if file_id is None:
         return None
@@ -586,6 +599,10 @@ def add_share_link_resolver(provider: str, resolver: ShareLinkResolver) -> None:
     ``resolver`` takes a URL and returns a :class:`ResolvedShareLink`, or ``None``
     to mean "not mine, try the next one". Replacing an existing provider keeps its
     position in the try-order; a new one is appended (so it is tried last).
+
+    Set ``download_endpoint=True`` on what your adapter returns when its
+    ``direct_url`` is the provider's raw download: the default, ``False``, tells
+    a host that an HTML body there may be the content.
     """
     share_link_resolvers[provider] = resolver
 
