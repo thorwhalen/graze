@@ -1,4 +1,4 @@
-> built 2026-11-03 11:06 UTC from f28c627 (master) · graze 0.1.46. Details: build_info.json
+> built 2026-11-21 19:03 UTC from 64def96 (master) · graze 0.1.47. Details: build_info.json
 
 # index.html.md
 
@@ -2408,18 +2408,18 @@ Shortens a long URL by directly calling the TinyURL API endpoint.
 
 # About this build
 
-This documentation was built on **2026-11-03 11:06 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/f28c62760cb4097a99d8016022b372f53653c0cb"><code>f28c627</code></a> on branch <code>master</code>, for **graze 0.1.46** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-21 19:03 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/64def961db3430cfa7b40ad3b49715f285a43f51"><code>64def96</code></a> on branch <code>master</code>, for **graze 0.1.47** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.46) is behind the latest release on PyPI (0.1.47): `pip install graze` gives newer code than these docs describe.
+- The documented version (0.1.47) is behind the latest release on PyPI (0.1.48): `pip install graze` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/graze/commit/f28c62760cb4097a99d8016022b372f53653c0cb"><code>f28c62760cb4097a99d8016022b372f53653c0cb</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/graze/commit/64def961db3430cfa7b40ad3b49715f285a43f51"><code>64def961db3430cfa7b40ad3b49715f285a43f51</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -2430,18 +2430,18 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/graze</code>                                                              |
-| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/41624571192">41624571192</a>     |
+| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/44938744509">44938744509</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>f28c62760cb4097a99d8016022b372f53653c0cb</code> (in the history of the built commit) |
+| Event commit | <code>64def961db3430cfa7b40ad3b49715f285a43f51</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.22  |
+| epythet  | 0.2.23  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
-| Python   | 3.12.15 |
+| Python   | 3.12.16 |
 
 ## Configuration as resolved
 
@@ -2457,14 +2457,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/graze/0.1.47/">0.1.47</a>, newer than the documented version (0.1.46).
+Latest release: <a href="https://pypi.org/project/graze/0.1.48/">0.1.48</a>, newer than the documented version (0.1.47).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout f28c62760cb4097a99d8016022b372f53653c0cb
-pip install "epythet==0.2.22"
+git checkout 64def961db3430cfa7b40ad3b49715f285a43f51
+pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 
