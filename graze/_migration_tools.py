@@ -17,7 +17,9 @@ from graze.base import (
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_decoder=lambda _id: _id.replace("https/", "https://").replace("http/", "http://"),
+    key_decoder=lambda _id: _id.replace("https/", "https://").replace(
+        "http/", "http://"
+    ),
     key_encoder=lambda k: k.replace("https://", "https/").replace("http://", "http/"),
 )
 class LocalGrazedVersion01(LocalFiles):
