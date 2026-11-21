@@ -17,8 +17,8 @@ from graze.base import (
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=lambda _id: _id.replace("https/", "https://").replace("http/", "http://"),
-    id_of_key=lambda k: k.replace("https://", "https/").replace("http://", "http/"),
+    key_decoder=lambda _id: _id.replace("https/", "https://").replace("http/", "http://"),
+    key_encoder=lambda k: k.replace("https://", "https/").replace("http://", "http/"),
 )
 class LocalGrazedVersion01(LocalFiles):
     """LocalFiles using url as keys"""
@@ -44,8 +44,8 @@ class _KeyMapVersion02:
 
 @add_ipython_key_completions
 @wrap_kvs(
-    key_of_id=_KeyMapVersion02.localpath_to_url,
-    id_of_key=_KeyMapVersion02.url_to_localpath,
+    key_decoder=_KeyMapVersion02.localpath_to_url,
+    key_encoder=_KeyMapVersion02.url_to_localpath,
 )
 class LocalGrazedVersion02(LocalFiles):
     """LocalFiles using url as keys"""
