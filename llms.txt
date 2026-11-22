@@ -5,7 +5,7 @@
 
 ## Pages
 
-- [graze](index.html.md): Cache (a tiny part of) the internet.
+- [graze](index.html.md): Cache (a tiny part of) the internet. &#96;graze&#96; is a URL-to-bytes download cache for Python: ask for a ...
 - [API reference](api.html.md): | &#96;graze&#96;   | Getting stuff from the internet (and caching locally, automatically)   |
 - [graze](_autosummary/graze.html.md): Getting stuff from the internet (and caching locally, automatically)
 - [graze.base](_autosummary/graze.base.html.md): Base functionality
@@ -14,7 +14,7 @@
 - [graze.guarded](_autosummary/graze.guarded.html.md): Guarded fetch with a pinned transport — an SSRF-safe GET for caller-supplied URLs.
 - [graze.share_links](_autosummary/graze.share_links.html.md): Pure (network-free) resolution of cloud share links to direct-download URLs.
 - [graze.util](_autosummary/graze.util.html.md): | &#96;add_special_url_route&#96;(condition, ...)             | Add a special url route, i.e. a function tha...
-- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-11-22 21:42 UTC&#42;&#42; from commit &lt;a href="https://github.com/tho...
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-11-22 23:23 UTC&#42;&#42; from commit &lt;a href="https://github.com/tho...
 
 ## Optional
 

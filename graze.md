@@ -1,4 +1,4 @@
-> built 2026-11-22 21:42 UTC from 645b00a (master) · graze 0.1.50. Details: build_info.json
+> built 2026-11-22 23:23 UTC from 5e8479d (master) · graze 0.1.50. Details: build_info.json
 
 # index.html.md
 
@@ -6,99 +6,58 @@
 
 # graze
 
-Cache (a tiny part of) the internet.
+Cache (a tiny part of) the internet. `graze` is a URL-to-bytes download cache for Python: ask for a URL and get its contents, downloaded once and kept locally, with no hand-written save-and-exists-check code. It is also a `MutableMapping`, so a cache is a dict you can list, read and delete from.
 
-(For the technically inclined, `graze` is meant to ease the separation of the concerns of getting and caching/persisting data from the internet.)
-
-## install
+## Install
 
 ```default
 pip install graze
 ```
 
-# Quick example
+## Quick example
+
+```python
+from graze import graze
+
+url = "https://raw.githubusercontent.com/thorwhalen/graze/master/README.md"
+content = graze(url)  # bytes: downloaded the first time, read from the local cache after that
+```
+
+Ask for the same URL again and `graze` returns the local copy without touching the network. It’s the easiest way to separate *getting* data from the internet from *keeping* it.
+
+Prefer a dict? `Graze` is the same thing as a `MutableMapping` of `url -> bytes`, caching under `~/.cache/graze` by default:
 
 ```python
 from graze import Graze
-g = Graze()  # caches under ~/.cache/graze by default
-list(g)
+
+g = Graze()
+list(g)  # [] the first time: nothing cached yet
+content = g[url]  # downloads and caches
+type(content)  # bytes
 ```
 
-If this is your first time, you got nothing:
+A key in `g` means you have a local copy of those contents. The file path isn’t really `https://...` but `rootdir/https/...`; you only need that if you fetch the file with something other than graze.
 
-```default
-[]
-```
-
-So get something. For no particular reason let’s be self-referential and get myself:
+Asking again returns the local copy without touching the internet:
 
 ```python
-url = "https://raw.githubusercontent.com/thorwhalen/graze/master/README.md"
-content = g[url]
-type(content), len(content)
-```
-
-Before I grew up, I had only 46 petty bytes (I have a lot more now):
-
-```default
-(bytes, 46)
-```
-
-These were:
-
-```python
-print(content.decode())
-```
-
-```default
-# graze
-
-Cache (a tiny part of) the internet.
-```
-
-But now, here’s the deal. List your `g` keys now. Go ahead, don’t be shy!
-
-```python
-list(g)
-```
-
-```default
-['https://raw.githubusercontent.com/thorwhalen/graze/master/README.md']
-```
-
-What does that mean?
-
-I means you have a local copy of these contents.
-
-The file path isn’t really `https://...`, it’s `rootdir/https/...`, but you
-only have to care about that if you actually have to go get the file with
-something else than graze. Because graze will give it to you.
-
-How? Same way you got it in the first place:
-
-```default
 content_2 = g[url]
 assert content_2 == content
 ```
 
-But this time, it didn’t ask the internet. It just got it’s local copy.
-
-And if you want a fresh copy?
-
-No problem, just delete your local one. You guessed!
-The same way you would delete a key from a dict:
+For a fresh copy, delete the key, as you would from a dict:
 
 ```python
 del g[url]
 ```
 
-# Understanding graze: Function and Class
+## Understanding graze: Function and Class
 
 Now that you’ve seen `graze` in action, let’s dive deeper into how it works and what options you have to tailor it to your needs.
 
-## The `graze()` function: Your core workhorse
+## The `graze()` function: The core function
 
-At the heart of the package is the `graze()` function. It’s simple: give it a URL, and it gives you back the contents as bytes. But here’s the clever bit—it caches those bytes locally so the next time you ask for the same URL, you get instant access without hitting the network again.
+At the heart of the package is the `graze()` function. It’s simple: give it a URL, and it gives you back the contents as bytes. It caches those bytes locally so the next time you ask for the same URL, you get instant access without hitting the network again.
 
 ```python
 from graze import graze
@@ -106,7 +65,7 @@ from graze import graze
 # First call downloads and caches
 content = graze("https://example.com/data.json")
 
-# Second call uses cached version - blazing fast!
+# Second call uses cached version
 content_again = graze("https://example.com/data.json")
 ```
 
@@ -233,7 +192,7 @@ content = graze(url, key_ingress=lambda k: logger.info(f"Fetching fresh data fro
 filepath = graze(url, return_key=True)
 ```
 
-## The `Graze` class: Your dict-like cache interface
+## The `Graze` class: The dict-like cache interface
 
 While the `graze()` function is great for one-off fetches, the `Graze` class gives you a convenient dict-like interface to browse and manage your cached data.
 
@@ -340,7 +299,7 @@ Use the **`Graze` class** when:
 - You need to browse, count, or manage cached items
 - You want to check what’s cached before fetching
 
-# Q&A
+## Q&A
 
 ## The pages I need to slurp need to be rendered, can I use selenium of other such engines?
 
@@ -2555,7 +2514,7 @@ Yield the successive translations of `arg` by `method` through a stack of wrappe
 
 # About this build
 
-This documentation was built on **2026-11-22 21:42 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/645b00a85e9b4859f7e1ace39e438c6655242f71"><code>645b00a</code></a> on branch <code>master</code>, for **graze 0.1.50** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 23:23 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/5e8479d485c281c19e64012e0ef0d1cbaf1e8b1d"><code>5e8479d</code></a> on branch <code>master</code>, for **graze 0.1.50** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -2564,7 +2523,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/graze/commit/645b00a85e9b4859f7e1ace39e438c6655242f71"><code>645b00a85e9b4859f7e1ace39e438c6655242f71</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/graze/commit/5e8479d485c281c19e64012e0ef0d1cbaf1e8b1d"><code>5e8479d485c281c19e64012e0ef0d1cbaf1e8b1d</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -2575,9 +2534,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/graze</code>                                                              |
-| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45073436926">45073436926</a>     |
+| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45082864248">45082864248</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>645b00a85e9b4859f7e1ace39e438c6655242f71</code> (in the history of the built commit) |
+| Event commit | <code>5e8479d485c281c19e64012e0ef0d1cbaf1e8b1d</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -2608,7 +2567,7 @@ Latest release: <a href="https://pypi.org/project/graze/0.1.50/">0.1.50</a>, the
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout 645b00a85e9b4859f7e1ace39e438c6655242f71
+git checkout 5e8479d485c281c19e64012e0ef0d1cbaf1e8b1d
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

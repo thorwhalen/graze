@@ -2,7 +2,7 @@
 
 # About this build
 
-This documentation was built on **2026-11-22 21:42 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/645b00a85e9b4859f7e1ace39e438c6655242f71"><code>645b00a</code></a> on branch <code>master</code>, for **graze 0.1.50** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 23:23 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/5e8479d485c281c19e64012e0ef0d1cbaf1e8b1d"><code>5e8479d</code></a> on branch <code>master</code>, for **graze 0.1.50** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -11,7 +11,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/graze/commit/645b00a85e9b4859f7e1ace39e438c6655242f71"><code>645b00a85e9b4859f7e1ace39e438c6655242f71</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/graze/commit/5e8479d485c281c19e64012e0ef0d1cbaf1e8b1d"><code>5e8479d485c281c19e64012e0ef0d1cbaf1e8b1d</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -22,9 +22,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/graze</code>                                                              |
-| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45073436926">45073436926</a>     |
+| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45082864248">45082864248</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>645b00a85e9b4859f7e1ace39e438c6655242f71</code> (in the history of the built commit) |
+| Event commit | <code>5e8479d485c281c19e64012e0ef0d1cbaf1e8b1d</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -55,7 +55,7 @@ Latest release: <a href="https://pypi.org/project/graze/0.1.50/">0.1.50</a>, the
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout 645b00a85e9b4859f7e1ace39e438c6655242f71
+git checkout 5e8479d485c281c19e64012e0ef0d1cbaf1e8b1d
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
