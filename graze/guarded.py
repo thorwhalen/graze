@@ -161,7 +161,7 @@ class FetchFailed(GuardedFetchError, OSError):
 class HTTPStatusError(GuardedFetchError):
     """The server answered with an error status (4xx or 5xx)."""
 
-    def __init__(self, message: str, *, status: int, url: str):
+    def __init__(self, message: str, *, status: int, url: str) -> None:
         super().__init__(message)
         self.status = status
         self.url = url
@@ -223,7 +223,7 @@ def _resolve_within(resolver: Resolver, host: str, port: int, *, deadline: float
     """
     results: queue.Queue = queue.Queue(maxsize=1)
 
-    def resolve():
+    def resolve() -> None:
         try:
             results.put((True, list(resolver(host, port))))
         except BaseException as e:  # handed to the caller, re-raised there
@@ -288,7 +288,7 @@ class _Watchdog:
     failed or empty read asks :attr:`fired` to tell "out of time" from "server hung up".
     """
 
-    def __init__(self, deadline: float):
+    def __init__(self, deadline: float) -> None:
         self.deadline = deadline
         self.fired = False
         self._sock: Optional[socket.socket] = None
@@ -382,7 +382,7 @@ def _pinned_connection(
         context = ssl_context or ssl.create_default_context()
 
         class _PinnedHTTPS(http.client.HTTPSConnection):
-            def connect(self):
+            def connect(self) -> None:
                 sock = open_pinned_socket(self)
                 tls = context.wrap_socket(
                     sock, server_hostname=self.host, do_handshake_on_connect=False
@@ -393,7 +393,7 @@ def _pinned_connection(
         return _PinnedHTTPS(host, port, timeout=watchdog.remaining(), context=context)
 
     class _PinnedHTTP(http.client.HTTPConnection):
-        def connect(self):
+        def connect(self) -> None:
             self.sock = open_pinned_socket(self)
 
     return _PinnedHTTP(host, port, timeout=watchdog.remaining())
