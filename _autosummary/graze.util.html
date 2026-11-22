@@ -287,14 +287,14 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#graze.util.google_drive_download_url" title="graze.util.google_drive_download_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">google_drive_download_url</span></code></a>(url)</p></td>
 <td><p>Get the direct-download url of a Google Drive FILE url.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">handle_missing_dir</span></code>(dirpath[, prefix_msg, ...])</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#graze.util.handle_missing_dir" title="graze.util.handle_missing_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">handle_missing_dir</span></code></a>(dirpath[, prefix_msg, ...])</p></td>
+<td><p>Make <code class="docutils literal notranslate"><span class="pre">dirpath</span></code> (<code class="docutils literal notranslate"><span class="pre">~</span></code> expanded) if it is missing, asking the user first if <code class="docutils literal notranslate"><span class="pre">ask_first</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#graze.util.human_readable_bytes" title="graze.util.human_readable_bytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">human_readable_bytes</span></code></a>(num_of_bytes, *[, ...])</p></td>
 <td><p>Convert a number of bytes into a human-readable format with units.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">inner_most</span></code>(store, arg, method)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#graze.util.inner_most" title="graze.util.inner_most"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inner_most</span></code></a>(store, arg, method)</p></td>
+<td><p>The last (innermost) translation of <code class="docutils literal notranslate"><span class="pre">arg</span></code> by <code class="docutils literal notranslate"><span class="pre">method</span></code> in a stack of wrapped stores.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#graze.util.is_dropbox_url" title="graze.util.is_dropbox_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_dropbox_url</span></code></a>(url)</p></td>
 <td><p>Whether <code class="code docutils literal notranslate"><span class="pre">url</span></code> is a dropbox share link.</p></td>
@@ -317,14 +317,14 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#graze.util.original_url_of_tiny_url" title="graze.util.original_url_of_tiny_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">original_url_of_tiny_url</span></code></a>(tiny_url)</p></td>
 <td><p>Expands a short URL by making a HEAD request and following the redirection.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">store_trans_path</span></code>(store, arg, method)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#graze.util.store_trans_path" title="graze.util.store_trans_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">store_trans_path</span></code></a>(store, arg, method)</p></td>
+<td><p>Yield the successive translations of <code class="docutils literal notranslate"><span class="pre">arg</span></code> by <code class="docutils literal notranslate"><span class="pre">method</span></code> through a stack of wrapped stores.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#graze.util.tiny_url" title="graze.util.tiny_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tiny_url</span></code></a>(long_url)</p></td>
 <td><p>Shortens a long URL by directly calling the TinyURL API endpoint.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">url_with_virus_scan_confirmation_token</span></code>(url, ...)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#graze.util.url_with_virus_scan_confirmation_token" title="graze.util.url_with_virus_scan_confirmation_token"><code class="xref py py-obj docutils literal notranslate"><span class="pre">url_with_virus_scan_confirmation_token</span></code></a>(url, ...)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">url</span></code> with the <code class="docutils literal notranslate"><span class="pre">confirm</span></code> token found in Google Drive's virus-scan <code class="docutils literal notranslate"><span class="pre">page_html</span></code> appended.</p></td>
 </tr>
 </tbody>
 </table>
@@ -445,6 +445,14 @@ folder id, which is what graze used to do.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="graze.util.handle_missing_dir">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">handle_missing_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix_msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ask_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/util.html#handle_missing_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.handle_missing_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Make <code class="docutils literal notranslate"><span class="pre">dirpath</span></code> (<code class="docutils literal notranslate"><span class="pre">~</span></code> expanded) if it is missing, asking the user first if <code class="docutils literal notranslate"><span class="pre">ask_first</span></code>.</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="graze.util.human_readable_bytes">
 <span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">human_readable_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_of_bytes</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'~'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('B',</span> <span class="pre">'KB',</span> <span class="pre">'MB',</span> <span class="pre">'GB',</span> <span class="pre">'TB',</span> <span class="pre">'PB')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/util.html#human_readable_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.human_readable_bytes" title="Link to this definition">¶</a></dt>
 <dd><p>Convert a number of bytes into a human-readable format with units.</p>
@@ -502,6 +510,18 @@ units.</p>
 <span class="go">'approximately 1.235e+08 kilobytes'</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.inner_most">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">inner_most</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/util.html#inner_most"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.inner_most" title="Link to this definition">¶</a></dt>
+<dd><p>The last (innermost) translation of <code class="docutils literal notranslate"><span class="pre">arg</span></code> by <code class="docutils literal notranslate"><span class="pre">method</span></code> in a stack of wrapped stores.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.inner_most_key">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">inner_most_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_id_of_key'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graze.util.inner_most_key" title="Link to this definition">¶</a></dt>
+<dd><p>The last (innermost) translation of <code class="docutils literal notranslate"><span class="pre">arg</span></code> by <code class="docutils literal notranslate"><span class="pre">method</span></code> in a stack of wrapped stores.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -587,6 +607,12 @@ units.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="graze.util.store_trans_path">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">store_trans_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/util.html#store_trans_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.store_trans_path" title="Link to this definition">¶</a></dt>
+<dd><p>Yield the successive translations of <code class="docutils literal notranslate"><span class="pre">arg</span></code> by <code class="docutils literal notranslate"><span class="pre">method</span></code> through a stack of wrapped stores.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="graze.util.tiny_url">
 <span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">tiny_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">long_url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/util.html#tiny_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.tiny_url" title="Link to this definition">¶</a></dt>
 <dd><p>Shortens a long URL by directly calling the TinyURL API endpoint.</p>
@@ -601,6 +627,18 @@ units.</p>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.unravel_key">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">unravel_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_id_of_key'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graze.util.unravel_key" title="Link to this definition">¶</a></dt>
+<dd><p>Yield the successive translations of <code class="docutils literal notranslate"><span class="pre">arg</span></code> by <code class="docutils literal notranslate"><span class="pre">method</span></code> through a stack of wrapped stores.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.util.url_with_virus_scan_confirmation_token">
+<span class="sig-prename descclassname"><span class="pre">graze.util.</span></span><span class="sig-name descname"><span class="pre">url_with_virus_scan_confirmation_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_html</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/util.html#url_with_virus_scan_confirmation_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.util.url_with_virus_scan_confirmation_token" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">url</span></code> with the <code class="docutils literal notranslate"><span class="pre">confirm</span></code> token found in Google Drive’s virus-scan <code class="docutils literal notranslate"><span class="pre">page_html</span></code> appended.</p>
 </dd></dl>
 
 </section>
@@ -659,7 +697,10 @@ units.</p>
 <li><a class="reference internal" href="#graze.util.download_url_contents"><code class="docutils literal notranslate"><span class="pre">download_url_contents()</span></code></a></li>
 <li><a class="reference internal" href="#graze.util.get_content_size"><code class="docutils literal notranslate"><span class="pre">get_content_size()</span></code></a></li>
 <li><a class="reference internal" href="#graze.util.google_drive_download_url"><code class="docutils literal notranslate"><span class="pre">google_drive_download_url()</span></code></a></li>
+<li><a class="reference internal" href="#graze.util.handle_missing_dir"><code class="docutils literal notranslate"><span class="pre">handle_missing_dir()</span></code></a></li>
 <li><a class="reference internal" href="#graze.util.human_readable_bytes"><code class="docutils literal notranslate"><span class="pre">human_readable_bytes()</span></code></a></li>
+<li><a class="reference internal" href="#graze.util.inner_most"><code class="docutils literal notranslate"><span class="pre">inner_most()</span></code></a></li>
+<li><a class="reference internal" href="#graze.util.inner_most_key"><code class="docutils literal notranslate"><span class="pre">inner_most_key()</span></code></a></li>
 <li><a class="reference internal" href="#graze.util.is_dropbox_url"><code class="docutils literal notranslate"><span class="pre">is_dropbox_url()</span></code></a></li>
 <li><a class="reference internal" href="#graze.util.is_google_drive_url"><code class="docutils literal notranslate"><span class="pre">is_google_drive_url()</span></code></a></li>
 <li><a class="reference internal" href="#graze.util.is_onedrive_url"><code class="docutils literal notranslate"><span class="pre">is_onedrive_url()</span></code></a></li>
@@ -667,7 +708,10 @@ units.</p>
 <li><a class="reference internal" href="#graze.util.is_special_url"><code class="docutils literal notranslate"><span class="pre">is_special_url()</span></code></a></li>
 <li><a class="reference internal" href="#graze.util.last_element"><code class="docutils literal notranslate"><span class="pre">last_element()</span></code></a></li>
 <li><a class="reference internal" href="#graze.util.original_url_of_tiny_url"><code class="docutils literal notranslate"><span class="pre">original_url_of_tiny_url()</span></code></a></li>
+<li><a class="reference internal" href="#graze.util.store_trans_path"><code class="docutils literal notranslate"><span class="pre">store_trans_path()</span></code></a></li>
 <li><a class="reference internal" href="#graze.util.tiny_url"><code class="docutils literal notranslate"><span class="pre">tiny_url()</span></code></a></li>
+<li><a class="reference internal" href="#graze.util.unravel_key"><code class="docutils literal notranslate"><span class="pre">unravel_key()</span></code></a></li>
+<li><a class="reference internal" href="#graze.util.url_with_virus_scan_confirmation_token"><code class="docutils literal notranslate"><span class="pre">url_with_virus_scan_confirmation_token()</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -14,9 +14,9 @@ Utils
 | [`download_url_contents`](#graze.util.download_url_contents)(url[, file, chk_size, ...]) | Download url contents into a `file` object, or return bytes if `file` is None.                                  |
 | [`get_content_size`](#graze.util.get_content_size)(url, \*[, default])              | Get the content size of a url, if available, without downloading the content.                                   |
 | [`google_drive_download_url`](#graze.util.google_drive_download_url)(url)                    | Get the direct-download url of a Google Drive FILE url.                                                         |
-| `handle_missing_dir`(dirpath[, prefix_msg, ...])                                                   |                                                                                                                 |
+| [`handle_missing_dir`](#graze.util.handle_missing_dir)(dirpath[, prefix_msg, ...])    | Make `dirpath` (`~` expanded) if it is missing, asking the user first if `ask_first`.                           |
 | [`human_readable_bytes`](#graze.util.human_readable_bytes)(num_of_bytes, \*[, ...])     | Convert a number of bytes into a human-readable format with units.                                              |
-| `inner_most`(store, arg, method)                                                                   |                                                                                                                 |
+| [`inner_most`](#graze.util.inner_most)(store, arg, method)                    | The last (innermost) translation of `arg` by `method` in a stack of wrapped stores.                             |
 | [`is_dropbox_url`](#graze.util.is_dropbox_url)(url)                               | Whether `url` is a dropbox share link.                                                                          |
 | [`is_google_drive_url`](#graze.util.is_google_drive_url)(url)                          | Whether `url` is a google_drive share link.                                                                     |
 | [`is_onedrive_url`](#graze.util.is_onedrive_url)(url)                              | Whether `url` is a onedrive share link.                                                                         |
@@ -24,9 +24,9 @@ Utils
 | [`is_special_url`](#graze.util.is_special_url)(url)                               | Check if a url is a special url, i.e. if it has a special url route.                                            |
 | [`last_element`](#graze.util.last_element)(iterable, \*[, default])             | Returns the last element of an iterable, or a default if the iterable is empty.                                 |
 | [`original_url_of_tiny_url`](#graze.util.original_url_of_tiny_url)(tiny_url)                | Expands a short URL by making a HEAD request and following the redirection.                                     |
-| `store_trans_path`(store, arg, method)                                                             |                                                                                                                 |
+| [`store_trans_path`](#graze.util.store_trans_path)(store, arg, method)              | Yield the successive translations of `arg` by `method` through a stack of wrapped stores.                       |
 | [`tiny_url`](#graze.util.tiny_url)(long_url)                                | Shortens a long URL by directly calling the TinyURL API endpoint.                                               |
-| `url_with_virus_scan_confirmation_token`(url, ...)                                                 |                                                                                                                 |
+| [`url_with_virus_scan_confirmation_token`](#graze.util.url_with_virus_scan_confirmation_token)(url, ...)  | `url` with the `confirm` token found in Google Drive's virus-scan `page_html` appended.                         |
 
 ### graze.util.add_special_url_route(condition, url_download_func)
 
@@ -123,6 +123,10 @@ folder id, which is what graze used to do.
 'https://drive.google.com/uc?export=download&id=1Ab'
 ```
 
+### graze.util.handle_missing_dir(dirpath, prefix_msg='', ask_first=True, verbose=True)
+
+Make `dirpath` (`~` expanded) if it is missing, asking the user first if `ask_first`.
+
 ### graze.util.human_readable_bytes(num_of_bytes, , approx_marker='~', n_digits=4, base=1000, units=('B', 'KB', 'MB', 'GB', 'TB', 'PB'))
 
 Convert a number of bytes into a human-readable format with units.
@@ -182,6 +186,14 @@ units.
 'approximately 1.235e+08 kilobytes'
 ```
 
+### graze.util.inner_most(store, arg, method)
+
+The last (innermost) translation of `arg` by `method` in a stack of wrapped stores.
+
+### graze.util.inner_most_key(store, arg, , method='_id_of_key')
+
+The last (innermost) translation of `arg` by `method` in a stack of wrapped stores.
+
 ### graze.util.is_dropbox_url(url)
 
 Whether `url` is a dropbox share link.
@@ -237,6 +249,10 @@ Expands a short URL by making a HEAD request and following the redirection.
 * **Return type:**
   [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
 
+### graze.util.store_trans_path(store, arg, method)
+
+Yield the successive translations of `arg` by `method` through a stack of wrapped stores.
+
 ### graze.util.tiny_url(long_url)
 
 Shortens a long URL by directly calling the TinyURL API endpoint.
@@ -247,3 +263,11 @@ Shortens a long URL by directly calling the TinyURL API endpoint.
   The shortened TinyURL, or an error message.
 * **Return type:**
   [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+### graze.util.unravel_key(store, arg, , method='_id_of_key')
+
+Yield the successive translations of `arg` by `method` through a stack of wrapped stores.
+
+### graze.util.url_with_virus_scan_confirmation_token(url, page_html)
+
+`url` with the `confirm` token found in Google Drive’s virus-scan `page_html` appended.

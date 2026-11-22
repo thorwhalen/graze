@@ -738,28 +738,44 @@
         <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
 
+<div class="viewcode-block" id="return_contents">
+<a class="viewcode-back" href="../../_autosummary/graze.base.html#graze.base.return_contents">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">return_contents</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">contents</span>
+<span class="w">    </span><span class="sd">"""Egress for ``Graze``-like stores: return the ``contents`` (ignoring ``filepath`` and ``url``)."""</span>
+    <span class="k">return</span> <span class="n">contents</span></div>
 
 
+
+<div class="viewcode-block" id="return_filepath">
+<a class="viewcode-back" href="../../_autosummary/graze.base.html#graze.base.return_filepath">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">return_filepath</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">filepath</span>
+<span class="w">    </span><span class="sd">"""Egress for ``Graze``-like stores: return the ``filepath`` (ignoring ``contents`` and ``url``)."""</span>
+    <span class="k">return</span> <span class="n">filepath</span></div>
+
 
 
 <span class="c1"># Typical function to use as a key_ingress to Graze</span>
+<div class="viewcode-block" id="key_egress_print_downloading_message">
+<a class="viewcode-back" href="../../_autosummary/graze.base.html#graze.base.key_egress_print_downloading_message">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">key_egress_print_downloading_message</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Print a message saying ``url`` is being downloaded, and return ``url`` unchanged."""</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The contents of </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> are being downloaded"</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">url</span>
+    <span class="k">return</span> <span class="n">url</span></div>
 
 
+
+<div class="viewcode-block" id="key_egress_print_downloading_message_with_size">
+<a class="viewcode-back" href="../../_autosummary/graze.base.html#graze.base.key_egress_print_downloading_message_with_size">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">key_egress_print_downloading_message_with_size</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Like ``key_egress_print_downloading_message``, also showing the content size when the server reports it."""</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">get_content_size</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">size</span> <span class="o">=</span> <span class="s2">" (size unknown)"</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" (</span><span class="si">{</span><span class="n">human_readable_bytes</span><span class="p">(</span><span class="n">size</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The contents </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> are being downloaded..."</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">url</span>
+    <span class="k">return</span> <span class="n">url</span></div>
+
 
 
 <span class="c1"># TODO: The function boils down a more abstract key-value caching pattern.</span>
@@ -843,7 +859,11 @@
 
 <span class="c1"># TODO: Think of a better way to handle the contents vs file download cases</span>
 <span class="c1">#   For example, better if Internet is not aware at all of local files</span>
+<div class="viewcode-block" id="Internet">
+<a class="viewcode-back" href="../../_autosummary/graze.base.html#graze.base.Internet">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Internet</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""The default source of a ``Graze``: gets the contents (or a file download) of a url off the internet."""</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">url_to_contents</span><span class="o">=</span><span class="n">DFLT_URL_TO_CONTENT</span><span class="p">,</span>
@@ -882,6 +902,8 @@
         <span class="k">except</span> <span class="n">RequestFailure</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
+<div class="viewcode-block" id="Internet.download_to_file">
+<a class="viewcode-back" href="../../_autosummary/graze.base.html#graze.base.Internet.download_to_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">download_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Download the contents of the url to the given filepath"""</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -893,7 +915,9 @@
         <span class="k">if</span> <span class="n">is_special_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">download_from_special_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_contents_of_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_contents_of_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span></div>
+</div>
+
 
 
 <span class="c1"># TODO: Use reususable caching decorator?</span>
@@ -1241,6 +1265,8 @@
 <div class="viewcode-block" id="GrazeWithDataRefresh">
 <a class="viewcode-back" href="../../_autosummary/graze.base.html#graze.base.GrazeWithDataRefresh">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GrazeWithDataRefresh</span><span class="p">(</span><span class="n">Graze</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A ``Graze`` that re-downloads a url's contents once the cached copy is older than ``time_to_live`` seconds."""</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rootdir</span><span class="o">=</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span>

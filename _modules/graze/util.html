@@ -277,20 +277,28 @@
 
 
 
+<div class="viewcode-block" id="store_trans_path">
+<a class="viewcode-back" href="../../_autosummary/graze.util.html#graze.util.store_trans_path">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">store_trans_path</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Yield the successive translations of ``arg`` by ``method`` through a stack of wrapped stores."""</span>
     <span class="n">f</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">trans_arg</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
         <span class="k">yield</span> <span class="n">trans_arg</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="s2">"store"</span><span class="p">):</span>
-            <span class="k">yield from</span> <span class="n">unravel_key</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">store</span><span class="p">,</span> <span class="n">trans_arg</span><span class="p">)</span>
+            <span class="k">yield from</span> <span class="n">unravel_key</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">store</span><span class="p">,</span> <span class="n">trans_arg</span><span class="p">)</span></div>
+
 
 
 <span class="n">unravel_key</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">store_trans_path</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"_id_of_key"</span><span class="p">)</span>
 
 
+<div class="viewcode-block" id="inner_most">
+<a class="viewcode-back" href="../../_autosummary/graze.util.html#graze.util.inner_most">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">inner_most</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">last_element</span><span class="p">(</span><span class="n">store_trans_path</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">method</span><span class="p">))</span>
+<span class="w">    </span><span class="sd">"""The last (innermost) translation of ``arg`` by ``method`` in a stack of wrapped stores."""</span>
+    <span class="k">return</span> <span class="n">last_element</span><span class="p">(</span><span class="n">store_trans_path</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">method</span><span class="p">))</span></div>
+
 
 
 <span class="c1"># The only raison d'être of everything above is to define inner_most_key:</span>
@@ -407,7 +415,10 @@
 
 
 
+<div class="viewcode-block" id="handle_missing_dir">
+<a class="viewcode-back" href="../../_autosummary/graze.util.html#graze.util.handle_missing_dir">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">handle_missing_dir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix_msg</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">ask_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Make ``dirpath`` (``~`` expanded) if it is missing, asking the user first if ``ask_first``."""</span>
     <span class="n">_clog</span> <span class="o">=</span> <span class="n">clog</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">dirpath</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"~"</span><span class="p">):</span>
         <span class="n">dirpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
@@ -419,7 +430,8 @@
             <span class="k">if</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">answer</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()),</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"y"</span><span class="p">:</span>
                 <span class="k">return</span>
         <span class="n">_clog</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Making </span><span class="si">{</span><span class="n">dirpath</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="get_content_size">
@@ -714,7 +726,10 @@
 
 
 
+<div class="viewcode-block" id="url_with_virus_scan_confirmation_token">
+<a class="viewcode-back" href="../../_autosummary/graze.util.html#graze.util.url_with_virus_scan_confirmation_token">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">url_with_virus_scan_confirmation_token</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">page_html</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""``url`` with the ``confirm`` token found in Google Drive's virus-scan ``page_html`` appended."""</span>
     <span class="c1"># Use regular expressions to find the confirmation token</span>
     <span class="n">confirm_token_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">"confirm=([0-9A-Za-z_\-]+)&amp;"</span><span class="p">,</span> <span class="n">page_html</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">confirm_token_match</span><span class="p">:</span>
@@ -726,7 +741,8 @@
     <span class="n">confirmation_token</span> <span class="o">=</span> <span class="n">confirm_token_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Construct the URL with the confirmation token</span>
-    <span class="k">return</span> <span class="n">url</span> <span class="o">+</span> <span class="s2">"&amp;confirm="</span> <span class="o">+</span> <span class="n">confirmation_token</span>
+    <span class="k">return</span> <span class="n">url</span> <span class="o">+</span> <span class="s2">"&amp;confirm="</span> <span class="o">+</span> <span class="n">confirmation_token</span></div>
+
 
 
 <span class="c1"># --------------------- OneDrive ---------------------</span>

@@ -4,30 +4,30 @@ Base functionality
 
 ### Functions
 
-| `DFLT_URL_TO_CONTENT`(url[, response_func])                                                  |                                                                                                                |
-|----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| [`graze`](#graze.base.graze)(url[, cache, cache_key, source, ...]) | Get the contents of the url (persisting the results in a local file or cache, for next time you'll ask for it) |
-| `key_egress_print_downloading_message`(url)                                                  |                                                                                                                |
-| `key_egress_print_downloading_message_with_size`(url)                                        |                                                                                                                |
-| [`localpath_to_url`](#graze.base.localpath_to_url)(path)                      |                                                                                                                |
-| `return_contents`(filepath, contents, url)                                                   |                                                                                                                |
-| `return_filepath`(filepath, contents, url)                                                   |                                                                                                                |
-| [`selenium_url_to_contents`](#graze.base.selenium_url_to_contents)(url[, ...])        | Function to get contents from a url, using selenium.                                                           |
-| [`url_to_file_download`](#graze.base.url_to_file_download)(url[, filepath, ...])  | Helper to make a url-to-file download functions (using partial).                                               |
-| [`url_to_filepath`](#graze.base.url_to_filepath)(url[, rootdir, download])   | Get the file path for the url.                                                                                 |
-| [`url_to_localpath`](#graze.base.url_to_localpath)(url)                       |                                                                                                                |
+| `DFLT_URL_TO_CONTENT`(url[, response_func])                                                          |                                                                                                                |
+|------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| [`graze`](#graze.base.graze)(url[, cache, cache_key, source, ...])         | Get the contents of the url (persisting the results in a local file or cache, for next time you'll ask for it) |
+| [`key_egress_print_downloading_message`](#graze.base.key_egress_print_downloading_message)(url)           | Print a message saying `url` is being downloaded, and return `url` unchanged.                                  |
+| [`key_egress_print_downloading_message_with_size`](#graze.base.key_egress_print_downloading_message_with_size)(url) | Like `key_egress_print_downloading_message`, also showing the content size when the server reports it.         |
+| [`localpath_to_url`](#graze.base.localpath_to_url)(path)                              |                                                                                                                |
+| [`return_contents`](#graze.base.return_contents)(filepath, contents, url)            | Egress for `Graze`-like stores: return the `contents` (ignoring `filepath` and `url`).                         |
+| [`return_filepath`](#graze.base.return_filepath)(filepath, contents, url)            | Egress for `Graze`-like stores: return the `filepath` (ignoring `contents` and `url`).                         |
+| [`selenium_url_to_contents`](#graze.base.selenium_url_to_contents)(url[, ...])                | Function to get contents from a url, using selenium.                                                           |
+| [`url_to_file_download`](#graze.base.url_to_file_download)(url[, filepath, ...])          | Helper to make a url-to-file download functions (using partial).                                               |
+| [`url_to_filepath`](#graze.base.url_to_filepath)(url[, rootdir, download])           | Get the file path for the url.                                                                                 |
+| [`url_to_localpath`](#graze.base.url_to_localpath)(url)                               |                                                                                                                |
 
 ### Classes
 
-| [`Gettable`](#graze.base.Gettable)(\*args, \*\*kwargs)                     | Protocol for objects with \_\_getitem_\_ method.                                              |
-|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
-| [`Graze`](#graze.base.Graze)(self[, rootdir, source, key_ingress, ...]) | A data access object that will get data from the internet if it's not already stored locally. |
-| [`GrazeBase`](#graze.base.GrazeBase)([cache, source, key_ingress, ...])     | Base class for Graze that wraps the graze() function.                                         |
-| [`GrazeWithDataRefresh`](#graze.base.GrazeWithDataRefresh)(self[, rootdir, ...])       |                                                                                               |
-| `Internet`([url_to_contents, url_to_file_download])                                               |                                                                                               |
-| [`LocalFiles`](#graze.base.LocalFiles)([rootdir])                            | Store to read/write/delete local files, creating directories on write.                        |
-| [`LocalGrazed`](#graze.base.LocalGrazed)([rootdir])                           | LocalFiles using url as keys                                                                  |
-| [`url_to_contents`](#graze.base.url_to_contents)()                                | A place to contain url_to_contents functions.                                                 |
+| [`Gettable`](#graze.base.Gettable)(\*args, \*\*kwargs)                      | Protocol for objects with \_\_getitem_\_ method.                                                        |
+|----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| [`Graze`](#graze.base.Graze)(self[, rootdir, source, key_ingress, ...])  | A data access object that will get data from the internet if it's not already stored locally.           |
+| [`GrazeBase`](#graze.base.GrazeBase)([cache, source, key_ingress, ...])      | Base class for Graze that wraps the graze() function.                                                   |
+| [`GrazeWithDataRefresh`](#graze.base.GrazeWithDataRefresh)(self[, rootdir, ...])        | A `Graze` that re-downloads a url's contents once the cached copy is older than `time_to_live` seconds. |
+| [`Internet`](#graze.base.Internet)([url_to_contents, url_to_file_download]) | The default source of a `Graze`: gets the contents (or a file download) of a url off the internet.      |
+| [`LocalFiles`](#graze.base.LocalFiles)([rootdir])                             | Store to read/write/delete local files, creating directories on write.                                  |
+| [`LocalGrazed`](#graze.base.LocalGrazed)([rootdir])                            | LocalFiles using url as keys                                                                            |
+| [`url_to_contents`](#graze.base.url_to_contents)()                                 | A place to contain url_to_contents functions.                                                           |
 
 ### Exceptions
 
@@ -128,6 +128,18 @@ This class just provides the Mapping interface and state management.
 ### *class* graze.base.GrazeWithDataRefresh(self, rootdir='/home/runner/.cache/graze', source=<graze.base.Internet object>, \*, key_ingress=None, return_filepaths=False)
 
 Bases: [`Graze`](#graze.base.Graze)
+
+A `Graze` that re-downloads a url’s contents once the cached copy is older than `time_to_live` seconds.
+
+### *class* graze.base.Internet(url_to_contents=<function url_to_contents.requests_get>, url_to_file_download=None)
+
+Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
+
+The default source of a `Graze`: gets the contents (or a file download) of a url off the internet.
+
+#### download_to_file(url, file=None)
+
+Download the contents of the url to the given filepath
 
 ### *class* graze.base.LocalFiles(rootdir='/home/runner/.cache/graze')
 
@@ -235,6 +247,14 @@ for next time you’ll ask for it)
 >>> content = graze('http://example.com/data.json', max_age=3600)
 ```
 
+### graze.base.key_egress_print_downloading_message(url)
+
+Print a message saying `url` is being downloaded, and return `url` unchanged.
+
+### graze.base.key_egress_print_downloading_message_with_size(url)
+
+Like `key_egress_print_downloading_message`, also showing the content size when the server reports it.
+
 ### graze.base.localpath_to_url(path)
 
 ```pycon
@@ -248,6 +268,14 @@ for next time you’ll ask for it)
 
 * **Return type:**
   [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+### graze.base.return_contents(filepath, contents, url)
+
+Egress for `Graze`-like stores: return the `contents` (ignoring `filepath` and `url`).
+
+### graze.base.return_filepath(filepath, contents, url)
+
+Egress for `Graze`-like stores: return the `filepath` (ignoring `contents` and `url`).
 
 ### graze.base.selenium_url_to_contents(url, response_func=<function \_dflt_selenium_response_func>, browser='Chrome')
 

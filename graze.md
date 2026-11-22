@@ -1,4 +1,4 @@
-> built 2026-11-22 14:45 UTC from bf3b240 (master) · graze 0.1.49. Details: build_info.json
+> built 2026-11-22 14:48 UTC from d66839f (master) · graze 0.1.49. Details: build_info.json
 
 # index.html.md
 
@@ -611,30 +611,30 @@ Base functionality
 
 ### Functions
 
-| `DFLT_URL_TO_CONTENT`(url[, response_func])                                                  |                                                                                                                |
-|----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| [`graze`](_autosummary/graze.base.html.md#graze.base.graze)(url[, cache, cache_key, source, ...]) | Get the contents of the url (persisting the results in a local file or cache, for next time you'll ask for it) |
-| `key_egress_print_downloading_message`(url)                                                  |                                                                                                                |
-| `key_egress_print_downloading_message_with_size`(url)                                        |                                                                                                                |
-| [`localpath_to_url`](_autosummary/graze.base.html.md#graze.base.localpath_to_url)(path)                      |                                                                                                                |
-| `return_contents`(filepath, contents, url)                                                   |                                                                                                                |
-| `return_filepath`(filepath, contents, url)                                                   |                                                                                                                |
-| [`selenium_url_to_contents`](_autosummary/graze.base.html.md#graze.base.selenium_url_to_contents)(url[, ...])        | Function to get contents from a url, using selenium.                                                           |
-| [`url_to_file_download`](_autosummary/graze.base.html.md#graze.base.url_to_file_download)(url[, filepath, ...])  | Helper to make a url-to-file download functions (using partial).                                               |
-| [`url_to_filepath`](_autosummary/graze.base.html.md#graze.base.url_to_filepath)(url[, rootdir, download])   | Get the file path for the url.                                                                                 |
-| [`url_to_localpath`](_autosummary/graze.base.html.md#graze.base.url_to_localpath)(url)                       |                                                                                                                |
+| `DFLT_URL_TO_CONTENT`(url[, response_func])                                                          |                                                                                                                |
+|------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| [`graze`](_autosummary/graze.base.html.md#graze.base.graze)(url[, cache, cache_key, source, ...])         | Get the contents of the url (persisting the results in a local file or cache, for next time you'll ask for it) |
+| [`key_egress_print_downloading_message`](_autosummary/graze.base.html.md#graze.base.key_egress_print_downloading_message)(url)           | Print a message saying `url` is being downloaded, and return `url` unchanged.                                  |
+| [`key_egress_print_downloading_message_with_size`](_autosummary/graze.base.html.md#graze.base.key_egress_print_downloading_message_with_size)(url) | Like `key_egress_print_downloading_message`, also showing the content size when the server reports it.         |
+| [`localpath_to_url`](_autosummary/graze.base.html.md#graze.base.localpath_to_url)(path)                              |                                                                                                                |
+| [`return_contents`](_autosummary/graze.base.html.md#graze.base.return_contents)(filepath, contents, url)            | Egress for `Graze`-like stores: return the `contents` (ignoring `filepath` and `url`).                         |
+| [`return_filepath`](_autosummary/graze.base.html.md#graze.base.return_filepath)(filepath, contents, url)            | Egress for `Graze`-like stores: return the `filepath` (ignoring `contents` and `url`).                         |
+| [`selenium_url_to_contents`](_autosummary/graze.base.html.md#graze.base.selenium_url_to_contents)(url[, ...])                | Function to get contents from a url, using selenium.                                                           |
+| [`url_to_file_download`](_autosummary/graze.base.html.md#graze.base.url_to_file_download)(url[, filepath, ...])          | Helper to make a url-to-file download functions (using partial).                                               |
+| [`url_to_filepath`](_autosummary/graze.base.html.md#graze.base.url_to_filepath)(url[, rootdir, download])           | Get the file path for the url.                                                                                 |
+| [`url_to_localpath`](_autosummary/graze.base.html.md#graze.base.url_to_localpath)(url)                               |                                                                                                                |
 
 ### Classes
 
-| [`Gettable`](_autosummary/graze.base.html.md#graze.base.Gettable)(\*args, \*\*kwargs)                     | Protocol for objects with \_\_getitem_\_ method.                                              |
-|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
-| [`Graze`](_autosummary/graze.base.html.md#graze.base.Graze)(self[, rootdir, source, key_ingress, ...]) | A data access object that will get data from the internet if it's not already stored locally. |
-| [`GrazeBase`](_autosummary/graze.base.html.md#graze.base.GrazeBase)([cache, source, key_ingress, ...])     | Base class for Graze that wraps the graze() function.                                         |
-| [`GrazeWithDataRefresh`](_autosummary/graze.base.html.md#graze.base.GrazeWithDataRefresh)(self[, rootdir, ...])       |                                                                                               |
-| `Internet`([url_to_contents, url_to_file_download])                                               |                                                                                               |
-| [`LocalFiles`](_autosummary/graze.base.html.md#graze.base.LocalFiles)([rootdir])                            | Store to read/write/delete local files, creating directories on write.                        |
-| [`LocalGrazed`](_autosummary/graze.base.html.md#graze.base.LocalGrazed)([rootdir])                           | LocalFiles using url as keys                                                                  |
-| [`url_to_contents`](_autosummary/graze.base.html.md#graze.base.url_to_contents)()                                | A place to contain url_to_contents functions.                                                 |
+| [`Gettable`](_autosummary/graze.base.html.md#graze.base.Gettable)(\*args, \*\*kwargs)                      | Protocol for objects with \_\_getitem_\_ method.                                                        |
+|----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| [`Graze`](_autosummary/graze.base.html.md#graze.base.Graze)(self[, rootdir, source, key_ingress, ...])  | A data access object that will get data from the internet if it's not already stored locally.           |
+| [`GrazeBase`](_autosummary/graze.base.html.md#graze.base.GrazeBase)([cache, source, key_ingress, ...])      | Base class for Graze that wraps the graze() function.                                                   |
+| [`GrazeWithDataRefresh`](_autosummary/graze.base.html.md#graze.base.GrazeWithDataRefresh)(self[, rootdir, ...])        | A `Graze` that re-downloads a url's contents once the cached copy is older than `time_to_live` seconds. |
+| [`Internet`](_autosummary/graze.base.html.md#graze.base.Internet)([url_to_contents, url_to_file_download]) | The default source of a `Graze`: gets the contents (or a file download) of a url off the internet.      |
+| [`LocalFiles`](_autosummary/graze.base.html.md#graze.base.LocalFiles)([rootdir])                             | Store to read/write/delete local files, creating directories on write.                                  |
+| [`LocalGrazed`](_autosummary/graze.base.html.md#graze.base.LocalGrazed)([rootdir])                            | LocalFiles using url as keys                                                                            |
+| [`url_to_contents`](_autosummary/graze.base.html.md#graze.base.url_to_contents)()                                 | A place to contain url_to_contents functions.                                                           |
 
 ### Exceptions
 
@@ -735,6 +735,18 @@ This class just provides the Mapping interface and state management.
 ### *class* graze.base.GrazeWithDataRefresh(self, rootdir='/home/runner/.cache/graze', source=<graze.base.Internet object>, \*, key_ingress=None, return_filepaths=False)
 
 Bases: [`Graze`](_autosummary/graze.base.html.md#graze.base.Graze)
+
+A `Graze` that re-downloads a url’s contents once the cached copy is older than `time_to_live` seconds.
+
+### *class* graze.base.Internet(url_to_contents=<function url_to_contents.requests_get>, url_to_file_download=None)
+
+Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
+
+The default source of a `Graze`: gets the contents (or a file download) of a url off the internet.
+
+#### download_to_file(url, file=None)
+
+Download the contents of the url to the given filepath
 
 ### *class* graze.base.LocalFiles(rootdir='/home/runner/.cache/graze')
 
@@ -842,6 +854,14 @@ for next time you’ll ask for it)
 >>> content = graze('http://example.com/data.json', max_age=3600)
 ```
 
+### graze.base.key_egress_print_downloading_message(url)
+
+Print a message saying `url` is being downloaded, and return `url` unchanged.
+
+### graze.base.key_egress_print_downloading_message_with_size(url)
+
+Like `key_egress_print_downloading_message`, also showing the content size when the server reports it.
+
 ### graze.base.localpath_to_url(path)
 
 ```pycon
@@ -855,6 +875,14 @@ for next time you’ll ask for it)
 
 * **Return type:**
   [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+### graze.base.return_contents(filepath, contents, url)
+
+Egress for `Graze`-like stores: return the `contents` (ignoring `filepath` and `url`).
+
+### graze.base.return_filepath(filepath, contents, url)
+
+Egress for `Graze`-like stores: return the `filepath` (ignoring `contents` and `url`).
 
 ### graze.base.selenium_url_to_contents(url, response_func=<function \_dflt_selenium_response_func>, browser='Chrome')
 
@@ -2229,9 +2257,9 @@ Utils
 | [`download_url_contents`](_autosummary/graze.util.html.md#graze.util.download_url_contents)(url[, file, chk_size, ...]) | Download url contents into a `file` object, or return bytes if `file` is None.                                  |
 | [`get_content_size`](_autosummary/graze.util.html.md#graze.util.get_content_size)(url, \*[, default])              | Get the content size of a url, if available, without downloading the content.                                   |
 | [`google_drive_download_url`](_autosummary/graze.util.html.md#graze.util.google_drive_download_url)(url)                    | Get the direct-download url of a Google Drive FILE url.                                                         |
-| `handle_missing_dir`(dirpath[, prefix_msg, ...])                                                   |                                                                                                                 |
+| [`handle_missing_dir`](_autosummary/graze.util.html.md#graze.util.handle_missing_dir)(dirpath[, prefix_msg, ...])    | Make `dirpath` (`~` expanded) if it is missing, asking the user first if `ask_first`.                           |
 | [`human_readable_bytes`](_autosummary/graze.util.html.md#graze.util.human_readable_bytes)(num_of_bytes, \*[, ...])     | Convert a number of bytes into a human-readable format with units.                                              |
-| `inner_most`(store, arg, method)                                                                   |                                                                                                                 |
+| [`inner_most`](_autosummary/graze.util.html.md#graze.util.inner_most)(store, arg, method)                    | The last (innermost) translation of `arg` by `method` in a stack of wrapped stores.                             |
 | [`is_dropbox_url`](_autosummary/graze.util.html.md#graze.util.is_dropbox_url)(url)                               | Whether `url` is a dropbox share link.                                                                          |
 | [`is_google_drive_url`](_autosummary/graze.util.html.md#graze.util.is_google_drive_url)(url)                          | Whether `url` is a google_drive share link.                                                                     |
 | [`is_onedrive_url`](_autosummary/graze.util.html.md#graze.util.is_onedrive_url)(url)                              | Whether `url` is a onedrive share link.                                                                         |
@@ -2239,9 +2267,9 @@ Utils
 | [`is_special_url`](_autosummary/graze.util.html.md#graze.util.is_special_url)(url)                               | Check if a url is a special url, i.e. if it has a special url route.                                            |
 | [`last_element`](_autosummary/graze.util.html.md#graze.util.last_element)(iterable, \*[, default])             | Returns the last element of an iterable, or a default if the iterable is empty.                                 |
 | [`original_url_of_tiny_url`](_autosummary/graze.util.html.md#graze.util.original_url_of_tiny_url)(tiny_url)                | Expands a short URL by making a HEAD request and following the redirection.                                     |
-| `store_trans_path`(store, arg, method)                                                             |                                                                                                                 |
+| [`store_trans_path`](_autosummary/graze.util.html.md#graze.util.store_trans_path)(store, arg, method)              | Yield the successive translations of `arg` by `method` through a stack of wrapped stores.                       |
 | [`tiny_url`](_autosummary/graze.util.html.md#graze.util.tiny_url)(long_url)                                | Shortens a long URL by directly calling the TinyURL API endpoint.                                               |
-| `url_with_virus_scan_confirmation_token`(url, ...)                                                 |                                                                                                                 |
+| [`url_with_virus_scan_confirmation_token`](_autosummary/graze.util.html.md#graze.util.url_with_virus_scan_confirmation_token)(url, ...)  | `url` with the `confirm` token found in Google Drive's virus-scan `page_html` appended.                         |
 
 ### graze.util.add_special_url_route(condition, url_download_func)
 
@@ -2338,6 +2366,10 @@ folder id, which is what graze used to do.
 'https://drive.google.com/uc?export=download&id=1Ab'
 ```
 
+### graze.util.handle_missing_dir(dirpath, prefix_msg='', ask_first=True, verbose=True)
+
+Make `dirpath` (`~` expanded) if it is missing, asking the user first if `ask_first`.
+
 ### graze.util.human_readable_bytes(num_of_bytes, , approx_marker='~', n_digits=4, base=1000, units=('B', 'KB', 'MB', 'GB', 'TB', 'PB'))
 
 Convert a number of bytes into a human-readable format with units.
@@ -2397,6 +2429,14 @@ units.
 'approximately 1.235e+08 kilobytes'
 ```
 
+### graze.util.inner_most(store, arg, method)
+
+The last (innermost) translation of `arg` by `method` in a stack of wrapped stores.
+
+### graze.util.inner_most_key(store, arg, , method='_id_of_key')
+
+The last (innermost) translation of `arg` by `method` in a stack of wrapped stores.
+
 ### graze.util.is_dropbox_url(url)
 
 Whether `url` is a dropbox share link.
@@ -2452,6 +2492,10 @@ Expands a short URL by making a HEAD request and following the redirection.
 * **Return type:**
   [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
 
+### graze.util.store_trans_path(store, arg, method)
+
+Yield the successive translations of `arg` by `method` through a stack of wrapped stores.
+
 ### graze.util.tiny_url(long_url)
 
 Shortens a long URL by directly calling the TinyURL API endpoint.
@@ -2463,6 +2507,14 @@ Shortens a long URL by directly calling the TinyURL API endpoint.
 * **Return type:**
   [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
 
+### graze.util.unravel_key(store, arg, , method='_id_of_key')
+
+Yield the successive translations of `arg` by `method` through a stack of wrapped stores.
+
+### graze.util.url_with_virus_scan_confirmation_token(url, page_html)
+
+`url` with the `confirm` token found in Google Drive’s virus-scan `page_html` appended.
+
 
 # about-this-build.html.md
 
@@ -2470,7 +2522,7 @@ Shortens a long URL by directly calling the TinyURL API endpoint.
 
 # About this build
 
-This documentation was built on **2026-11-22 14:45 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/bf3b240f9d273874ce62f0a70d14e9aaf1fcf980"><code>bf3b240</code></a> on branch <code>master</code>, for **graze 0.1.49** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 14:48 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/d66839f68cc477bce8d580762e87c077ac056702"><code>d66839f</code></a> on branch <code>master</code>, for **graze 0.1.49** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -2479,7 +2531,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/graze/commit/bf3b240f9d273874ce62f0a70d14e9aaf1fcf980"><code>bf3b240f9d273874ce62f0a70d14e9aaf1fcf980</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/graze/commit/d66839f68cc477bce8d580762e87c077ac056702"><code>d66839f68cc477bce8d580762e87c077ac056702</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -2490,9 +2542,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/graze</code>                                                              |
-| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45034432384">45034432384</a>     |
+| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45034680989">45034680989</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>bf3b240f9d273874ce62f0a70d14e9aaf1fcf980</code> (in the history of the built commit) |
+| Event commit | <code>d66839f68cc477bce8d580762e87c077ac056702</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -2523,7 +2575,7 @@ Latest release: <a href="https://pypi.org/project/graze/0.1.49/">0.1.49</a>, the
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout bf3b240f9d273874ce62f0a70d14e9aaf1fcf980
+git checkout d66839f68cc477bce8d580762e87c077ac056702
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

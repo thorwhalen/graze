@@ -266,20 +266,20 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#graze.base.graze" title="graze.base.graze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">graze</span></code></a>(url[, cache, cache_key, source, ...])</p></td>
 <td><p>Get the contents of the url (persisting the results in a local file or cache, for next time you'll ask for it)</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">key_egress_print_downloading_message</span></code>(url)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graze.base.key_egress_print_downloading_message" title="graze.base.key_egress_print_downloading_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key_egress_print_downloading_message</span></code></a>(url)</p></td>
+<td><p>Print a message saying <code class="docutils literal notranslate"><span class="pre">url</span></code> is being downloaded, and return <code class="docutils literal notranslate"><span class="pre">url</span></code> unchanged.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">key_egress_print_downloading_message_with_size</span></code>(url)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#graze.base.key_egress_print_downloading_message_with_size" title="graze.base.key_egress_print_downloading_message_with_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key_egress_print_downloading_message_with_size</span></code></a>(url)</p></td>
+<td><p>Like <code class="docutils literal notranslate"><span class="pre">key_egress_print_downloading_message</span></code>, also showing the content size when the server reports it.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#graze.base.localpath_to_url" title="graze.base.localpath_to_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">localpath_to_url</span></code></a>(path)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_contents</span></code>(filepath, contents, url)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#graze.base.return_contents" title="graze.base.return_contents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_contents</span></code></a>(filepath, contents, url)</p></td>
+<td><p>Egress for <code class="docutils literal notranslate"><span class="pre">Graze</span></code>-like stores: return the <code class="docutils literal notranslate"><span class="pre">contents</span></code> (ignoring <code class="docutils literal notranslate"><span class="pre">filepath</span></code> and <code class="docutils literal notranslate"><span class="pre">url</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_filepath</span></code>(filepath, contents, url)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graze.base.return_filepath" title="graze.base.return_filepath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_filepath</span></code></a>(filepath, contents, url)</p></td>
+<td><p>Egress for <code class="docutils literal notranslate"><span class="pre">Graze</span></code>-like stores: return the <code class="docutils literal notranslate"><span class="pre">filepath</span></code> (ignoring <code class="docutils literal notranslate"><span class="pre">contents</span></code> and <code class="docutils literal notranslate"><span class="pre">url</span></code>).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#graze.base.selenium_url_to_contents" title="graze.base.selenium_url_to_contents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">selenium_url_to_contents</span></code></a>(url[, ...])</p></td>
 <td><p>Function to get contents from a url, using selenium.</p></td>
@@ -310,10 +310,10 @@
 <td><p>Base class for Graze that wraps the graze() function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#graze.base.GrazeWithDataRefresh" title="graze.base.GrazeWithDataRefresh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GrazeWithDataRefresh</span></code></a>(self[, rootdir, ...])</p></td>
-<td><p></p></td>
+<td><p>A <code class="docutils literal notranslate"><span class="pre">Graze</span></code> that re-downloads a url's contents once the cached copy is older than <code class="docutils literal notranslate"><span class="pre">time_to_live</span></code> seconds.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Internet</span></code>([url_to_contents, url_to_file_download])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graze.base.Internet" title="graze.base.Internet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Internet</span></code></a>([url_to_contents, url_to_file_download])</p></td>
+<td><p>The default source of a <code class="docutils literal notranslate"><span class="pre">Graze</span></code>: gets the contents (or a file download) of a url off the internet.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#graze.base.LocalFiles" title="graze.base.LocalFiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LocalFiles</span></code></a>([rootdir])</p></td>
 <td><p>Store to read/write/delete local files, creating directories on write.</p></td>
@@ -439,8 +439,22 @@ Defaults to localpath_to_url.</p></li>
 <dt class="sig sig-object py" id="graze.base.GrazeWithDataRefresh">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">GrazeWithDataRefresh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/runner/.cache/graze'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;graze.base.Internet</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_ingress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_filepaths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/base.html#GrazeWithDataRefresh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.GrazeWithDataRefresh" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graze.base.Graze" title="graze.base.Graze"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graze</span></code></a></p>
+<p>A <code class="docutils literal notranslate"><span class="pre">Graze</span></code> that re-downloads a url’s contents once the cached copy is older than <code class="docutils literal notranslate"><span class="pre">time_to_live</span></code> seconds.</p>
 <dl class="field-list simple">
 </dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graze.base.Internet">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">Internet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url_to_contents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">url_to_contents.requests_get&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url_to_file_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/base.html#Internet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.Internet" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The default source of a <code class="docutils literal notranslate"><span class="pre">Graze</span></code>: gets the contents (or a file download) of a url off the internet.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graze.base.Internet.download_to_file">
+<span class="sig-name descname"><span class="pre">download_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/base.html#Internet.download_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.Internet.download_to_file" title="Link to this definition">¶</a></dt>
+<dd><p>Download the contents of the url to the given filepath</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -564,6 +578,18 @@ If cached data is older, it will be re-downloaded. Cannot be used with refresh.<
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="graze.base.key_egress_print_downloading_message">
+<span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">key_egress_print_downloading_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/base.html#key_egress_print_downloading_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.key_egress_print_downloading_message" title="Link to this definition">¶</a></dt>
+<dd><p>Print a message saying <code class="docutils literal notranslate"><span class="pre">url</span></code> is being downloaded, and return <code class="docutils literal notranslate"><span class="pre">url</span></code> unchanged.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.base.key_egress_print_downloading_message_with_size">
+<span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">key_egress_print_downloading_message_with_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/base.html#key_egress_print_downloading_message_with_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.key_egress_print_downloading_message_with_size" title="Link to this definition">¶</a></dt>
+<dd><p>Like <code class="docutils literal notranslate"><span class="pre">key_egress_print_downloading_message</span></code>, also showing the content size when the server reports it.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="graze.base.localpath_to_url">
 <span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">localpath_to_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/base.html#localpath_to_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.localpath_to_url" title="Link to this definition">¶</a></dt>
 <dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">localpath_to_url</span><span class="p">(</span><span class="s1">'http/www.example.com_f/subdir1_f/subdir2_f/file.txt'</span><span class="p">)</span>
@@ -579,6 +605,18 @@ If cached data is older, it will be re-downloaded. Cannot be used with refresh.<
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.base.return_contents">
+<span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">return_contents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/base.html#return_contents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.return_contents" title="Link to this definition">¶</a></dt>
+<dd><p>Egress for <code class="docutils literal notranslate"><span class="pre">Graze</span></code>-like stores: return the <code class="docutils literal notranslate"><span class="pre">contents</span></code> (ignoring <code class="docutils literal notranslate"><span class="pre">filepath</span></code> and <code class="docutils literal notranslate"><span class="pre">url</span></code>).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.base.return_filepath">
+<span class="sig-prename descclassname"><span class="pre">graze.base.</span></span><span class="sig-name descname"><span class="pre">return_filepath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/base.html#return_filepath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.base.return_filepath" title="Link to this definition">¶</a></dt>
+<dd><p>Egress for <code class="docutils literal notranslate"><span class="pre">Graze</span></code>-like stores: return the <code class="docutils literal notranslate"><span class="pre">filepath</span></code> (ignoring <code class="docutils literal notranslate"><span class="pre">contents</span></code> and <code class="docutils literal notranslate"><span class="pre">url</span></code>).</p>
 </dd></dl>
 
 <dl class="py function">
@@ -923,6 +961,10 @@ such a file if needed… or you can use the following for the best of both world
 </li>
 <li><a class="reference internal" href="#graze.base.GrazeBase"><code class="docutils literal notranslate"><span class="pre">GrazeBase</span></code></a></li>
 <li><a class="reference internal" href="#graze.base.GrazeWithDataRefresh"><code class="docutils literal notranslate"><span class="pre">GrazeWithDataRefresh</span></code></a></li>
+<li><a class="reference internal" href="#graze.base.Internet"><code class="docutils literal notranslate"><span class="pre">Internet</span></code></a><ul>
+<li><a class="reference internal" href="#graze.base.Internet.download_to_file"><code class="docutils literal notranslate"><span class="pre">Internet.download_to_file()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#graze.base.LocalFiles"><code class="docutils literal notranslate"><span class="pre">LocalFiles</span></code></a><ul>
 <li><a class="reference internal" href="#graze.base.LocalFiles.is_valid_key"><code class="docutils literal notranslate"><span class="pre">LocalFiles.is_valid_key()</span></code></a></li>
 <li><a class="reference internal" href="#graze.base.LocalFiles.validate_key"><code class="docutils literal notranslate"><span class="pre">LocalFiles.validate_key()</span></code></a></li>
@@ -935,7 +977,11 @@ such a file if needed… or you can use the following for the best of both world
 </li>
 <li><a class="reference internal" href="#graze.base.RequestFailure"><code class="docutils literal notranslate"><span class="pre">RequestFailure</span></code></a></li>
 <li><a class="reference internal" href="#graze.base.graze"><code class="docutils literal notranslate"><span class="pre">graze()</span></code></a></li>
+<li><a class="reference internal" href="#graze.base.key_egress_print_downloading_message"><code class="docutils literal notranslate"><span class="pre">key_egress_print_downloading_message()</span></code></a></li>
+<li><a class="reference internal" href="#graze.base.key_egress_print_downloading_message_with_size"><code class="docutils literal notranslate"><span class="pre">key_egress_print_downloading_message_with_size()</span></code></a></li>
 <li><a class="reference internal" href="#graze.base.localpath_to_url"><code class="docutils literal notranslate"><span class="pre">localpath_to_url()</span></code></a></li>
+<li><a class="reference internal" href="#graze.base.return_contents"><code class="docutils literal notranslate"><span class="pre">return_contents()</span></code></a></li>
+<li><a class="reference internal" href="#graze.base.return_filepath"><code class="docutils literal notranslate"><span class="pre">return_filepath()</span></code></a></li>
 <li><a class="reference internal" href="#graze.base.selenium_url_to_contents"><code class="docutils literal notranslate"><span class="pre">selenium_url_to_contents()</span></code></a></li>
 <li><a class="reference internal" href="#graze.base.url_to_contents"><code class="docutils literal notranslate"><span class="pre">url_to_contents</span></code></a><ul>
 <li><a class="reference internal" href="#graze.base.url_to_contents.selenium_chrome"><code class="docutils literal notranslate"><span class="pre">url_to_contents.selenium_chrome()</span></code></a></li>
