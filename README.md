@@ -4,54 +4,36 @@ Cache (a tiny part of) the internet.
 
 (For the technically inclined, `graze` is meant to ease the separation of the concerns of getting and caching/persisting data from the internet.)
 
-## install
+## Install
 
 ```
 pip install graze
 ```
 
 
-# Quick example
+## Quick example
+
+```python
+from graze import graze
+
+url = "https://raw.githubusercontent.com/thorwhalen/graze/master/README.md"
+content = graze(url)  # bytes: downloaded the first time, read from the local cache after that
+```
+
+Ask for the same URL again and `graze` returns the local copy without touching the network. It's the easiest way to separate *getting* data from the internet from *keeping* it.
+
+Prefer a dict? `Graze` is the same thing as a `MutableMapping` of `url -> bytes`, caching under `~/.cache/graze` by default:
 
 ```python
 from graze import Graze
-g = Graze()  # caches under ~/.cache/graze by default
-list(g)
+
+g = Graze()
+list(g)  # [] the first time: nothing cached yet
+content = g[url]  # downloads and caches
+type(content)  # bytes
 ```
 
-If this is your first time, you got nothing:
-
-```
-[]
-```
-
-So get something. For no particular reason let's be self-referential and get myself:
-
-```python
-url = "https://raw.githubusercontent.com/thorwhalen/graze/master/README.md"
-content = g[url]
-type(content), len(content)
-```
-
-Before I grew up, I had only 46 petty bytes (I have a lot more now):
-
-```
-(bytes, 46)
-```
-
-These were:
-
-```python
-print(content.decode())
-```
-
-```
-# graze
-
-Cache (a tiny part of) the internet.
-```
-
-But now, here's the deal. List your ``g`` keys now. Go ahead, don't be shy!
+But now, here's the deal. List your ``g`` keys again. Go ahead, don't be shy!
 
 ```python
 list(g)
@@ -62,7 +44,7 @@ list(g)
 
 What does that mean? 
 
-I means you have a local copy of these contents. 
+That means you have a local copy of these contents. 
 
 The file path isn't really ``https://...``, it's `rootdir/https/...`, but you 
 only have to care about that if you actually have to go get the file with
@@ -75,7 +57,7 @@ content_2 = g[url]
 assert content_2 == content
 ```
 
-But this time, it didn't ask the internet. It just got it's local copy.
+But this time, it didn't ask the internet. It just got its local copy.
 
 And if you want a fresh copy? 
 
@@ -87,7 +69,7 @@ del g[url]
 ```
 
 
-# Understanding graze: Function and Class
+## Understanding graze: Function and Class
 
 Now that you've seen `graze` in action, let's dive deeper into how it works and what options you have to tailor it to your needs.
 
