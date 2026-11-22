@@ -28,6 +28,7 @@ def last_element(iterable, *, default=None):
 
 
 def store_trans_path(store, arg, method):
+    """Yield the successive translations of ``arg`` by ``method`` through a stack of wrapped stores."""
     f = getattr(store, method, None)
     if f is not None:
         trans_arg = f(arg)
@@ -40,6 +41,7 @@ unravel_key = partial(store_trans_path, method="_id_of_key")
 
 
 def inner_most(store, arg, method):
+    """The last (innermost) translation of ``arg`` by ``method`` in a stack of wrapped stores."""
     return last_element(store_trans_path(store, arg, method))
 
 
@@ -149,6 +151,7 @@ def clog(condition: bool, *args, log_func: Callable = print, **kwargs):
 
 
 def handle_missing_dir(dirpath: str, prefix_msg="", ask_first=True, verbose=True):
+    """Make ``dirpath`` (``~`` expanded) if it is missing, asking the user first if ``ask_first``."""
     _clog = clog(verbose)
     if dirpath.startswith("~"):
         dirpath = os.path.expanduser(dirpath)
@@ -432,6 +435,7 @@ def download_from_google_drive(
 
 
 def url_with_virus_scan_confirmation_token(url, page_html):
+    """``url`` with the ``confirm`` token found in Google Drive's virus-scan ``page_html`` appended."""
     # Use regular expressions to find the confirmation token
     confirm_token_match = re.search(r"confirm=([0-9A-Za-z_\-]+)&", page_html)
     if not confirm_token_match:

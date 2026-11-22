@@ -58,6 +58,7 @@ def _middle_folders(path):
 
 
 def is_a_version_3_graze_folder(rootdir):
+    """Whether every folder level under ``rootdir`` ends with ``_f`` (the layout of graze version 3)."""
     from itertools import chain
     from dol import FilesReader
 
