@@ -260,7 +260,9 @@
 <p>(For the technically inclined, <code class="docutils literal notranslate"><span class="pre">graze</span></code> is meant to ease the separation of the concerns of getting and caching/persisting data from the internet.)</p>
 <section id="install">
 <h2>install<a class="headerlink" href="#install" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">graze</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">graze</span>
+</pre></div>
+</div>
 </section>
 </section>
 <section id="quick-example">
@@ -336,6 +338,7 @@ The same way you would delete a key from a dict:</p>
 <section id="where-does-it-cache">
 <h3>Where does it cache?<a class="headerlink" href="#where-does-it-cache" title="Link to this heading">¶</a></h3>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">graze()</span></code> stores files in <code class="docutils literal notranslate"><span class="pre">~/.cache/graze</span></code> (honoring <code class="docutils literal notranslate"><span class="pre">$XDG_CACHE_HOME</span></code>), but you have full control over this through the <code class="docutils literal notranslate"><span class="pre">cache</span></code> parameter:</p>
+<!-- wads-docs: skip fragment; depends on the placeholder URL (example.com) blocks above -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cache to a specific folder</span>
 <span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="s2">"~/my_project/cache"</span><span class="p">)</span>
 
@@ -380,6 +383,7 @@ The same way you would delete a key from a dict:</p>
 <h3>Keeping data fresh<a class="headerlink" href="#keeping-data-fresh" title="Link to this heading">¶</a></h3>
 <p>What if the data at your URL changes? <code class="docutils literal notranslate"><span class="pre">graze</span></code> offers two powerful refresh strategies:</p>
 <p><strong>Time-based refresh with <code class="docutils literal notranslate"><span class="pre">max_age</span></code>:</strong></p>
+<!-- wads-docs: skip fragment; depends on the placeholder URL blocks above -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Re-download if cached data is older than 1 hour (3600 seconds)</span>
 <span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">max_age</span><span class="o">=</span><span class="mi">3600</span><span class="p">)</span>
 
@@ -388,6 +392,7 @@ The same way you would delete a key from a dict:</p>
 </pre></div>
 </div>
 <p><strong>Custom refresh logic with <code class="docutils literal notranslate"><span class="pre">refresh</span></code>:</strong></p>
+<!-- wads-docs: skip fragment; depends on the placeholder URL blocks above -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Always re-download</span>
 <span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -405,6 +410,7 @@ The same way you would delete a key from a dict:</p>
 <section id="custom-data-sources">
 <h3>Custom data sources<a class="headerlink" href="#custom-data-sources" title="Link to this heading">¶</a></h3>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">graze</span></code> uses <code class="docutils literal notranslate"><span class="pre">requests</span></code> to fetch URLs, but you can plug in any data source:</p>
+<!-- wads-docs: skip fragment; response_bytes is a placeholder -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graze</span><span class="w"> </span><span class="kn">import</span> <span class="n">graze</span><span class="p">,</span> <span class="n">Internet</span>
 
 
@@ -424,6 +430,7 @@ The same way you would delete a key from a dict:</p>
 <section id="getting-notified-of-downloads">
 <h3>Getting notified of downloads<a class="headerlink" href="#getting-notified-of-downloads" title="Link to this heading">¶</a></h3>
 <p>Want to know when <code class="docutils literal notranslate"><span class="pre">graze</span></code> is actually hitting the network?</p>
+<!-- wads-docs: skip fragment; url is a placeholder and `__name__` is None under the runner -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simple notification</span>
 <span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">key_ingress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Downloading </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">..."</span><span class="p">))</span>
 
@@ -437,6 +444,7 @@ The same way you would delete a key from a dict:</p>
 </section>
 <section id="other-useful-parameters">
 <h3>Other useful parameters<a class="headerlink" href="#other-useful-parameters" title="Link to this heading">¶</a></h3>
+<!-- wads-docs: skip fragment; url is a placeholder -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the cache key/filepath instead of contents</span>
 <span class="n">filepath</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">return_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -611,6 +619,7 @@ Since you don’t have a local copy, it will get one from the <code class="docut
 </pre></div>
 </div>
 <p><strong>Custom refresh logic:</strong></p>
+<!-- wads-docs: skip fragment; your_logic_here is a placeholder -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Always refresh</span>
 <span class="n">content</span> <span class="o">=</span> <span class="n">graze</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -677,6 +686,7 @@ asset”:</p>
 a Google Drive <em>folder</em> needs the Drive API, a Google Workspace document has to be
 exported (in a format only you can choose), and OneDrive’s contract hasn’t been
 measured yet. Those raise <code class="docutils literal notranslate"><span class="pre">ShareLinkResolutionError</span></code>, carrying the reason:</p>
+<!-- wads-docs: skip illustrates an error; raises ShareLinkResolutionError by design -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">direct_download_url</span><span class="p">(</span><span class="s2">"https://drive.google.com/drive/folders/1AbCdEf"</span><span class="p">)</span>
 <span class="c1"># ShareLinkResolutionError: Cannot resolve this google_drive link ... enumerating a</span>
 <span class="c1"># folder needs the Drive API (files.list with q="'1AbCdEf' in parents") and a credential.</span>
@@ -781,7 +791,7 @@ to the new format.</p>
 </section>
 </section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 19:16 UTC from <a href="https://github.com/thorwhalen/graze/commit/9f7f229bad5973e8af172e7713fa117ac39458e1">9f7f229</a> (master) · graze 0.1.49 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 21:42 UTC from <a href="https://github.com/thorwhalen/graze/commit/645b00a85e9b4859f7e1ace39e438c6655242f71">645b00a</a> (master) · graze 0.1.50 · <a href="about-this-build.html">about this build</a></p>
         </article>
       </div>
       <footer>
@@ -870,7 +880,7 @@ to the new format.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=817023e2"></script>
+</div><script src="_static/documentation_options.js?v=c61c636a"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

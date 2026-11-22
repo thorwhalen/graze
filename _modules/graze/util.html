@@ -417,7 +417,9 @@
 
 <div class="viewcode-block" id="handle_missing_dir">
 <a class="viewcode-back" href="../../_autosummary/graze.util.html#graze.util.handle_missing_dir">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">handle_missing_dir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix_msg</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">ask_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_missing_dir</span><span class="p">(</span>
+    <span class="n">dirpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix_msg</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">ask_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Make ``dirpath`` (``~`` expanded) if it is missing, asking the user first if ``ask_first``."""</span>
     <span class="n">_clog</span> <span class="o">=</span> <span class="n">clog</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">dirpath</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"~"</span><span class="p">):</span>
@@ -829,7 +831,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=817023e2"></script>
+</div><script src="../../_static/documentation_options.js?v=c61c636a"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

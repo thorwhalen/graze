@@ -8,7 +8,9 @@ Cache (a tiny part of) the internet.
 
 ## install
 
-`pip install graze`
+```default
+pip install graze
+```
 
 # Quick example
 
@@ -108,6 +110,7 @@ content_again = graze("https://example.com/data.json")
 
 By default, `graze()` stores files in `~/.cache/graze` (honoring `$XDG_CACHE_HOME`), but you have full control over this through the `cache` parameter:
 
+<!-- wads-docs: skip fragment; depends on the placeholder URL (example.com) blocks above -->
 ```python
 # Cache to a specific folder
 content = graze(url, cache="~/my_project/cache")
@@ -155,6 +158,7 @@ What if the data at your URL changes? `graze` offers two powerful refresh strate
 
 **Time-based refresh with `max_age`:**
 
+<!-- wads-docs: skip fragment; depends on the placeholder URL blocks above -->
 ```python
 # Re-download if cached data is older than 1 hour (3600 seconds)
 content = graze(url, max_age=3600)
@@ -165,6 +169,7 @@ content = graze(url, max_age=86400)
 
 **Custom refresh logic with `refresh`:**
 
+<!-- wads-docs: skip fragment; depends on the placeholder URL blocks above -->
 ```python
 # Always re-download
 content = graze(url, refresh=True)
@@ -183,6 +188,7 @@ content = graze(url, refresh=should_refresh)
 
 By default, `graze` uses `requests` to fetch URLs, but you can plug in any data source:
 
+<!-- wads-docs: skip fragment; response_bytes is a placeholder -->
 ```python
 from graze import graze, Internet
 
@@ -203,6 +209,7 @@ content = graze(url, source=Internet(timeout=30))
 
 Want to know when `graze` is actually hitting the network?
 
+<!-- wads-docs: skip fragment; url is a placeholder and \`_\_name_\_\` is None under the runner -->
 ```python
 # Simple notification
 content = graze(url, key_ingress=lambda k: print(f"Downloading {k}..."))
@@ -216,6 +223,7 @@ content = graze(url, key_ingress=lambda k: logger.info(f"Fetching fresh data fro
 
 ### Other useful parameters
 
+<!-- wads-docs: skip fragment; url is a placeholder -->
 ```python
 # Get the cache key/filepath instead of contents
 filepath = graze(url, return_key=True)
@@ -410,6 +418,7 @@ content = g[url]
 
 **Custom refresh logic:**
 
+<!-- wads-docs: skip fragment; your_logic_here is a placeholder -->
 ```python
 # Always refresh
 content = graze(url, refresh=True)
@@ -485,6 +494,7 @@ a Google Drive *folder* needs the Drive API, a Google Workspace document has to 
 exported (in a format only you can choose), and OneDrive’s contract hasn’t been
 measured yet. Those raise `ShareLinkResolutionError`, carrying the reason:
 
+<!-- wads-docs: skip illustrates an error; raises ShareLinkResolutionError by design -->
 ```python
 direct_download_url("https://drive.google.com/drive/folders/1AbCdEf")
 # ShareLinkResolutionError: Cannot resolve this google_drive link ... enumerating a
