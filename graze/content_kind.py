@@ -53,7 +53,30 @@ __all__ = [
 
 
 class ContentKindMismatch(ValueError):
-    """The fetched bytes are not the kind of thing that was asked for."""
+    """The fetched bytes are not the kind of thing that was asked for.
+
+    A caller that has to act on *what* arrived reads :attr:`family` (what
+    :func:`sniff_content_family` returned: ``'html'``, ``'archive'``, a media
+    family) and :attr:`expect_kind` instead of matching the message text. Both
+    are ``None`` when the error was raised without them.
+
+    >>> try:
+    ...     assert_content_kind(b'<!doctype html><html>', expect_kind='audio')
+    ... except ContentKindMismatch as e:
+    ...     e.family, e.expect_kind
+    ('html', 'audio')
+    """
+
+    def __init__(
+        self,
+        message: str = "",
+        *,
+        family: Optional[str] = None,
+        expect_kind: Optional[str] = None,
+    ):
+        super().__init__(message)
+        self.family = family
+        self.expect_kind = expect_kind
 
 
 #: How many leading bytes are enough to classify a payload. Every signature this module
@@ -393,17 +416,23 @@ def assert_content_kind(
             f"with a web page (an error, login or preview page) rather than the media "
             f"itself — refusing to store it as a {expect_kind}. The usual cause is a "
             f"share link that is not public: set it to anyone-with-the-link, or use a "
-            f"direct-download URL."
+            f"direct-download URL.",
+            family=family,
+            expect_kind=expect_kind,
         )
     if family == "archive":
         raise ContentKindMismatch(
             f"expected {expect_kind} bytes{where}, got an archive (ZIP/gzip). A folder "
             f"share link downloads as a single archive of many files — expand it into one "
-            f"asset per member, or share the individual file instead."
+            f"asset per member, or share the individual file instead.",
+            family=family,
+            expect_kind=expect_kind,
         )
     raise ContentKindMismatch(
         f"expected {expect_kind} bytes{where}, got {family} — refusing to store it under "
-        f"the wrong kind."
+        f"the wrong kind.",
+        family=family,
+        expect_kind=expect_kind,
     )
 
 
