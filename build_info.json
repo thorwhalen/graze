@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-22T13:02:58Z",
+  "built_at": "2026-11-22T14:45:29Z",
   "package": {
     "name": "graze",
-    "version": "0.1.48",
+    "version": "0.1.49",
     "display_name": "graze",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "29f3883bef513eef977f19155f58f4addf3a7002",
-    "short_commit": "29f3883",
+    "commit": "bf3b240f9d273874ce62f0a70d14e9aaf1fcf980",
+    "short_commit": "bf3b240",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/thorwhalen/graze",
-    "commit_url": "https://github.com/thorwhalen/graze/commit/29f3883bef513eef977f19155f58f4addf3a7002",
+    "commit_url": "https://github.com/thorwhalen/graze/commit/bf3b240f9d273874ce62f0a70d14e9aaf1fcf980",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "thorwhalen/graze",
-    "sha": "29f3883bef513eef977f19155f58f4addf3a7002",
+    "sha": "bf3b240f9d273874ce62f0a70d14e9aaf1fcf980",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "45025307907",
-    "run_url": "https://github.com/thorwhalen/graze/actions/runs/45025307907",
+    "run_id": "45034432384",
+    "run_url": "https://github.com/thorwhalen/graze/actions/runs/45034432384",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -60,11 +60,11 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.48",
+    "latest": "0.1.49",
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/thorwhalen/graze && cd graze\ngit checkout 29f3883bef513eef977f19155f58f4addf3a7002\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/thorwhalen/graze && cd graze\ngit checkout bf3b240f9d273874ce62f0a70d14e9aaf1fcf980\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,

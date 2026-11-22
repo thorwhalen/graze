@@ -1,4 +1,4 @@
-> built 2026-11-22 13:02 UTC from 29f3883 (master) · graze 0.1.48. Details: build_info.json
+> built 2026-11-22 14:45 UTC from bf3b240 (master) · graze 0.1.49. Details: build_info.json
 
 # index.html.md
 
@@ -2470,7 +2470,7 @@ Shortens a long URL by directly calling the TinyURL API endpoint.
 
 # About this build
 
-This documentation was built on **2026-11-22 13:02 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/29f3883bef513eef977f19155f58f4addf3a7002"><code>29f3883</code></a> on branch <code>master</code>, for **graze 0.1.48** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 14:45 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/bf3b240f9d273874ce62f0a70d14e9aaf1fcf980"><code>bf3b240</code></a> on branch <code>master</code>, for **graze 0.1.49** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -2479,7 +2479,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/graze/commit/29f3883bef513eef977f19155f58f4addf3a7002"><code>29f3883bef513eef977f19155f58f4addf3a7002</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/graze/commit/bf3b240f9d273874ce62f0a70d14e9aaf1fcf980"><code>bf3b240f9d273874ce62f0a70d14e9aaf1fcf980</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -2490,9 +2490,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/graze</code>                                                              |
-| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45025307907">45025307907</a>     |
+| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45034432384">45034432384</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>29f3883bef513eef977f19155f58f4addf3a7002</code> (in the history of the built commit) |
+| Event commit | <code>bf3b240f9d273874ce62f0a70d14e9aaf1fcf980</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -2517,13 +2517,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/graze/0.1.48/">0.1.48</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/graze/0.1.49/">0.1.49</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout 29f3883bef513eef977f19155f58f4addf3a7002
+git checkout bf3b240f9d273874ce62f0a70d14e9aaf1fcf980
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
