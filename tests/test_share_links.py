@@ -513,3 +513,14 @@ def test_an_unresolved_link_cannot_claim_a_download_endpoint():
             reason="nope",
             download_endpoint=True,
         )
+
+
+def test_is_host_page_judges_a_download_endpoint_by_content_disposition():
+    from graze import is_host_page, resolve_share_url
+
+    dropbox = resolve_share_url("https://www.dropbox.com/scl/fi/a1b2/clip.mp4?rlkey=zz&dl=0")
+    assert dropbox.download_endpoint
+    assert is_host_page(dropbox, {"Content-Type": "text/html; charset=utf-8"})
+    assert not is_host_page(dropbox, {"content-disposition": 'attachment; filename="notes.md"'})
+    plain = resolve_share_url("https://example.com/notes.html")
+    assert not plain.download_endpoint and not is_host_page(plain, {})

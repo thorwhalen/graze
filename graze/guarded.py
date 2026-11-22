@@ -430,6 +430,13 @@ class GuardedResponse:
     _watchdog: _Watchdog = field(repr=False)
     _bytes_read: int = field(default=0, repr=False)
 
+    @property
+    def is_attachment(self) -> bool:
+        """Did the server send the body as ``Content-Disposition: attachment``?"""
+        from graze.share_links import is_attachment
+
+        return is_attachment(self.headers)
+
     def _out_of_time(self) -> FetchLimitExceeded:
         return FetchLimitExceeded(f"fetching {self.url} ran over its time budget")
 

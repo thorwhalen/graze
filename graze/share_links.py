@@ -73,7 +73,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import Callable, Optional
+from typing import Callable, Mapping, Optional
 from urllib.parse import urlsplit, urlunsplit, unquote
 
 
@@ -671,6 +671,46 @@ def resolve_share_url(
         if resolved is not None:
             return resolved
     return _resolve_plain_url(url)
+
+
+def is_attachment(headers: Mapping[str, str]) -> bool:
+    """Whether response ``headers`` say the body is a file download.
+
+    True for ``Content-Disposition: attachment`` (any case, with or without a
+    ``filename``); header names are matched case-insensitively.
+
+    >>> is_attachment({'content-disposition': 'attachment; filename="a.mp3"'})
+    True
+    >>> is_attachment({'Content-Disposition': 'inline'}), is_attachment({})
+    (False, False)
+    """
+    value = next(
+        (v for k, v in headers.items() if k.lower() == "content-disposition"), ""
+    )
+    return str(value).strip().lower().startswith("attachment")
+
+
+def is_host_page(resolved: ResolvedShareLink, headers: Mapping[str, str]) -> bool:
+    """Whether the response is the share host's own page, not the shared content.
+
+    A share host sends a file as an attachment and never sends its own pages
+    (sign-in, preview, virus scan) that way, so a response from a **download
+    endpoint** (:attr:`ResolvedShareLink.download_endpoint`) that did not come as
+    ``Content-Disposition: attachment`` is the host's page, whatever its bytes
+    look like. That also keeps a shared ``.html`` or Markdown file ingestible
+    where the URL carries no file name (Drive ``uc?id=``). Pure: it takes the
+    response headers (``GuardedResponse.headers``) and opens nothing. A link that
+    is not a download endpoint is never judged a host page here.
+
+    >>> drive = resolve_share_url('https://drive.google.com/file/d/abc123/view')
+    >>> is_host_page(drive, {'Content-Type': 'text/html'})
+    True
+    >>> is_host_page(drive, {'Content-Disposition': 'attachment; filename="n.html"'})
+    False
+    >>> is_host_page(resolve_share_url('https://example.com/a.html'), {})
+    False
+    """
+    return resolved.download_endpoint and not is_attachment(headers)
 
 
 def direct_download_url(

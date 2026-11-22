@@ -261,3 +261,13 @@ def test_content_kind_doctests():
         optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE,
     )
     assert results.failed == 0, f"{results.failed} doctest failure(s)"
+
+
+def test_content_kind_mismatch_exposes_the_sniffed_family_and_expected_kind():
+    from graze import ContentKindMismatch, assert_content_kind
+
+    for head, family in ((b"<!doctype html><html>", "html"), (b"PK\x03\x04", "archive"), (b"\x89PNG\r\n\x1a\n", "image")):
+        with pytest.raises(ContentKindMismatch) as caught:
+            assert_content_kind(head, expect_kind="audio", url="https://x/y")
+        assert (caught.value.family, caught.value.expect_kind) == (family, "audio")
+    assert ContentKindMismatch("plain").family is None

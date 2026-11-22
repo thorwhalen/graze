@@ -21,6 +21,8 @@ from graze.share_links import (
     ShareLinkResolutionError,
     resolve_share_url,
     direct_download_url,
+    is_host_page,
+    is_attachment,
     share_link_resolvers,
     add_share_link_resolver,
 )
