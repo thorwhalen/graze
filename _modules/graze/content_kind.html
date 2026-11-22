@@ -302,7 +302,30 @@
 <div class="viewcode-block" id="ContentKindMismatch">
 <a class="viewcode-back" href="../../_autosummary/graze.content_kind.html#graze.content_kind.ContentKindMismatch">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ContentKindMismatch</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""The fetched bytes are not the kind of thing that was asked for."""</span></div>
+<span class="w">    </span><span class="sd">"""The fetched bytes are not the kind of thing that was asked for.</span>
+
+<span class="sd">    A caller that has to act on *what* arrived reads :attr:`family` (what</span>
+<span class="sd">    :func:`sniff_content_family` returned: ``'html'``, ``'archive'``, a media</span>
+<span class="sd">    family) and :attr:`expect_kind` instead of matching the message text. Both</span>
+<span class="sd">    are ``None`` when the error was raised without them.</span>
+
+<span class="sd">    &gt;&gt;&gt; try:</span>
+<span class="sd">    ...     assert_content_kind(b'&lt;!doctype html&gt;&lt;html&gt;', expect_kind='audio')</span>
+<span class="sd">    ... except ContentKindMismatch as e:</span>
+<span class="sd">    ...     e.family, e.expect_kind</span>
+<span class="sd">    ('html', 'audio')</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">family</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">expect_kind</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span> <span class="n">family</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expect_kind</span> <span class="o">=</span> <span class="n">expect_kind</span></div>
 
 
 
@@ -648,17 +671,23 @@
             <span class="sa">f</span><span class="s2">"with a web page (an error, login or preview page) rather than the media "</span>
             <span class="sa">f</span><span class="s2">"itself — refusing to store it as a </span><span class="si">{</span><span class="n">expect_kind</span><span class="si">}</span><span class="s2">. The usual cause is a "</span>
             <span class="sa">f</span><span class="s2">"share link that is not public: set it to anyone-with-the-link, or use a "</span>
-            <span class="sa">f</span><span class="s2">"direct-download URL."</span>
+            <span class="sa">f</span><span class="s2">"direct-download URL."</span><span class="p">,</span>
+            <span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">,</span>
+            <span class="n">expect_kind</span><span class="o">=</span><span class="n">expect_kind</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="n">family</span> <span class="o">==</span> <span class="s2">"archive"</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">ContentKindMismatch</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">"expected </span><span class="si">{</span><span class="n">expect_kind</span><span class="si">}</span><span class="s2"> bytes</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">, got an archive (ZIP/gzip). A folder "</span>
             <span class="sa">f</span><span class="s2">"share link downloads as a single archive of many files — expand it into one "</span>
-            <span class="sa">f</span><span class="s2">"asset per member, or share the individual file instead."</span>
+            <span class="sa">f</span><span class="s2">"asset per member, or share the individual file instead."</span><span class="p">,</span>
+            <span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">,</span>
+            <span class="n">expect_kind</span><span class="o">=</span><span class="n">expect_kind</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">raise</span> <span class="n">ContentKindMismatch</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">"expected </span><span class="si">{</span><span class="n">expect_kind</span><span class="si">}</span><span class="s2"> bytes</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">family</span><span class="si">}</span><span class="s2"> — refusing to store it under "</span>
-        <span class="sa">f</span><span class="s2">"the wrong kind."</span>
+        <span class="sa">f</span><span class="s2">"the wrong kind."</span><span class="p">,</span>
+        <span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">,</span>
+        <span class="n">expect_kind</span><span class="o">=</span><span class="n">expect_kind</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -734,7 +763,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=8a47a6c3"></script>
+</div><script src="../../_static/documentation_options.js?v=28305784"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

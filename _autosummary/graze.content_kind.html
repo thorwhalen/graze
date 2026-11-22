@@ -323,7 +323,7 @@ signatures are unambiguous.</p></li>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#graze.content_kind.ContentKindMismatch" title="graze.content_kind.ContentKindMismatch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ContentKindMismatch</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graze.content_kind.ContentKindMismatch" title="graze.content_kind.ContentKindMismatch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ContentKindMismatch</span></code></a>([message, family, ...])</p></td>
 <td><p>The fetched bytes are not the kind of thing that was asked for.</p></td>
 </tr>
 </tbody>
@@ -331,9 +331,22 @@ signatures are unambiguous.</p></li>
 </div>
 <dl class="py exception">
 <dt class="sig sig-object py" id="graze.content_kind.ContentKindMismatch">
-<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graze.content_kind.</span></span><span class="sig-name descname"><span class="pre">ContentKindMismatch</span></span><a class="reference internal" href="../_modules/graze/content_kind.html#ContentKindMismatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.content_kind.ContentKindMismatch" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graze.content_kind.</span></span><span class="sig-name descname"><span class="pre">ContentKindMismatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">family</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expect_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/content_kind.html#ContentKindMismatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.content_kind.ContentKindMismatch" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a></p>
 <p>The fetched bytes are not the kind of thing that was asked for.</p>
+<p>A caller that has to act on <em>what</em> arrived reads <code class="xref py py-attr docutils literal notranslate"><span class="pre">family</span></code> (what
+<a class="reference internal" href="#graze.content_kind.sniff_content_family" title="graze.content_kind.sniff_content_family"><code class="xref py py-func docutils literal notranslate"><span class="pre">sniff_content_family()</span></code></a> returned: <code class="docutils literal notranslate"><span class="pre">'html'</span></code>, <code class="docutils literal notranslate"><span class="pre">'archive'</span></code>, a media
+family) and <code class="xref py py-attr docutils literal notranslate"><span class="pre">expect_kind</span></code> instead of matching the message text. Both
+are <code class="docutils literal notranslate"><span class="pre">None</span></code> when the error was raised without them.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">assert_content_kind</span><span class="p">(</span><span class="sa">b</span><span class="s1">'&lt;!doctype html&gt;&lt;html&gt;'</span><span class="p">,</span> <span class="n">expect_kind</span><span class="o">=</span><span class="s1">'audio'</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">except</span> <span class="n">ContentKindMismatch</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">e</span><span class="o">.</span><span class="n">family</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">expect_kind</span>
+<span class="go">('html', 'audio')</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py data">
@@ -518,7 +531,7 @@ re-emitted as one buffered piece:</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=8a47a6c3"></script>
+</div><script src="../_static/documentation_options.js?v=28305784"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

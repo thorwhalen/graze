@@ -356,6 +356,12 @@ hop is the transport layer’s job.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#graze.share_links.direct_download_url" title="graze.share_links.direct_download_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">direct_download_url</span></code></a>(url, *[, resolvers])</p></td>
 <td><p>The URL to actually fetch, or raise <a class="reference internal" href="#graze.share_links.ShareLinkResolutionError" title="graze.share_links.ShareLinkResolutionError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShareLinkResolutionError</span></code></a>.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graze.share_links.is_attachment" title="graze.share_links.is_attachment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_attachment</span></code></a>(headers)</p></td>
+<td><p>Whether response <code class="docutils literal notranslate"><span class="pre">headers</span></code> say the body is a file download.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#graze.share_links.is_host_page" title="graze.share_links.is_host_page"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_host_page</span></code></a>(resolved, headers)</p></td>
+<td><p>Whether the response is the share host's own page, not the shared content.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#graze.share_links.resolve_dropbox" title="graze.share_links.resolve_dropbox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve_dropbox</span></code></a>(url)</p></td>
 <td><p>Resolve a Dropbox share link by forcing <code class="docutils literal notranslate"><span class="pre">dl=1</span></code>.</p></td>
 </tr>
@@ -538,6 +544,53 @@ a host that an HTML body there may be the content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.share_links.is_attachment">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">is_attachment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">headers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/share_links.html#is_attachment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.share_links.is_attachment" title="Link to this definition">¶</a></dt>
+<dd><p>Whether response <code class="docutils literal notranslate"><span class="pre">headers</span></code> say the body is a file download.</p>
+<p>True for <code class="docutils literal notranslate"><span class="pre">Content-Disposition:</span> <span class="pre">attachment</span></code> (any case, with or without a
+<code class="docutils literal notranslate"><span class="pre">filename</span></code>); header names are matched case-insensitively.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">is_attachment</span><span class="p">({</span><span class="s1">'content-disposition'</span><span class="p">:</span> <span class="s1">'attachment; filename="a.mp3"'</span><span class="p">})</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_attachment</span><span class="p">({</span><span class="s1">'Content-Disposition'</span><span class="p">:</span> <span class="s1">'inline'</span><span class="p">}),</span> <span class="n">is_attachment</span><span class="p">({})</span>
+<span class="go">(False, False)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graze.share_links.is_host_page">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">is_host_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resolved</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graze/share_links.html#is_host_page"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graze.share_links.is_host_page" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the response is the share host’s own page, not the shared content.</p>
+<p>A share host sends a file as an attachment and never sends its own pages
+(sign-in, preview, virus scan) that way, so a response from a **download
+endpoint** (<code class="xref py py-attr docutils literal notranslate"><span class="pre">ResolvedShareLink.download_endpoint</span></code>) that did not come as
+<code class="docutils literal notranslate"><span class="pre">Content-Disposition:</span> <span class="pre">attachment</span></code> is the host’s page, whatever its bytes
+look like. That also keeps a shared <code class="docutils literal notranslate"><span class="pre">.html</span></code> or Markdown file ingestible
+where the URL carries no file name (Drive <code class="docutils literal notranslate"><span class="pre">uc?id=</span></code>). Pure: it takes the
+response headers (<code class="docutils literal notranslate"><span class="pre">GuardedResponse.headers</span></code>) and opens nothing. A link that
+is not a download endpoint is never judged a host page here.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">drive</span> <span class="o">=</span> <span class="n">resolve_share_url</span><span class="p">(</span><span class="s1">'https://drive.google.com/file/d/abc123/view'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_host_page</span><span class="p">(</span><span class="n">drive</span><span class="p">,</span> <span class="p">{</span><span class="s1">'Content-Type'</span><span class="p">:</span> <span class="s1">'text/html'</span><span class="p">})</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_host_page</span><span class="p">(</span><span class="n">drive</span><span class="p">,</span> <span class="p">{</span><span class="s1">'Content-Disposition'</span><span class="p">:</span> <span class="s1">'attachment; filename="n.html"'</span><span class="p">})</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_host_page</span><span class="p">(</span><span class="n">resolve_share_url</span><span class="p">(</span><span class="s1">'https://example.com/a.html'</span><span class="p">),</span> <span class="p">{})</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -776,6 +829,8 @@ extend it with <a class="reference internal" href="#graze.share_links.add_share_
 <li><a class="reference internal" href="#graze.share_links.ShareLinkResolver"><code class="docutils literal notranslate"><span class="pre">ShareLinkResolver</span></code></a></li>
 <li><a class="reference internal" href="#graze.share_links.add_share_link_resolver"><code class="docutils literal notranslate"><span class="pre">add_share_link_resolver()</span></code></a></li>
 <li><a class="reference internal" href="#graze.share_links.direct_download_url"><code class="docutils literal notranslate"><span class="pre">direct_download_url()</span></code></a></li>
+<li><a class="reference internal" href="#graze.share_links.is_attachment"><code class="docutils literal notranslate"><span class="pre">is_attachment()</span></code></a></li>
+<li><a class="reference internal" href="#graze.share_links.is_host_page"><code class="docutils literal notranslate"><span class="pre">is_host_page()</span></code></a></li>
 <li><a class="reference internal" href="#graze.share_links.resolve_dropbox"><code class="docutils literal notranslate"><span class="pre">resolve_dropbox()</span></code></a></li>
 <li><a class="reference internal" href="#graze.share_links.resolve_google_drive"><code class="docutils literal notranslate"><span class="pre">resolve_google_drive()</span></code></a></li>
 <li><a class="reference internal" href="#graze.share_links.resolve_onedrive"><code class="docutils literal notranslate"><span class="pre">resolve_onedrive()</span></code></a></li>
@@ -792,7 +847,7 @@ extend it with <a class="reference internal" href="#graze.share_links.add_share_
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=8a47a6c3"></script>
+</div><script src="../_static/documentation_options.js?v=28305784"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

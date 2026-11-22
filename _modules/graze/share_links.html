@@ -320,7 +320,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlsplit</span><span class="p">,</span> <span class="n">urlunsplit</span><span class="p">,</span> <span class="n">unquote</span>
 
 
@@ -944,6 +944,52 @@
 
 
 
+<div class="viewcode-block" id="is_attachment">
+<a class="viewcode-back" href="../../_autosummary/graze.share_links.html#graze.share_links.is_attachment">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_attachment</span><span class="p">(</span><span class="n">headers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Whether response ``headers`` say the body is a file download.</span>
+
+<span class="sd">    True for ``Content-Disposition: attachment`` (any case, with or without a</span>
+<span class="sd">    ``filename``); header names are matched case-insensitively.</span>
+
+<span class="sd">    &gt;&gt;&gt; is_attachment({'content-disposition': 'attachment; filename="a.mp3"'})</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; is_attachment({'Content-Disposition': 'inline'}), is_attachment({})</span>
+<span class="sd">    (False, False)</span>
+<span class="sd">    """</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"content-disposition"</span><span class="p">),</span> <span class="s2">""</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"attachment"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_host_page">
+<a class="viewcode-back" href="../../_autosummary/graze.share_links.html#graze.share_links.is_host_page">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_host_page</span><span class="p">(</span><span class="n">resolved</span><span class="p">:</span> <span class="n">ResolvedShareLink</span><span class="p">,</span> <span class="n">headers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Whether the response is the share host's own page, not the shared content.</span>
+
+<span class="sd">    A share host sends a file as an attachment and never sends its own pages</span>
+<span class="sd">    (sign-in, preview, virus scan) that way, so a response from a **download</span>
+<span class="sd">    endpoint** (:attr:`ResolvedShareLink.download_endpoint`) that did not come as</span>
+<span class="sd">    ``Content-Disposition: attachment`` is the host's page, whatever its bytes</span>
+<span class="sd">    look like. That also keeps a shared ``.html`` or Markdown file ingestible</span>
+<span class="sd">    where the URL carries no file name (Drive ``uc?id=``). Pure: it takes the</span>
+<span class="sd">    response headers (``GuardedResponse.headers``) and opens nothing. A link that</span>
+<span class="sd">    is not a download endpoint is never judged a host page here.</span>
+
+<span class="sd">    &gt;&gt;&gt; drive = resolve_share_url('https://drive.google.com/file/d/abc123/view')</span>
+<span class="sd">    &gt;&gt;&gt; is_host_page(drive, {'Content-Type': 'text/html'})</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; is_host_page(drive, {'Content-Disposition': 'attachment; filename="n.html"'})</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; is_host_page(resolve_share_url('https://example.com/a.html'), {})</span>
+<span class="sd">    False</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">resolved</span><span class="o">.</span><span class="n">download_endpoint</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_attachment</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="direct_download_url">
 <a class="viewcode-back" href="../../_autosummary/graze.share_links.html#graze.share_links.direct_download_url">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">direct_download_url</span><span class="p">(</span>
@@ -994,7 +1040,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=8a47a6c3"></script>
+</div><script src="../../_static/documentation_options.js?v=28305784"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

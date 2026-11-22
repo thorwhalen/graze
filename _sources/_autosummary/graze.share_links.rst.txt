@@ -20,6 +20,8 @@ graze.share\_links
    
       add_share_link_resolver
       direct_download_url
+      is_attachment
+      is_host_page
       resolve_dropbox
       resolve_google_drive
       resolve_onedrive

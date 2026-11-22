@@ -700,6 +700,13 @@
     <span class="n">_watchdog</span><span class="p">:</span> <span class="n">_Watchdog</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">_bytes_read</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_attachment</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Did the server send the body as ``Content-Disposition: attachment``?"""</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">graze.share_links</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_attachment</span>
+
+        <span class="k">return</span> <span class="n">is_attachment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_out_of_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FetchLimitExceeded</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">FetchLimitExceeded</span><span class="p">(</span><span class="sa">f</span><span class="s2">"fetching </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2"> ran over its time budget"</span><span class="p">)</span>
 
@@ -1115,7 +1122,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=8a47a6c3"></script>
+</div><script src="../../_static/documentation_options.js?v=28305784"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

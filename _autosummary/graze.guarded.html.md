@@ -132,6 +132,10 @@ disk, say) should ask for a `timeout` that covers its own work too.
 
 the IP the socket was actually connected to
 
+#### *property* is_attachment *: [bool](https://docs.python.org/3/builtins/functions.html#bool)*
+
+Did the server send the body as `Content-Disposition: attachment`?
+
 #### iter_chunks(chunk_size=65536)
 
 Yield the body in chunks of at most `chunk_size` bytes, within budget.

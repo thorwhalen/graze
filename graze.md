@@ -1,4 +1,4 @@
-> built 2026-11-21 19:03 UTC from 64def96 (master) · graze 0.1.47. Details: build_info.json
+> built 2026-11-22 13:02 UTC from 29f3883 (master) · graze 0.1.48. Details: build_info.json
 
 # index.html.md
 
@@ -1191,14 +1191,27 @@ This module is dependency-free and network-free, like [`graze.share_links`](_aut
 
 ### Exceptions
 
-| [`ContentKindMismatch`](_autosummary/graze.content_kind.html.md#graze.content_kind.ContentKindMismatch)   | The fetched bytes are not the kind of thing that was asked for.   |
-|------------------------------------------------------------------------|-------------------------------------------------------------------|
+| [`ContentKindMismatch`](_autosummary/graze.content_kind.html.md#graze.content_kind.ContentKindMismatch)([message, family, ...])   | The fetched bytes are not the kind of thing that was asked for.   |
+|------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
 
-### *exception* graze.content_kind.ContentKindMismatch
+### *exception* graze.content_kind.ContentKindMismatch(message='', , family=None, expect_kind=None)
 
 Bases: [`ValueError`](https://docs.python.org/3/builtins/exceptions.html#ValueError)
 
 The fetched bytes are not the kind of thing that was asked for.
+
+A caller that has to act on *what* arrived reads `family` (what
+[`sniff_content_family()`](_autosummary/graze.content_kind.html.md#graze.content_kind.sniff_content_family) returned: `'html'`, `'archive'`, a media
+family) and `expect_kind` instead of matching the message text. Both
+are `None` when the error was raised without them.
+
+```pycon
+>>> try:
+...     assert_content_kind(b'<!doctype html><html>', expect_kind='audio')
+... except ContentKindMismatch as e:
+...     e.family, e.expect_kind
+('html', 'audio')
+```
 
 ### graze.content_kind.SNIFF_BYTES *= 512*
 
@@ -1595,6 +1608,10 @@ disk, say) should ask for a `timeout` that covers its own work too.
 
 the IP the socket was actually connected to
 
+#### *property* is_attachment *: [bool](https://docs.python.org/3/builtins/functions.html#bool)*
+
+Did the server send the body as `Content-Disposition: attachment`?
+
 #### iter_chunks(chunk_size=65536)
 
 Yield the body in chunks of at most `chunk_size` bytes, within budget.
@@ -1828,6 +1845,8 @@ hop is the transport layer’s job.
 | [`add_share_link_resolver`](_autosummary/graze.share_links.html.md#graze.share_links.add_share_link_resolver)(provider, resolver)   | Register (or replace) a provider adapter.                                                                      |
 |------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
 | [`direct_download_url`](_autosummary/graze.share_links.html.md#graze.share_links.direct_download_url)(url, \*[, resolvers])     | The URL to actually fetch, or raise [`ShareLinkResolutionError`](_autosummary/graze.share_links.html.md#graze.share_links.ShareLinkResolutionError). |
+| [`is_attachment`](_autosummary/graze.share_links.html.md#graze.share_links.is_attachment)(headers)                        | Whether response `headers` say the body is a file download.                                                    |
+| [`is_host_page`](_autosummary/graze.share_links.html.md#graze.share_links.is_host_page)(resolved, headers)               | Whether the response is the share host's own page, not the shared content.                                     |
 | [`resolve_dropbox`](_autosummary/graze.share_links.html.md#graze.share_links.resolve_dropbox)(url)                          | Resolve a Dropbox share link by forcing `dl=1`.                                                                |
 | [`resolve_google_drive`](_autosummary/graze.share_links.html.md#graze.share_links.resolve_google_drive)(url)                     | Resolve a Google Drive / Google Workspace URL.                                                                 |
 | [`resolve_onedrive`](_autosummary/graze.share_links.html.md#graze.share_links.resolve_onedrive)(url)                         | Recognise a OneDrive / SharePoint share link, and refuse it.                                                   |
@@ -1973,6 +1992,49 @@ graze.share_links.ShareLinkResolutionError: Cannot resolve this onedrive link...
 
 * **Return type:**
   [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+### graze.share_links.is_attachment(headers)
+
+Whether response `headers` say the body is a file download.
+
+True for `Content-Disposition: attachment` (any case, with or without a
+`filename`); header names are matched case-insensitively.
+
+```pycon
+>>> is_attachment({'content-disposition': 'attachment; filename="a.mp3"'})
+True
+>>> is_attachment({'Content-Disposition': 'inline'}), is_attachment({})
+(False, False)
+```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
+### graze.share_links.is_host_page(resolved, headers)
+
+Whether the response is the share host’s own page, not the shared content.
+
+A share host sends a file as an attachment and never sends its own pages
+(sign-in, preview, virus scan) that way, so a response from a \*\*download
+endpoint\*\* (`ResolvedShareLink.download_endpoint`) that did not come as
+`Content-Disposition: attachment` is the host’s page, whatever its bytes
+look like. That also keeps a shared `.html` or Markdown file ingestible
+where the URL carries no file name (Drive `uc?id=`). Pure: it takes the
+response headers (`GuardedResponse.headers`) and opens nothing. A link that
+is not a download endpoint is never judged a host page here.
+
+```pycon
+>>> drive = resolve_share_url('https://drive.google.com/file/d/abc123/view')
+>>> is_host_page(drive, {'Content-Type': 'text/html'})
+True
+>>> is_host_page(drive, {'Content-Disposition': 'attachment; filename="n.html"'})
+False
+>>> is_host_page(resolve_share_url('https://example.com/a.html'), {})
+False
+```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### graze.share_links.resolve_dropbox(url)
 
@@ -2408,18 +2470,16 @@ Shortens a long URL by directly calling the TinyURL API endpoint.
 
 # About this build
 
-This documentation was built on **2026-11-21 19:03 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/64def961db3430cfa7b40ad3b49715f285a43f51"><code>64def96</code></a> on branch <code>master</code>, for **graze 0.1.47** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 13:02 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/29f3883bef513eef977f19155f58f4addf3a7002"><code>29f3883</code></a> on branch <code>master</code>, for **graze 0.1.48** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.1.47) is behind the latest release on PyPI (0.1.48): `pip install graze` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/graze/commit/64def961db3430cfa7b40ad3b49715f285a43f51"><code>64def961db3430cfa7b40ad3b49715f285a43f51</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/graze/commit/29f3883bef513eef977f19155f58f4addf3a7002"><code>29f3883bef513eef977f19155f58f4addf3a7002</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -2430,9 +2490,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/graze</code>                                                              |
-| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/44938744509">44938744509</a>     |
+| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45025307907">45025307907</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>64def961db3430cfa7b40ad3b49715f285a43f51</code> (in the history of the built commit) |
+| Event commit | <code>29f3883bef513eef977f19155f58f4addf3a7002</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -2457,13 +2517,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/graze/0.1.48/">0.1.48</a>, newer than the documented version (0.1.47).
+Latest release: <a href="https://pypi.org/project/graze/0.1.48/">0.1.48</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout 64def961db3430cfa7b40ad3b49715f285a43f51
+git checkout 29f3883bef513eef977f19155f58f4addf3a7002
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

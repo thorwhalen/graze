@@ -60,14 +60,27 @@ This module is dependency-free and network-free, like [`graze.share_links`](graz
 
 ### Exceptions
 
-| [`ContentKindMismatch`](#graze.content_kind.ContentKindMismatch)   | The fetched bytes are not the kind of thing that was asked for.   |
-|------------------------------------------------------------------------|-------------------------------------------------------------------|
+| [`ContentKindMismatch`](#graze.content_kind.ContentKindMismatch)([message, family, ...])   | The fetched bytes are not the kind of thing that was asked for.   |
+|------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
 
-### *exception* graze.content_kind.ContentKindMismatch
+### *exception* graze.content_kind.ContentKindMismatch(message='', , family=None, expect_kind=None)
 
 Bases: [`ValueError`](https://docs.python.org/3/builtins/exceptions.html#ValueError)
 
 The fetched bytes are not the kind of thing that was asked for.
+
+A caller that has to act on *what* arrived reads `family` (what
+[`sniff_content_family()`](#graze.content_kind.sniff_content_family) returned: `'html'`, `'archive'`, a media
+family) and `expect_kind` instead of matching the message text. Both
+are `None` when the error was raised without them.
+
+```pycon
+>>> try:
+...     assert_content_kind(b'<!doctype html><html>', expect_kind='audio')
+... except ContentKindMismatch as e:
+...     e.family, e.expect_kind
+('html', 'audio')
+```
 
 ### graze.content_kind.SNIFF_BYTES *= 512*
 

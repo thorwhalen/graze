@@ -96,6 +96,8 @@ hop is the transport layer’s job.
 | [`add_share_link_resolver`](#graze.share_links.add_share_link_resolver)(provider, resolver)   | Register (or replace) a provider adapter.                                                                      |
 |------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
 | [`direct_download_url`](#graze.share_links.direct_download_url)(url, \*[, resolvers])     | The URL to actually fetch, or raise [`ShareLinkResolutionError`](#graze.share_links.ShareLinkResolutionError). |
+| [`is_attachment`](#graze.share_links.is_attachment)(headers)                        | Whether response `headers` say the body is a file download.                                                    |
+| [`is_host_page`](#graze.share_links.is_host_page)(resolved, headers)               | Whether the response is the share host's own page, not the shared content.                                     |
 | [`resolve_dropbox`](#graze.share_links.resolve_dropbox)(url)                          | Resolve a Dropbox share link by forcing `dl=1`.                                                                |
 | [`resolve_google_drive`](#graze.share_links.resolve_google_drive)(url)                     | Resolve a Google Drive / Google Workspace URL.                                                                 |
 | [`resolve_onedrive`](#graze.share_links.resolve_onedrive)(url)                         | Recognise a OneDrive / SharePoint share link, and refuse it.                                                   |
@@ -241,6 +243,49 @@ graze.share_links.ShareLinkResolutionError: Cannot resolve this onedrive link...
 
 * **Return type:**
   [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+### graze.share_links.is_attachment(headers)
+
+Whether response `headers` say the body is a file download.
+
+True for `Content-Disposition: attachment` (any case, with or without a
+`filename`); header names are matched case-insensitively.
+
+```pycon
+>>> is_attachment({'content-disposition': 'attachment; filename="a.mp3"'})
+True
+>>> is_attachment({'Content-Disposition': 'inline'}), is_attachment({})
+(False, False)
+```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
+### graze.share_links.is_host_page(resolved, headers)
+
+Whether the response is the share host’s own page, not the shared content.
+
+A share host sends a file as an attachment and never sends its own pages
+(sign-in, preview, virus scan) that way, so a response from a \*\*download
+endpoint\*\* (`ResolvedShareLink.download_endpoint`) that did not come as
+`Content-Disposition: attachment` is the host’s page, whatever its bytes
+look like. That also keeps a shared `.html` or Markdown file ingestible
+where the URL carries no file name (Drive `uc?id=`). Pure: it takes the
+response headers (`GuardedResponse.headers`) and opens nothing. A link that
+is not a download endpoint is never judged a host page here.
+
+```pycon
+>>> drive = resolve_share_url('https://drive.google.com/file/d/abc123/view')
+>>> is_host_page(drive, {'Content-Type': 'text/html'})
+True
+>>> is_host_page(drive, {'Content-Disposition': 'attachment; filename="n.html"'})
+False
+>>> is_host_page(resolve_share_url('https://example.com/a.html'), {})
+False
+```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### graze.share_links.resolve_dropbox(url)
 
