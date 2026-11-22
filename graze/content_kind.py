@@ -73,7 +73,7 @@ class ContentKindMismatch(ValueError):
         *,
         family: Optional[str] = None,
         expect_kind: Optional[str] = None,
-    ):
+    ) -> None:
         super().__init__(message)
         self.family = family
         self.expect_kind = expect_kind

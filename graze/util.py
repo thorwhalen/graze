@@ -150,7 +150,7 @@ def clog(condition: bool, *args, log_func: Callable = print, **kwargs):
         return log_func(*args, **kwargs)
 
 
-def handle_missing_dir(dirpath: str, prefix_msg="", ask_first=True, verbose=True):
+def handle_missing_dir(dirpath: str, prefix_msg="", ask_first=True, verbose=True) -> None:
     """Make ``dirpath`` (``~`` expanded) if it is missing, asking the user first if ``ask_first``."""
     _clog = clog(verbose)
     if dirpath.startswith("~"):
@@ -186,7 +186,7 @@ def human_readable_bytes(
     n_digits=4,
     base=1000,
     units=("B", "KB", "MB", "GB", "TB", "PB"),
-):
+) -> str:
     """
     Convert a number of bytes into a human-readable format with units.
 
@@ -276,7 +276,7 @@ def download_url_contents(
     Download url contents into a `file` object, or return bytes if `file` is None.
     """
 
-    def iter_content_and_copy_to(file):
+    def iter_content_and_copy_to(file) -> None:
         for chk in chks_of_url_contents(url, chk_size=chk_size, user_agent=user_agent):
             file.write(chk)
 
@@ -472,7 +472,7 @@ special_url_routes = {
 }
 
 
-def add_special_url_route(condition, url_download_func):
+def add_special_url_route(condition, url_download_func) -> None:
     """
     Add a special url route, i.e. a function that downloads a url's contents
     for a specific condition on the url.
@@ -480,7 +480,7 @@ def add_special_url_route(condition, url_download_func):
     special_url_routes.update({condition: url_download_func})
 
 
-def is_special_url(url: str):
+def is_special_url(url: str) -> bool:
     """Check if a url is a special url, i.e. if it has a special url route."""
     for _is_special_url in special_url_routes:
         if _is_special_url(url):

@@ -143,7 +143,7 @@ def _wrap_with_exceptions(
 
     # Simple wrapper class that checks exceptions first
     class CacheWithExceptions(MutableMapping):
-        def __init__(self, cache, exceptions):
+        def __init__(self, cache, exceptions) -> None:
             self._cache = cache
             self._getter = _make_exception_getter(exceptions, cache.__getitem__)
             # Preserve important attributes from the wrapped cache
@@ -155,16 +155,16 @@ def _wrap_with_exceptions(
         def __getitem__(self, key):
             return self._getter(key)
 
-        def __setitem__(self, key, value):
+        def __setitem__(self, key, value) -> None:
             self._cache[key] = value
 
-        def __delitem__(self, key):
+        def __delitem__(self, key) -> None:
             del self._cache[key]
 
         def __iter__(self):
             return iter(self._cache)
 
-        def __len__(self):
+        def __len__(self) -> int:
             return len(self._cache)
 
     return CacheWithExceptions(cache, exceptions)
@@ -243,7 +243,7 @@ def add_exception(
     filepath: str,
     *,
     exceptions_filename: str = "_exceptions.json",
-):
+) -> None:
     """
     Add an exceptional URL to the cache's exceptions file.
 

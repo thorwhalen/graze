@@ -226,7 +226,7 @@ def _cache_set(
     cache_key: str,
     contents: Contents,
     is_explicit_filepath: bool,
-):
+) -> None:
     """Store contents in cache."""
     if is_explicit_filepath:
         expanded_path = os.path.expanduser(cache_key)
@@ -327,7 +327,7 @@ FOLDER_SUFFIX = SUBDIR_SUFFIX  # TODO: Check usage and delete if none
 class LocalFiles(Files):
     """Store to read/write/delete local files, creating directories on write."""
 
-    def __init__(self, rootdir=DFLT_GRAZE_DIR):
+    def __init__(self, rootdir=DFLT_GRAZE_DIR) -> None:
         handle_missing_dir(rootdir)
         super().__init__(ensure_slash_suffix(rootdir))
 
@@ -419,7 +419,7 @@ class url_to_contents:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         raise ValueError(
             "Not meant to be instantiated: Just to hold url_to_contents functions"
         )
@@ -456,35 +456,35 @@ DFLT_URL_TO_CONTENT = url_to_contents.requests_get
 from graze.util import _ensure_dirs_of_file_exists
 
 
-def _write_to_file(contents, filepath, *, mode="wb"):
+def _write_to_file(contents: Contents, filepath: LocalPath, *, mode: str = "wb"):
     with open(filepath, mode) as f:
         f.write(contents)
     return filepath
 
 
-def _read_file(filepath, *, mode="rb"):
+def _read_file(filepath: LocalPath, *, mode: str = "rb"):
     with open(filepath, mode) as f:
         return f.read()
 
 
-def return_contents(filepath, contents, url):
+def return_contents(filepath: LocalPath, contents: Contents, url: Url) -> Contents:
     """Egress for ``Graze``-like stores: return the ``contents`` (ignoring ``filepath`` and ``url``)."""
     return contents
 
 
-def return_filepath(filepath, contents, url):
+def return_filepath(filepath: LocalPath, contents: Contents, url: Url) -> LocalPath:
     """Egress for ``Graze``-like stores: return the ``filepath`` (ignoring ``contents`` and ``url``)."""
     return filepath
 
 
 # Typical function to use as a key_ingress to Graze
-def key_egress_print_downloading_message(url):
+def key_egress_print_downloading_message(url: Url) -> Url:
     """Print a message saying ``url`` is being downloaded, and return ``url`` unchanged."""
     print(f"The contents of {url} are being downloaded")
     return url
 
 
-def key_egress_print_downloading_message_with_size(url):
+def key_egress_print_downloading_message_with_size(url: Url) -> Url:
     """Like ``key_egress_print_downloading_message``, also showing the content size when the server reports it."""
     size = get_content_size(url)
     if size is None:
@@ -580,7 +580,7 @@ class Internet:
         self,
         url_to_contents=DFLT_URL_TO_CONTENT,
         url_to_file_download=None,  # TODO: Find a good explicit default
-    ):
+    ) -> None:
         """From the url, get content off the internet.
 
         :param url_to_contents: The function that gets you the contents from the url
@@ -614,7 +614,7 @@ class Internet:
         except RequestFailure as e:
             raise KeyError(str(e))
 
-    def download_to_file(self, url, file=None):
+    def download_to_file(self, url: Url, file: LocalPath | None = None):
         """Download the contents of the url to the given filepath"""
         url = url.strip()
         if url.endswith("/"):
@@ -740,7 +740,7 @@ class GrazeBase(MutableMapping):
         url_to_cache_key: Callable[[str], str] = url_to_localpath,
         cache_key_to_url: Callable[[str], str] = localpath_to_url,
         refresh: Union[bool, Callable] = False,
-    ):
+    ) -> None:
         # Set defaults
         if cache is None:
             cache = DFLT_GRAZE_DIR
@@ -767,12 +767,12 @@ class GrazeBase(MutableMapping):
             refresh=self.refresh,
         )
 
-    def __setitem__(self, url: str, contents: Contents):
+    def __setitem__(self, url: str, contents: Contents) -> None:
         """Manually set contents for URL in cache."""
         cache_key = self.url_to_cache_key(url)
         _cache_set(self.cache, cache_key, contents, is_explicit_filepath=False)
 
-    def __delitem__(self, url: str):
+    def __delitem__(self, url: str) -> None:
         """Delete cached contents for URL."""
         cache_key = self.url_to_cache_key(url)
 
@@ -805,7 +805,7 @@ class GrazeBase(MutableMapping):
         """Return number of cached URLs."""
         return _get_cache_size(self.cache)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         cache_repr = (
             repr(self.cache) if not isinstance(self.cache, str) else f"'{self.cache}'"
         )
@@ -836,7 +836,7 @@ class Graze(GrazeBase):
         *,
         key_ingress: Callable | None = None,
         return_filepaths: bool = False,
-    ):
+    ) -> None:
         """
         :param rootdir: Where to store the contents locally.
         :param source: Where to get the contents from if they're not already stored
@@ -972,7 +972,7 @@ class GrazeWithDataRefresh(Graze):
             "warn", "raise", "ignore", "warn_and_return_local"
         ] = "ignore",
         return_filepaths: bool = False,
-    ):
+    ) -> None:
         """Like Graze, but where you can specify a time_to_live "freshness threshold"
         to trigger the re-download of data
 
@@ -1225,7 +1225,7 @@ def graze(
     if callable(source) and not hasattr(source, "__getitem__"):
         # Wrap callable in a simple class with __getitem__
         class _CallableWrapper:
-            def __init__(self, func):
+            def __init__(self, func) -> None:
                 self.func = func
 
             def __getitem__(self, key):
@@ -1285,7 +1285,9 @@ graze.key_ingress_print_downloading_message_with_size = (
 )
 
 
-def url_to_filepath(url: str, rootdir: str = DFLT_GRAZE_DIR, *, download=None):
+def url_to_filepath(
+    url: str, rootdir: str = DFLT_GRAZE_DIR, *, download: bool | None = None
+):
     """Get the file path for the url.
 
     :param rootdir: Where to store the contents locally.

@@ -91,7 +91,7 @@ def _get_old_grazer(src_root=DFLT_GRAZE_DIR, old_grazer=None):
             raise ValueError(f"{old_grazer=}")
 
 
-def _migrate_versions(src_root=DFLT_GRAZE_DIR, old_grazer=None):
+def _migrate_versions(src_root=DFLT_GRAZE_DIR, old_grazer=None) -> None:
     src = LocalFiles(src_root)
     old_grazer = _get_old_grazer(src_root, old_grazer)
 
