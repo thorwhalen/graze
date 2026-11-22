@@ -143,6 +143,12 @@ def test_first_bytes_and_is_html_doc(tmp_path):
     assert not util._is_html_doc(b"plain text file contents")
 
 
+def test_first_bytes_of_a_file_like_object():
+    import io
+
+    assert util._first_bytes(io.BytesIO(b"abcdef"), 3) == b"abc"
+
+
 def test_virus_scan_confirmation_token():
     html = '<a href="/uc?export=download&confirm=AbC_-1&id=x">'
     assert (
