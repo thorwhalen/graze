@@ -468,20 +468,24 @@ def _read_file(filepath, *, mode="rb"):
 
 
 def return_contents(filepath, contents, url):
+    """Egress for ``Graze``-like stores: return the ``contents`` (ignoring ``filepath`` and ``url``)."""
     return contents
 
 
 def return_filepath(filepath, contents, url):
+    """Egress for ``Graze``-like stores: return the ``filepath`` (ignoring ``contents`` and ``url``)."""
     return filepath
 
 
 # Typical function to use as a key_ingress to Graze
 def key_egress_print_downloading_message(url):
+    """Print a message saying ``url`` is being downloaded, and return ``url`` unchanged."""
     print(f"The contents of {url} are being downloaded")
     return url
 
 
 def key_egress_print_downloading_message_with_size(url):
+    """Like ``key_egress_print_downloading_message``, also showing the content size when the server reports it."""
     size = get_content_size(url)
     if size is None:
         size = " (size unknown)"
@@ -570,6 +574,8 @@ _url_to_file_download = url_to_file_download  # backcompatibility alias
 # TODO: Think of a better way to handle the contents vs file download cases
 #   For example, better if Internet is not aware at all of local files
 class Internet:
+    """The default source of a ``Graze``: gets the contents (or a file download) of a url off the internet."""
+
     def __init__(
         self,
         url_to_contents=DFLT_URL_TO_CONTENT,
@@ -953,6 +959,8 @@ from typing import Literal
 # TODO: Would be nicer to solve this with a reusable ttl caching decorator!
 #       (or possibly, with a key_ingress enhancement)
 class GrazeWithDataRefresh(Graze):
+    """A ``Graze`` that re-downloads a url's contents once the cached copy is older than ``time_to_live`` seconds."""
+
     def __init__(
         self,
         rootdir=DFLT_GRAZE_DIR,
