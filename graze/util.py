@@ -150,7 +150,9 @@ def clog(condition: bool, *args, log_func: Callable = print, **kwargs):
         return log_func(*args, **kwargs)
 
 
-def handle_missing_dir(dirpath: str, prefix_msg="", ask_first=True, verbose=True) -> None:
+def handle_missing_dir(
+    dirpath: str, prefix_msg="", ask_first=True, verbose=True
+) -> None:
     """Make ``dirpath`` (``~`` expanded) if it is missing, asking the user first if ``ask_first``."""
     _clog = clog(verbose)
     if dirpath.startswith("~"):
