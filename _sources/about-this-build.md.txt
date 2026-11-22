@@ -5,7 +5,7 @@ orphan: true
 
 # About this build
 
-This documentation was built on **2026-11-22 19:07 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/ba336eb0ff89b2c25899d08d72aa44ea5b8187a1"><code>ba336eb</code></a> on branch <code>master</code>, for **graze 0.1.49** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 19:16 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/9f7f229bad5973e8af172e7713fa117ac39458e1"><code>9f7f229</code></a> on branch <code>master</code>, for **graze 0.1.49** (from <code>pyproject.toml</code>).
 
 :::{note}
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -15,7 +15,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 | | |
 |---|---|
-| Commit | <a href="https://github.com/thorwhalen/graze/commit/ba336eb0ff89b2c25899d08d72aa44ea5b8187a1"><code>ba336eb0ff89b2c25899d08d72aa44ea5b8187a1</code></a> |
+| Commit | <a href="https://github.com/thorwhalen/graze/commit/9f7f229bad5973e8af172e7713fa117ac39458e1"><code>9f7f229bad5973e8af172e7713fa117ac39458e1</code></a> |
 | Branch | <code>master</code> |
 | Tags at this commit | none |
 | Working tree | clean |
@@ -26,9 +26,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 | | |
 |---|---|
 | Repository | <code>thorwhalen/graze</code> |
-| Run | <a href="https://github.com/thorwhalen/graze/actions/runs/45058788104">45058788104</a> |
+| Run | <a href="https://github.com/thorwhalen/graze/actions/runs/45059713986">45059713986</a> |
 | Ref | <code>refs/heads/master</code> |
-| Event commit | <code>ba336eb0ff89b2c25899d08d72aa44ea5b8187a1</code> (in the history of the built commit) |
+| Event commit | <code>9f7f229bad5973e8af172e7713fa117ac39458e1</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -59,7 +59,7 @@ Latest release: <a href="https://pypi.org/project/graze/0.1.49/">0.1.49</a>, the
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout ba336eb0ff89b2c25899d08d72aa44ea5b8187a1
+git checkout 9f7f229bad5973e8af172e7713fa117ac39458e1
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

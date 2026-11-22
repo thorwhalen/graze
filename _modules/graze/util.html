@@ -527,7 +527,7 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n_bytes</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># assume it's a file-like object</span>
-        <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n_bytes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n_bytes</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="chks_of_url_contents">
