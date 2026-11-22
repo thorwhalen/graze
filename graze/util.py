@@ -253,7 +253,7 @@ def _first_bytes(src, n_bytes=None):
         with open(src, "rb") as file:
             return file.read(n_bytes)
     else:  # assume it's a file-like object
-        file.read(n_bytes)
+        return src.read(n_bytes)
 
 
 def chks_of_url_contents(url, *, chk_size=DFLT_CHK_SIZE, user_agent=DFLT_USER_AGENT):
