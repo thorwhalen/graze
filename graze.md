@@ -1,4 +1,4 @@
-> built 2026-11-22 14:48 UTC from d66839f (master) · graze 0.1.49. Details: build_info.json
+> built 2026-11-22 19:07 UTC from ba336eb (master) · graze 0.1.49. Details: build_info.json
 
 # index.html.md
 
@@ -858,9 +858,15 @@ for next time you’ll ask for it)
 
 Print a message saying `url` is being downloaded, and return `url` unchanged.
 
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
 ### graze.base.key_egress_print_downloading_message_with_size(url)
 
 Like `key_egress_print_downloading_message`, also showing the content size when the server reports it.
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### graze.base.localpath_to_url(path)
 
@@ -880,9 +886,15 @@ Like `key_egress_print_downloading_message`, also showing the content size when 
 
 Egress for `Graze`-like stores: return the `contents` (ignoring `filepath` and `url`).
 
+* **Return type:**
+  [`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`bytes`](https://docs.python.org/3/builtins/stdtypes.html#bytes), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
 ### graze.base.return_filepath(filepath, contents, url)
 
 Egress for `Graze`-like stores: return the `filepath` (ignoring `contents` and `url`).
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### graze.base.selenium_url_to_contents(url, response_func=<function \_dflt_selenium_response_func>, browser='Chrome')
 
@@ -1116,7 +1128,7 @@ Get the file path for the url.
 
 * **Parameters:**
   * **rootdir** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Where to store the contents locally.
-  * **download** – Controls when to download the file.
+  * **download** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool) | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – Controls when to download the file.
     If None (default), will download only if “necessary”
 
 ```pycon
@@ -1398,6 +1410,8 @@ Add an exceptional URL to the cache’s exceptions file.
   * **url** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – URL to map
   * **filepath** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Path to existing file
   * **exceptions_filename** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of exceptions file in cache directory
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### Examples
 
@@ -2276,6 +2290,9 @@ Utils
 Add a special url route, i.e. a function that downloads a url’s contents
 for a specific condition on the url.
 
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
 ### graze.util.bytes_of_url_content(url, , file=None, chk_size=1024, user_agent='Wget/1.16 (linux-gnu)')
 
 Download url contents into a `file` object, or return bytes if `file` is None.
@@ -2370,6 +2387,9 @@ folder id, which is what graze used to do.
 
 Make `dirpath` (`~` expanded) if it is missing, asking the user first if `ask_first`.
 
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
 ### graze.util.human_readable_bytes(num_of_bytes, , approx_marker='~', n_digits=4, base=1000, units=('B', 'KB', 'MB', 'GB', 'TB', 'PB'))
 
 Convert a number of bytes into a human-readable format with units.
@@ -2383,7 +2403,7 @@ Convert a number of bytes into a human-readable format with units.
 * **Returns:**
   Human-readable string representing the number of bytes.
 * **Return type:**
-  [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### Examples
 
@@ -2477,6 +2497,9 @@ False
 
 Check if a url is a special url, i.e. if it has a special url route.
 
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
 ### graze.util.last_element(iterable, , default=None)
 
 Returns the last element of an iterable, or a default if the iterable is empty.
@@ -2522,7 +2545,7 @@ Yield the successive translations of `arg` by `method` through a stack of wrappe
 
 # About this build
 
-This documentation was built on **2026-11-22 14:48 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/d66839f68cc477bce8d580762e87c077ac056702"><code>d66839f</code></a> on branch <code>master</code>, for **graze 0.1.49** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 19:07 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/ba336eb0ff89b2c25899d08d72aa44ea5b8187a1"><code>ba336eb</code></a> on branch <code>master</code>, for **graze 0.1.49** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -2531,7 +2554,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/graze/commit/d66839f68cc477bce8d580762e87c077ac056702"><code>d66839f68cc477bce8d580762e87c077ac056702</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/graze/commit/ba336eb0ff89b2c25899d08d72aa44ea5b8187a1"><code>ba336eb0ff89b2c25899d08d72aa44ea5b8187a1</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -2542,9 +2565,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/graze</code>                                                              |
-| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45034680989">45034680989</a>     |
+| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45058788104">45058788104</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>d66839f68cc477bce8d580762e87c077ac056702</code> (in the history of the built commit) |
+| Event commit | <code>ba336eb0ff89b2c25899d08d72aa44ea5b8187a1</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -2575,7 +2598,7 @@ Latest release: <a href="https://pypi.org/project/graze/0.1.49/">0.1.49</a>, the
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout d66839f68cc477bce8d580762e87c077ac056702
+git checkout ba336eb0ff89b2c25899d08d72aa44ea5b8187a1
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

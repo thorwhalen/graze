@@ -251,9 +251,15 @@ for next time you’ll ask for it)
 
 Print a message saying `url` is being downloaded, and return `url` unchanged.
 
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
 ### graze.base.key_egress_print_downloading_message_with_size(url)
 
 Like `key_egress_print_downloading_message`, also showing the content size when the server reports it.
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### graze.base.localpath_to_url(path)
 
@@ -273,9 +279,15 @@ Like `key_egress_print_downloading_message`, also showing the content size when 
 
 Egress for `Graze`-like stores: return the `contents` (ignoring `filepath` and `url`).
 
+* **Return type:**
+  [`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`bytes`](https://docs.python.org/3/builtins/stdtypes.html#bytes), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
 ### graze.base.return_filepath(filepath, contents, url)
 
 Egress for `Graze`-like stores: return the `filepath` (ignoring `contents` and `url`).
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### graze.base.selenium_url_to_contents(url, response_func=<function \_dflt_selenium_response_func>, browser='Chrome')
 
@@ -509,7 +521,7 @@ Get the file path for the url.
 
 * **Parameters:**
   * **rootdir** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Where to store the contents locally.
-  * **download** – Controls when to download the file.
+  * **download** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool) | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – Controls when to download the file.
     If None (default), will download only if “necessary”
 
 ```pycon

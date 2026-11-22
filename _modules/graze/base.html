@@ -482,7 +482,7 @@
     <span class="n">cache_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">contents</span><span class="p">:</span> <span class="n">Contents</span><span class="p">,</span>
     <span class="n">is_explicit_filepath</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Store contents in cache."""</span>
     <span class="k">if</span> <span class="n">is_explicit_filepath</span><span class="p">:</span>
         <span class="n">expanded_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">cache_key</span><span class="p">)</span>
@@ -585,7 +585,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">LocalFiles</span><span class="p">(</span><span class="n">Files</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Store to read/write/delete local files, creating directories on write."""</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rootdir</span><span class="o">=</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rootdir</span><span class="o">=</span><span class="n">DFLT_GRAZE_DIR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle_missing_dir</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ensure_slash_suffix</span><span class="p">(</span><span class="n">rootdir</span><span class="p">))</span></div>
 
@@ -689,7 +689,7 @@
 
 <span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">"Not meant to be instantiated: Just to hold url_to_contents functions"</span>
         <span class="p">)</span>
@@ -727,20 +727,20 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">graze.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ensure_dirs_of_file_exists</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_write_to_file</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"wb"</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_write_to_file</span><span class="p">(</span><span class="n">contents</span><span class="p">:</span> <span class="n">Contents</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="n">LocalPath</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"wb"</span><span class="p">):</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">filepath</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_read_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"rb"</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="n">LocalPath</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"rb"</span><span class="p">):</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="return_contents">
 <a class="viewcode-back" href="../../_autosummary/graze.base.html#graze.base.return_contents">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">return_contents</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">return_contents</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="n">LocalPath</span><span class="p">,</span> <span class="n">contents</span><span class="p">:</span> <span class="n">Contents</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="n">Url</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Contents</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Egress for ``Graze``-like stores: return the ``contents`` (ignoring ``filepath`` and ``url``)."""</span>
     <span class="k">return</span> <span class="n">contents</span></div>
 
@@ -748,7 +748,7 @@
 
 <div class="viewcode-block" id="return_filepath">
 <a class="viewcode-back" href="../../_autosummary/graze.base.html#graze.base.return_filepath">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">return_filepath</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">return_filepath</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="n">LocalPath</span><span class="p">,</span> <span class="n">contents</span><span class="p">:</span> <span class="n">Contents</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="n">Url</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LocalPath</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Egress for ``Graze``-like stores: return the ``filepath`` (ignoring ``contents`` and ``url``)."""</span>
     <span class="k">return</span> <span class="n">filepath</span></div>
 
@@ -757,7 +757,7 @@
 <span class="c1"># Typical function to use as a key_ingress to Graze</span>
 <div class="viewcode-block" id="key_egress_print_downloading_message">
 <a class="viewcode-back" href="../../_autosummary/graze.base.html#graze.base.key_egress_print_downloading_message">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">key_egress_print_downloading_message</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">key_egress_print_downloading_message</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n">Url</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Url</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Print a message saying ``url`` is being downloaded, and return ``url`` unchanged."""</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The contents of </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> are being downloaded"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">url</span></div>
@@ -766,7 +766,7 @@
 
 <div class="viewcode-block" id="key_egress_print_downloading_message_with_size">
 <a class="viewcode-back" href="../../_autosummary/graze.base.html#graze.base.key_egress_print_downloading_message_with_size">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">key_egress_print_downloading_message_with_size</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">key_egress_print_downloading_message_with_size</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n">Url</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Url</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Like ``key_egress_print_downloading_message``, also showing the content size when the server reports it."""</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">get_content_size</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -868,7 +868,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">url_to_contents</span><span class="o">=</span><span class="n">DFLT_URL_TO_CONTENT</span><span class="p">,</span>
         <span class="n">url_to_file_download</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># TODO: Find a good explicit default</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""From the url, get content off the internet.</span>
 
 <span class="sd">        :param url_to_contents: The function that gets you the contents from the url</span>
@@ -904,7 +904,7 @@
 
 <div class="viewcode-block" id="Internet.download_to_file">
 <a class="viewcode-back" href="../../_autosummary/graze.base.html#graze.base.Internet.download_to_file">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">download_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">download_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="n">Url</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">LocalPath</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Download the contents of the url to the given filepath"""</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"/"</span><span class="p">):</span>
@@ -1034,7 +1034,7 @@
         <span class="n">url_to_cache_key</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">url_to_localpath</span><span class="p">,</span>
         <span class="n">cache_key_to_url</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">localpath_to_url</span><span class="p">,</span>
         <span class="n">refresh</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Set defaults</span>
         <span class="k">if</span> <span class="n">cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cache</span> <span class="o">=</span> <span class="n">DFLT_GRAZE_DIR</span>
@@ -1061,12 +1061,12 @@
             <span class="n">refresh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">contents</span><span class="p">:</span> <span class="n">Contents</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">contents</span><span class="p">:</span> <span class="n">Contents</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Manually set contents for URL in cache."""</span>
         <span class="n">cache_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">url_to_cache_key</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="n">_cache_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">cache_key</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">is_explicit_filepath</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Delete cached contents for URL."""</span>
         <span class="n">cache_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">url_to_cache_key</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 
@@ -1099,7 +1099,7 @@
 <span class="w">        </span><span class="sd">"""Return number of cached URLs."""</span>
         <span class="k">return</span> <span class="n">_get_cache_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">cache_repr</span> <span class="o">=</span> <span class="p">(</span>
             <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="si">}</span><span class="s2">'"</span>
         <span class="p">)</span>
@@ -1133,7 +1133,7 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">key_ingress</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">return_filepaths</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :param rootdir: Where to store the contents locally.</span>
 <span class="sd">        :param source: Where to get the contents from if they're not already stored</span>
@@ -1278,7 +1278,7 @@
             <span class="s2">"warn"</span><span class="p">,</span> <span class="s2">"raise"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">,</span> <span class="s2">"warn_and_return_local"</span>
         <span class="p">]</span> <span class="o">=</span> <span class="s2">"ignore"</span><span class="p">,</span>
         <span class="n">return_filepaths</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Like Graze, but where you can specify a time_to_live "freshness threshold"</span>
 <span class="sd">        to trigger the re-download of data</span>
 
@@ -1534,7 +1534,7 @@
     <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s2">"__getitem__"</span><span class="p">):</span>
         <span class="c1"># Wrap callable in a simple class with __getitem__</span>
         <span class="k">class</span><span class="w"> </span><span class="nc">_CallableWrapper</span><span class="p">:</span>
-            <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
             <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
@@ -1597,7 +1597,9 @@
 
 <div class="viewcode-block" id="url_to_filepath">
 <a class="viewcode-back" href="../../_autosummary/graze.base.html#graze.base.url_to_filepath">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">url_to_filepath</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rootdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">url_to_filepath</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rootdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_GRAZE_DIR</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">download</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Get the file path for the url.</span>
 
 <span class="sd">    :param rootdir: Where to store the contents locally.</span>

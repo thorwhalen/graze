@@ -33,6 +33,9 @@ Utils
 Add a special url route, i.e. a function that downloads a url’s contents
 for a specific condition on the url.
 
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
 ### graze.util.bytes_of_url_content(url, , file=None, chk_size=1024, user_agent='Wget/1.16 (linux-gnu)')
 
 Download url contents into a `file` object, or return bytes if `file` is None.
@@ -127,6 +130,9 @@ folder id, which is what graze used to do.
 
 Make `dirpath` (`~` expanded) if it is missing, asking the user first if `ask_first`.
 
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
 ### graze.util.human_readable_bytes(num_of_bytes, , approx_marker='~', n_digits=4, base=1000, units=('B', 'KB', 'MB', 'GB', 'TB', 'PB'))
 
 Convert a number of bytes into a human-readable format with units.
@@ -140,7 +146,7 @@ Convert a number of bytes into a human-readable format with units.
 * **Returns:**
   Human-readable string representing the number of bytes.
 * **Return type:**
-  [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### Examples
 
@@ -233,6 +239,9 @@ False
 ### graze.util.is_special_url(url)
 
 Check if a url is a special url, i.e. if it has a special url route.
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### graze.util.last_element(iterable, , default=None)
 

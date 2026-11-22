@@ -417,7 +417,7 @@
 
 <div class="viewcode-block" id="handle_missing_dir">
 <a class="viewcode-back" href="../../_autosummary/graze.util.html#graze.util.handle_missing_dir">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">handle_missing_dir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix_msg</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">ask_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_missing_dir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix_msg</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">ask_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Make ``dirpath`` (``~`` expanded) if it is missing, asking the user first if ``ask_first``."""</span>
     <span class="n">_clog</span> <span class="o">=</span> <span class="n">clog</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">dirpath</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"~"</span><span class="p">):</span>
@@ -459,7 +459,7 @@
     <span class="n">n_digits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
     <span class="n">base</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">units</span><span class="o">=</span><span class="p">(</span><span class="s2">"B"</span><span class="p">,</span> <span class="s2">"KB"</span><span class="p">,</span> <span class="s2">"MB"</span><span class="p">,</span> <span class="s2">"GB"</span><span class="p">,</span> <span class="s2">"TB"</span><span class="p">,</span> <span class="s2">"PB"</span><span class="p">),</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert a number of bytes into a human-readable format with units.</span>
 
@@ -555,7 +555,7 @@
 <span class="sd">    Download url contents into a `file` object, or return bytes if `file` is None.</span>
 <span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">iter_content_and_copy_to</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iter_content_and_copy_to</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">chk</span> <span class="ow">in</span> <span class="n">chks_of_url_contents</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="n">chk_size</span><span class="p">,</span> <span class="n">user_agent</span><span class="o">=</span><span class="n">user_agent</span><span class="p">):</span>
             <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span>
 
@@ -769,7 +769,7 @@
 
 <div class="viewcode-block" id="add_special_url_route">
 <a class="viewcode-back" href="../../_autosummary/graze.util.html#graze.util.add_special_url_route">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">add_special_url_route</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">url_download_func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_special_url_route</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">url_download_func</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Add a special url route, i.e. a function that downloads a url's contents</span>
 <span class="sd">    for a specific condition on the url.</span>
@@ -780,7 +780,7 @@
 
 <div class="viewcode-block" id="is_special_url">
 <a class="viewcode-back" href="../../_autosummary/graze.util.html#graze.util.is_special_url">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">is_special_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_special_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check if a url is a special url, i.e. if it has a special url route."""</span>
     <span class="k">for</span> <span class="n">_is_special_url</span> <span class="ow">in</span> <span class="n">special_url_routes</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">_is_special_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>

@@ -48,6 +48,8 @@ Add an exceptional URL to the cache’s exceptions file.
   * **url** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – URL to map
   * **filepath** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Path to existing file
   * **exceptions_filename** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of exceptions file in cache directory
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### Examples
 

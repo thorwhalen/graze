@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-22T14:48:27Z",
+  "built_at": "2026-11-22T19:07:32Z",
   "package": {
     "name": "graze",
     "version": "0.1.49",
@@ -9,24 +9,24 @@
   },
   "git": {
     "available": true,
-    "commit": "d66839f68cc477bce8d580762e87c077ac056702",
-    "short_commit": "d66839f",
+    "commit": "ba336eb0ff89b2c25899d08d72aa44ea5b8187a1",
+    "short_commit": "ba336eb",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/thorwhalen/graze",
-    "commit_url": "https://github.com/thorwhalen/graze/commit/d66839f68cc477bce8d580762e87c077ac056702",
+    "commit_url": "https://github.com/thorwhalen/graze/commit/ba336eb0ff89b2c25899d08d72aa44ea5b8187a1",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "thorwhalen/graze",
-    "sha": "d66839f68cc477bce8d580762e87c077ac056702",
+    "sha": "ba336eb0ff89b2c25899d08d72aa44ea5b8187a1",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "45034680989",
-    "run_url": "https://github.com/thorwhalen/graze/actions/runs/45034680989",
+    "run_id": "45058788104",
+    "run_url": "https://github.com/thorwhalen/graze/actions/runs/45058788104",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -64,7 +64,7 @@
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/thorwhalen/graze && cd graze\ngit checkout d66839f68cc477bce8d580762e87c077ac056702\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/thorwhalen/graze && cd graze\ngit checkout ba336eb0ff89b2c25899d08d72aa44ea5b8187a1\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,
