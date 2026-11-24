@@ -149,6 +149,17 @@ def test_first_bytes_of_a_file_like_object():
     assert util._first_bytes(io.BytesIO(b"abcdef"), 3) == b"abc"
 
 
+def test_first_bytes_peeks_a_seekable_file_like_object_without_consuming_it():
+    import io
+
+    f = io.BytesIO(b"<!DOCTYPE html><p>x</p>")
+    assert util._is_html_doc(f)
+    assert f.tell() == 0 and f.read() == b"<!DOCTYPE html><p>x</p>"
+    f.seek(5)
+    assert util._first_bytes(f, 3) == b"TYP"
+    assert f.tell() == 5
+
+
 def test_virus_scan_confirmation_token():
     html = '<a href="/uc?export=download&confirm=AbC_-1&id=x">'
     assert (
