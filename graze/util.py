@@ -248,13 +248,24 @@ DFLT_CHK_SIZE = 1024
 
 
 def _first_bytes(src, n_bytes=None):
-    """Get the first n_bytes of a src, which can be a bytes object or a file path."""
+    """Get the first n_bytes of a src: a bytes object, a file path or a file-like object.
+
+    Peeking: a seekable file-like object is left at the position it had, so the caller
+    can still read the whole content afterwards.
+    """
     if isinstance(src, bytes):
         return src[slice(0, n_bytes)]
     elif isinstance(src, str):
         with open(src, "rb") as file:
             return file.read(n_bytes)
     else:  # assume it's a file-like object
+        seekable = getattr(src, "seekable", None)
+        if seekable is not None and seekable():
+            position = src.tell()
+            try:
+                return src.read(n_bytes)
+            finally:
+                src.seek(position)
         return src.read(n_bytes)
 
 
