@@ -16,7 +16,9 @@ pip install graze
 from graze import graze
 
 url = "https://raw.githubusercontent.com/thorwhalen/graze/master/README.md"
-content = graze(url)  # bytes: downloaded the first time, read from the local cache after that
+content = graze(
+    url
+)  # bytes: downloaded the first time, read from the local cache after that
 ```
 
 Ask for the same URL again and `graze` returns the local copy without touching the network. It’s the easiest way to separate *getting* data from the internet from *keeping* it.

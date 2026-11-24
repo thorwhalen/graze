@@ -522,13 +522,24 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_first_bytes</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">n_bytes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Get the first n_bytes of a src, which can be a bytes object or a file path."""</span>
+<span class="w">    </span><span class="sd">"""Get the first n_bytes of a src: a bytes object, a file path or a file-like object.</span>
+
+<span class="sd">    Peeking: a seekable file-like object is left at the position it had, so the caller</span>
+<span class="sd">    can still read the whole content afterwards.</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">src</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_bytes</span><span class="p">)]</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n_bytes</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># assume it's a file-like object</span>
+        <span class="n">seekable</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s2">"seekable"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">seekable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">seekable</span><span class="p">():</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n_bytes</span><span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">src</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n_bytes</span><span class="p">)</span>
 
 
@@ -831,7 +842,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=c61c636a"></script>
+</div><script src="../../_static/documentation_options.js?v=6f5c170c"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
