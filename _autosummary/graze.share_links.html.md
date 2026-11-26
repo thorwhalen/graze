@@ -84,12 +84,13 @@ hop is the transport layer’s job.
 
 ### Module Attributes
 
-| [`ShareLinkResolver`](#graze.share_links.ShareLinkResolver)    | given a URL, return its resolution, or `None` for "not mine".                                |
-|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
-| [`DROPBOX_CONTENT_HOST`](#graze.share_links.DROPBOX_CONTENT_HOST) | The content host every share link redirects to (`dl.` itself, or a `<token>.dl.` subdomain). |
-| [`DROPBOX_PATH_KINDS`](#graze.share_links.DROPBOX_PATH_KINDS)   | Share-link path prefixes -> what they denote.                                                |
-| [`share_link_resolvers`](#graze.share_links.share_link_resolvers) | Provider adapters, tried in order; the first non-`None` result wins.                         |
-| [`PASSTHROUGH_SCHEMES`](#graze.share_links.PASSTHROUGH_SCHEMES)  | this module describes *fetchable web resources*, and unknown schemes are not that.           |
+| [`ShareLinkResolver`](#graze.share_links.ShareLinkResolver)          | given a URL, return its resolution, or `None` for "not mine".                                                                                  |
+|-----------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`DROPBOX_CONTENT_HOST`](#graze.share_links.DROPBOX_CONTENT_HOST)       | The content host every share link redirects to (`dl.` itself, or a `<token>.dl.` subdomain).                                                   |
+| [`DROPBOX_INLINE_PATH_PREFIX`](#graze.share_links.DROPBOX_INLINE_PATH_PREFIX) | Preview renditions on the content host (`/cd/0/inline/`, `/cd/0/inline2/`): served `Content-Disposition: inline`, so not attachment endpoints. |
+| [`DROPBOX_PATH_KINDS`](#graze.share_links.DROPBOX_PATH_KINDS)         | Share-link path prefixes -> what they denote.                                                                                                  |
+| [`share_link_resolvers`](#graze.share_links.share_link_resolvers)       | Provider adapters, tried in order; the first non-`None` result wins.                                                                           |
+| [`PASSTHROUGH_SCHEMES`](#graze.share_links.PASSTHROUGH_SCHEMES)        | this module describes *fetchable web resources*, and unknown schemes are not that.                                                             |
 
 ### Functions
 
@@ -118,6 +119,11 @@ hop is the transport layer’s job.
 
 The content host every share link redirects to (`dl.` itself, or a
 `<token>.dl.` subdomain). A URL here *is* the download: never rewritten.
+
+### graze.share_links.DROPBOX_INLINE_PATH_PREFIX *= '/cd/0/inline'*
+
+Preview renditions on the content host (`/cd/0/inline/`, `/cd/0/inline2/`):
+served `Content-Disposition: inline`, so not attachment endpoints.
 
 ### graze.share_links.DROPBOX_PATH_KINDS *= (('/scl/fi/', ShareLinkKind.FILE), ('/scl/fo/', ShareLinkKind.ARCHIVE), ('/s/', ShareLinkKind.FILE), ('/sh/', ShareLinkKind.ARCHIVE))*
 
@@ -319,6 +325,18 @@ True
 >>> r = resolve_dropbox(u)
 >>> r.direct_url == u, r.download_endpoint
 (True, True)
+```
+
+The content host also serves *preview* renditions under `/cd/0/inline*/`
+(`Content-Disposition: inline`). Those are the shared file itself, so they
+pass through too, but are not asserted to be an attachment endpoint – else
+[`is_host_page()`](#graze.share_links.is_host_page) would reject the file as Dropbox’s own page:
+
+```pycon
+>>> u = 'https://uc4a.dl.dropboxusercontent.com/cd/0/inline2/Ab/file'
+>>> r = resolve_dropbox(u)
+>>> r.direct_url == u, r.download_endpoint
+(True, False)
 ```
 
 Non-share Dropbox URLs are not this adapter’s business:

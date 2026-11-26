@@ -1,4 +1,4 @@
-> built 2026-11-24 01:24 UTC from d9173a0 (master) · graze 0.1.51. Details: build_info.json
+> built 2026-11-26 14:08 UTC from ea356d7 (master) · graze 0.1.52. Details: build_info.json
 
 # index.html.md
 
@@ -1846,12 +1846,13 @@ hop is the transport layer’s job.
 
 ### Module Attributes
 
-| [`ShareLinkResolver`](_autosummary/graze.share_links.html.md#graze.share_links.ShareLinkResolver)    | given a URL, return its resolution, or `None` for "not mine".                                |
-|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
-| [`DROPBOX_CONTENT_HOST`](_autosummary/graze.share_links.html.md#graze.share_links.DROPBOX_CONTENT_HOST) | The content host every share link redirects to (`dl.` itself, or a `<token>.dl.` subdomain). |
-| [`DROPBOX_PATH_KINDS`](_autosummary/graze.share_links.html.md#graze.share_links.DROPBOX_PATH_KINDS)   | Share-link path prefixes -> what they denote.                                                |
-| [`share_link_resolvers`](_autosummary/graze.share_links.html.md#graze.share_links.share_link_resolvers) | Provider adapters, tried in order; the first non-`None` result wins.                         |
-| [`PASSTHROUGH_SCHEMES`](_autosummary/graze.share_links.html.md#graze.share_links.PASSTHROUGH_SCHEMES)  | this module describes *fetchable web resources*, and unknown schemes are not that.           |
+| [`ShareLinkResolver`](_autosummary/graze.share_links.html.md#graze.share_links.ShareLinkResolver)          | given a URL, return its resolution, or `None` for "not mine".                                                                                  |
+|-----------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`DROPBOX_CONTENT_HOST`](_autosummary/graze.share_links.html.md#graze.share_links.DROPBOX_CONTENT_HOST)       | The content host every share link redirects to (`dl.` itself, or a `<token>.dl.` subdomain).                                                   |
+| [`DROPBOX_INLINE_PATH_PREFIX`](_autosummary/graze.share_links.html.md#graze.share_links.DROPBOX_INLINE_PATH_PREFIX) | Preview renditions on the content host (`/cd/0/inline/`, `/cd/0/inline2/`): served `Content-Disposition: inline`, so not attachment endpoints. |
+| [`DROPBOX_PATH_KINDS`](_autosummary/graze.share_links.html.md#graze.share_links.DROPBOX_PATH_KINDS)         | Share-link path prefixes -> what they denote.                                                                                                  |
+| [`share_link_resolvers`](_autosummary/graze.share_links.html.md#graze.share_links.share_link_resolvers)       | Provider adapters, tried in order; the first non-`None` result wins.                                                                           |
+| [`PASSTHROUGH_SCHEMES`](_autosummary/graze.share_links.html.md#graze.share_links.PASSTHROUGH_SCHEMES)        | this module describes *fetchable web resources*, and unknown schemes are not that.                                                             |
 
 ### Functions
 
@@ -1880,6 +1881,11 @@ hop is the transport layer’s job.
 
 The content host every share link redirects to (`dl.` itself, or a
 `<token>.dl.` subdomain). A URL here *is* the download: never rewritten.
+
+### graze.share_links.DROPBOX_INLINE_PATH_PREFIX *= '/cd/0/inline'*
+
+Preview renditions on the content host (`/cd/0/inline/`, `/cd/0/inline2/`):
+served `Content-Disposition: inline`, so not attachment endpoints.
 
 ### graze.share_links.DROPBOX_PATH_KINDS *= (('/scl/fi/', ShareLinkKind.FILE), ('/scl/fo/', ShareLinkKind.ARCHIVE), ('/s/', ShareLinkKind.FILE), ('/sh/', ShareLinkKind.ARCHIVE))*
 
@@ -2081,6 +2087,18 @@ True
 >>> r = resolve_dropbox(u)
 >>> r.direct_url == u, r.download_endpoint
 (True, True)
+```
+
+The content host also serves *preview* renditions under `/cd/0/inline*/`
+(`Content-Disposition: inline`). Those are the shared file itself, so they
+pass through too, but are not asserted to be an attachment endpoint – else
+[`is_host_page()`](_autosummary/graze.share_links.html.md#graze.share_links.is_host_page) would reject the file as Dropbox’s own page:
+
+```pycon
+>>> u = 'https://uc4a.dl.dropboxusercontent.com/cd/0/inline2/Ab/file'
+>>> r = resolve_dropbox(u)
+>>> r.direct_url == u, r.download_endpoint
+(True, False)
 ```
 
 Non-share Dropbox URLs are not this adapter’s business:
@@ -2516,7 +2534,7 @@ Yield the successive translations of `arg` by `method` through a stack of wrappe
 
 # About this build
 
-This documentation was built on **2026-11-24 01:24 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/d9173a0a3ce5628eb4aaf5cc53e95dcc5149b956"><code>d9173a0</code></a> on branch <code>master</code>, for **graze 0.1.51** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-26 14:08 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/ea356d7935872e8ad18cf6d7c0dead88cb3204e9"><code>ea356d7</code></a> on branch <code>master</code>, for **graze 0.1.52** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -2525,7 +2543,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/graze/commit/d9173a0a3ce5628eb4aaf5cc53e95dcc5149b956"><code>d9173a0a3ce5628eb4aaf5cc53e95dcc5149b956</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/graze/commit/ea356d7935872e8ad18cf6d7c0dead88cb3204e9"><code>ea356d7935872e8ad18cf6d7c0dead88cb3204e9</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -2536,9 +2554,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/graze</code>                                                              |
-| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45304633550">45304633550</a>     |
+| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45835704360">45835704360</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>d9173a0a3ce5628eb4aaf5cc53e95dcc5149b956</code> (in the history of the built commit) |
+| Event commit | <code>ea356d7935872e8ad18cf6d7c0dead88cb3204e9</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -2563,13 +2581,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/graze/0.1.51/">0.1.51</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/graze/0.1.52/">0.1.52</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout d9173a0a3ce5628eb4aaf5cc53e95dcc5149b956
+git checkout ea356d7935872e8ad18cf6d7c0dead88cb3204e9
 pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

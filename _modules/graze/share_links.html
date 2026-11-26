@@ -511,6 +511,10 @@
 <span class="c1">#: ``&lt;token&gt;.dl.`` subdomain). A URL here *is* the download: never rewritten.</span>
 <span class="n">DROPBOX_CONTENT_HOST</span> <span class="o">=</span> <span class="s2">"dl.dropboxusercontent.com"</span>
 
+<span class="c1">#: Preview renditions on the content host (``/cd/0/inline/``, ``/cd/0/inline2/``):</span>
+<span class="c1">#: served ``Content-Disposition: inline``, so not attachment endpoints.</span>
+<span class="n">DROPBOX_INLINE_PATH_PREFIX</span> <span class="o">=</span> <span class="s2">"/cd/0/inline"</span>
+
 <span class="c1">#: Share-link path prefixes -&gt; what they denote. ``/s/`` + ``/sh/`` are the legacy</span>
 <span class="c1">#: forms; ``/scl/fi/`` + ``/scl/fo/`` are the ones Dropbox issues today.</span>
 <span class="n">DROPBOX_PATH_KINDS</span> <span class="o">=</span> <span class="p">(</span>
@@ -552,6 +556,16 @@
 <span class="sd">    &gt;&gt;&gt; r.direct_url == u, r.download_endpoint</span>
 <span class="sd">    (True, True)</span>
 
+<span class="sd">    The content host also serves *preview* renditions under ``/cd/0/inline*/``</span>
+<span class="sd">    (``Content-Disposition: inline``). Those are the shared file itself, so they</span>
+<span class="sd">    pass through too, but are not asserted to be an attachment endpoint -- else</span>
+<span class="sd">    :func:`is_host_page` would reject the file as Dropbox's own page:</span>
+
+<span class="sd">    &gt;&gt;&gt; u = 'https://uc4a.dl.dropboxusercontent.com/cd/0/inline2/Ab/file'</span>
+<span class="sd">    &gt;&gt;&gt; r = resolve_dropbox(u)</span>
+<span class="sd">    &gt;&gt;&gt; r.direct_url == u, r.download_endpoint</span>
+<span class="sd">    (True, False)</span>
+
 <span class="sd">    Non-share Dropbox URLs are not this adapter's business:</span>
 
 <span class="sd">    &gt;&gt;&gt; resolve_dropbox('https://www.dropbox.com/home') is None</span>
@@ -566,7 +580,9 @@
             <span class="n">provider</span><span class="o">=</span><span class="s2">"dropbox"</span><span class="p">,</span>
             <span class="n">kind</span><span class="o">=</span><span class="n">ShareLinkKind</span><span class="o">.</span><span class="n">FILE</span><span class="p">,</span>
             <span class="n">direct_url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
-            <span class="n">download_endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">download_endpoint</span><span class="o">=</span><span class="ow">not</span> <span class="n">urlsplit</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                <span class="n">DROPBOX_INLINE_PATH_PREFIX</span>
+            <span class="p">),</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="n">host</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DROPBOX_HOSTS</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -1040,7 +1056,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=6f5c170c"></script>
+</div><script src="../../_static/documentation_options.js?v=4fed8de7"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -5,7 +5,7 @@ orphan: true
 
 # About this build
 
-This documentation was built on **2026-11-24 01:24 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/d9173a0a3ce5628eb4aaf5cc53e95dcc5149b956"><code>d9173a0</code></a> on branch <code>master</code>, for **graze 0.1.51** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-26 14:08 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/ea356d7935872e8ad18cf6d7c0dead88cb3204e9"><code>ea356d7</code></a> on branch <code>master</code>, for **graze 0.1.52** (from <code>pyproject.toml</code>).
 
 :::{note}
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -15,7 +15,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 | | |
 |---|---|
-| Commit | <a href="https://github.com/thorwhalen/graze/commit/d9173a0a3ce5628eb4aaf5cc53e95dcc5149b956"><code>d9173a0a3ce5628eb4aaf5cc53e95dcc5149b956</code></a> |
+| Commit | <a href="https://github.com/thorwhalen/graze/commit/ea356d7935872e8ad18cf6d7c0dead88cb3204e9"><code>ea356d7935872e8ad18cf6d7c0dead88cb3204e9</code></a> |
 | Branch | <code>master</code> |
 | Tags at this commit | none |
 | Working tree | clean |
@@ -26,9 +26,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 | | |
 |---|---|
 | Repository | <code>thorwhalen/graze</code> |
-| Run | <a href="https://github.com/thorwhalen/graze/actions/runs/45304633550">45304633550</a> |
+| Run | <a href="https://github.com/thorwhalen/graze/actions/runs/45835704360">45835704360</a> |
 | Ref | <code>refs/heads/master</code> |
-| Event commit | <code>d9173a0a3ce5628eb4aaf5cc53e95dcc5149b956</code> (in the history of the built commit) |
+| Event commit | <code>ea356d7935872e8ad18cf6d7c0dead88cb3204e9</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -53,13 +53,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/graze/0.1.51/">0.1.51</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/graze/0.1.52/">0.1.52</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout d9173a0a3ce5628eb4aaf5cc53e95dcc5149b956
+git checkout ea356d7935872e8ad18cf6d7c0dead88cb3204e9
 pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

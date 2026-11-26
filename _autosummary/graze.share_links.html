@@ -334,13 +334,16 @@ hop is the transport layer’s job.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#graze.share_links.DROPBOX_CONTENT_HOST" title="graze.share_links.DROPBOX_CONTENT_HOST"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DROPBOX_CONTENT_HOST</span></code></a></p></td>
 <td><p>The content host every share link redirects to (<code class="docutils literal notranslate"><span class="pre">dl.</span></code> itself, or a <code class="docutils literal notranslate"><span class="pre">&lt;token&gt;.dl.</span></code> subdomain).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#graze.share_links.DROPBOX_PATH_KINDS" title="graze.share_links.DROPBOX_PATH_KINDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DROPBOX_PATH_KINDS</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graze.share_links.DROPBOX_INLINE_PATH_PREFIX" title="graze.share_links.DROPBOX_INLINE_PATH_PREFIX"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DROPBOX_INLINE_PATH_PREFIX</span></code></a></p></td>
+<td><p>Preview renditions on the content host (<code class="docutils literal notranslate"><span class="pre">/cd/0/inline/</span></code>, <code class="docutils literal notranslate"><span class="pre">/cd/0/inline2/</span></code>): served <code class="docutils literal notranslate"><span class="pre">Content-Disposition:</span> <span class="pre">inline</span></code>, so not attachment endpoints.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#graze.share_links.DROPBOX_PATH_KINDS" title="graze.share_links.DROPBOX_PATH_KINDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DROPBOX_PATH_KINDS</span></code></a></p></td>
 <td><p>Share-link path prefixes -&gt; what they denote.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#graze.share_links.share_link_resolvers" title="graze.share_links.share_link_resolvers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">share_link_resolvers</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graze.share_links.share_link_resolvers" title="graze.share_links.share_link_resolvers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">share_link_resolvers</span></code></a></p></td>
 <td><p>Provider adapters, tried in order; the first non-<code class="docutils literal notranslate"><span class="pre">None</span></code> result wins.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#graze.share_links.PASSTHROUGH_SCHEMES" title="graze.share_links.PASSTHROUGH_SCHEMES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PASSTHROUGH_SCHEMES</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#graze.share_links.PASSTHROUGH_SCHEMES" title="graze.share_links.PASSTHROUGH_SCHEMES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PASSTHROUGH_SCHEMES</span></code></a></p></td>
 <td><p>this module describes <em>fetchable web resources</em>, and unknown schemes are not that.</p></td>
 </tr>
 </tbody>
@@ -405,6 +408,13 @@ hop is the transport layer’s job.</p>
 <span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">DROPBOX_CONTENT_HOST</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dl.dropboxusercontent.com'</span></span><a class="headerlink" href="#graze.share_links.DROPBOX_CONTENT_HOST" title="Link to this definition">¶</a></dt>
 <dd><p>The content host every share link redirects to (<code class="docutils literal notranslate"><span class="pre">dl.</span></code> itself, or a
 <code class="docutils literal notranslate"><span class="pre">&lt;token&gt;.dl.</span></code> subdomain). A URL here <em>is</em> the download: never rewritten.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="graze.share_links.DROPBOX_INLINE_PATH_PREFIX">
+<span class="sig-prename descclassname"><span class="pre">graze.share_links.</span></span><span class="sig-name descname"><span class="pre">DROPBOX_INLINE_PATH_PREFIX</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/cd/0/inline'</span></span><a class="headerlink" href="#graze.share_links.DROPBOX_INLINE_PATH_PREFIX" title="Link to this definition">¶</a></dt>
+<dd><p>Preview renditions on the content host (<code class="docutils literal notranslate"><span class="pre">/cd/0/inline/</span></code>, <code class="docutils literal notranslate"><span class="pre">/cd/0/inline2/</span></code>):
+served <code class="docutils literal notranslate"><span class="pre">Content-Disposition:</span> <span class="pre">inline</span></code>, so not attachment endpoints.</p>
 </dd></dl>
 
 <dl class="py data">
@@ -623,6 +633,16 @@ already on the content host, which passes through untouched:</p>
 <span class="go">(True, True)</span>
 </pre></div>
 </div>
+<p>The content host also serves <em>preview</em> renditions under <code class="docutils literal notranslate"><span class="pre">/cd/0/inline*/</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Content-Disposition:</span> <span class="pre">inline</span></code>). Those are the shared file itself, so they
+pass through too, but are not asserted to be an attachment endpoint – else
+<a class="reference internal" href="#graze.share_links.is_host_page" title="graze.share_links.is_host_page"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_host_page()</span></code></a> would reject the file as Dropbox’s own page:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="s1">'https://uc4a.dl.dropboxusercontent.com/cd/0/inline2/Ab/file'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">resolve_dropbox</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">direct_url</span> <span class="o">==</span> <span class="n">u</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">download_endpoint</span>
+<span class="go">(True, False)</span>
+</pre></div>
+</div>
 <p>Non-share Dropbox URLs are not this adapter’s business:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_dropbox</span><span class="p">(</span><span class="s1">'https://www.dropbox.com/home'</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
 <span class="go">True</span>
@@ -818,6 +838,7 @@ extend it with <a class="reference internal" href="#graze.share_links.add_share_
             <ul>
 <li><a class="reference internal" href="#">graze.share_links</a><ul>
 <li><a class="reference internal" href="#graze.share_links.DROPBOX_CONTENT_HOST"><code class="docutils literal notranslate"><span class="pre">DROPBOX_CONTENT_HOST</span></code></a></li>
+<li><a class="reference internal" href="#graze.share_links.DROPBOX_INLINE_PATH_PREFIX"><code class="docutils literal notranslate"><span class="pre">DROPBOX_INLINE_PATH_PREFIX</span></code></a></li>
 <li><a class="reference internal" href="#graze.share_links.DROPBOX_PATH_KINDS"><code class="docutils literal notranslate"><span class="pre">DROPBOX_PATH_KINDS</span></code></a></li>
 <li><a class="reference internal" href="#graze.share_links.PASSTHROUGH_SCHEMES"><code class="docutils literal notranslate"><span class="pre">PASSTHROUGH_SCHEMES</span></code></a></li>
 <li><a class="reference internal" href="#graze.share_links.ResolvedShareLink"><code class="docutils literal notranslate"><span class="pre">ResolvedShareLink</span></code></a><ul>
@@ -847,7 +868,7 @@ extend it with <a class="reference internal" href="#graze.share_links.add_share_
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6f5c170c"></script>
+</div><script src="../_static/documentation_options.js?v=4fed8de7"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
