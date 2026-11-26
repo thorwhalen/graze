@@ -255,6 +255,10 @@ DROPBOX_HOSTS = ("www.dropbox.com", "dropbox.com")
 #: ``<token>.dl.`` subdomain). A URL here *is* the download: never rewritten.
 DROPBOX_CONTENT_HOST = "dl.dropboxusercontent.com"
 
+#: Preview renditions on the content host (``/cd/0/inline/``, ``/cd/0/inline2/``):
+#: served ``Content-Disposition: inline``, so not attachment endpoints.
+DROPBOX_INLINE_PATH_PREFIX = "/cd/0/inline"
+
 #: Share-link path prefixes -> what they denote. ``/s/`` + ``/sh/`` are the legacy
 #: forms; ``/scl/fi/`` + ``/scl/fo/`` are the ones Dropbox issues today.
 DROPBOX_PATH_KINDS = (
@@ -294,6 +298,16 @@ def resolve_dropbox(url: str) -> Optional[ResolvedShareLink]:
     >>> r.direct_url == u, r.download_endpoint
     (True, True)
 
+    The content host also serves *preview* renditions under ``/cd/0/inline*/``
+    (``Content-Disposition: inline``). Those are the shared file itself, so they
+    pass through too, but are not asserted to be an attachment endpoint -- else
+    :func:`is_host_page` would reject the file as Dropbox's own page:
+
+    >>> u = 'https://uc4a.dl.dropboxusercontent.com/cd/0/inline2/Ab/file'
+    >>> r = resolve_dropbox(u)
+    >>> r.direct_url == u, r.download_endpoint
+    (True, False)
+
     Non-share Dropbox URLs are not this adapter's business:
 
     >>> resolve_dropbox('https://www.dropbox.com/home') is None
@@ -308,7 +322,9 @@ def resolve_dropbox(url: str) -> Optional[ResolvedShareLink]:
             provider="dropbox",
             kind=ShareLinkKind.FILE,
             direct_url=url,
-            download_endpoint=True,
+            download_endpoint=not urlsplit(url).path.startswith(
+                DROPBOX_INLINE_PATH_PREFIX
+            ),
         )
     if host not in DROPBOX_HOSTS:
         return None

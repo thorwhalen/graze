@@ -524,3 +524,21 @@ def test_is_host_page_judges_a_download_endpoint_by_content_disposition():
     assert not is_host_page(dropbox, {"content-disposition": 'attachment; filename="notes.md"'})
     plain = resolve_share_url("https://example.com/notes.html")
     assert not plain.download_endpoint and not is_host_page(plain, {})
+
+
+@pytest.mark.parametrize("kind", ["inline", "inline2"])
+def test_a_dropbox_inline_preview_url_is_not_judged_a_host_page(kind):
+    from graze import is_host_page, resolve_share_url
+
+    url = f"https://uc4a.dl.dropboxusercontent.com/cd/0/{kind}/Ab/file"
+    resolved = resolve_share_url(url)
+    assert resolved.direct_url == url
+    assert resolved.download_endpoint is False
+    assert is_host_page(resolved, {"Content-Type": "application/pdf"}) is False
+
+
+def test_a_dropbox_get_url_not_served_as_attachment_is_still_a_host_page():
+    from graze import is_host_page, resolve_share_url
+
+    resolved = resolve_share_url("https://uc4a.dl.dropboxusercontent.com/cd/0/get/Ab/f")
+    assert is_host_page(resolved, {"Content-Type": "text/html"}) is True
