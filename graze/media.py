@@ -60,7 +60,14 @@ from graze.share_links import (
     resolve_share_url,
 )
 
-__all__ = ["FetchedMedia", "fetch_media", "FETCH_MEDIA_ERRORS", "DFLT_REFUSE", "redact_url", "clean_filename"]
+__all__ = [
+    "FetchedMedia",
+    "fetch_media",
+    "FETCH_MEDIA_ERRORS",
+    "DFLT_REFUSE",
+    "redact_url",
+    "clean_filename",
+]
 
 #: What :func:`fetch_media` raises on purpose; catch this tuple at a surface.
 FETCH_MEDIA_ERRORS = (ShareLinkResolutionError, ContentKindMismatch, GuardedFetchError)
@@ -98,12 +105,18 @@ def clean_filename(name: str) -> str:
     ('passwd', '', 'ab.mp3')
     """
     name = posixpath.basename(name.replace("\\", "/"))
-    name = "".join(c for c in name if unicodedata.category(c) not in ("Cc", "Cf")).strip()
+    name = "".join(
+        c for c in name if unicodedata.category(c) not in ("Cc", "Cf")
+    ).strip()
     if name in (".", ".."):
         return ""
     if len(name) > MAX_FILENAME_CHARS:
         stem, dot, ext = name.rpartition(".")
-        keep = MAX_FILENAME_CHARS - len(dot + ext) if dot and len(ext) <= 16 else MAX_FILENAME_CHARS
+        keep = (
+            MAX_FILENAME_CHARS - len(dot + ext)
+            if dot and len(ext) <= 16
+            else MAX_FILENAME_CHARS
+        )
         name = (stem[:keep] + dot + ext) if dot and len(ext) <= 16 else name[:keep]
     return name
 
@@ -113,7 +126,9 @@ class FetchedMedia:
     """The bytes of one fetched file, and what is known about them."""
 
     data: bytes = field(repr=False)
-    filename: str  #: from Content-Disposition, else the URL's last path segment ('' if none)
+    filename: (
+        str  #: from Content-Disposition, else the URL's last path segment ('' if none)
+    )
     content_type: str  #: as the server declared it ('' if it did not)
     url: str  #: the final URL, after redirects
     provider: str  #: the share-link provider ('dropbox', 'google_drive'...) or 'http'
@@ -125,7 +140,11 @@ class FetchedMedia:
 
 def _filename(headers, *urls: str) -> str:
     """The file name the server gave (RFC 6266, ``filename*`` included), else the URL's."""
-    name = clean_filename(headers.get_filename() or "") if hasattr(headers, "get_filename") else ""
+    name = (
+        clean_filename(headers.get_filename() or "")
+        if hasattr(headers, "get_filename")
+        else ""
+    )
     if name:
         return name
     for url in urls:
@@ -172,7 +191,9 @@ def fetch_media(
         resolved = resolve_share_url(url.strip(), resolvers=resolvers)
     except ShareLinkResolutionError:
         raise
-    except Exception as error:  # a malformed URL (urlsplit), or a resolver's own failure
+    except (
+        Exception
+    ) as error:  # a malformed URL (urlsplit), or a resolver's own failure
         raise ShareLinkResolutionError(
             f"That is not a link that can be fetched ({type(error).__name__})."
         ) from error
@@ -208,25 +229,33 @@ def fetch_media(
         declared = _content_type(response.headers)
         if not data:
             raise ContentKindMismatch(
-                f"{shown} answered with an empty file.", family=None, expect_kind=expect_kind
+                f"{shown} answered with an empty file.",
+                family=None,
+                expect_kind=expect_kind,
             )
         head = data[:SNIFF_BYTES]
         family = sniff_content_family(head)
         if family is None and declared in _TEXT_TYPES:
-            family = "html"  # a page or a message the sniffer could not place: not media
+            family = (
+                "html"  # a page or a message the sniffer could not place: not media
+            )
         if family in refuse or (expect_kind and family == "html"):
             # assert_content_kind words the html and archive cases for the person
             if family == "html":
                 head = b"<!doctype html>"
             assert_content_kind(head, expect_kind=expect_kind or "media", url=shown)
             raise ContentKindMismatch(
-                f"got {family} bytes from {shown}", family=family, expect_kind=expect_kind
+                f"got {family} bytes from {shown}",
+                family=family,
+                expect_kind=expect_kind,
             )
         if expect_kind:
             assert_content_kind(head, expect_kind=expect_kind, url=shown)
         return FetchedMedia(
             data=data,
-            filename=_filename(response.headers, response.url, resolved.direct_url, resolved.url),
+            filename=_filename(
+                response.headers, response.url, resolved.direct_url, resolved.url
+            ),
             content_type=declared,
             url=response.url,
             provider=resolved.provider,
