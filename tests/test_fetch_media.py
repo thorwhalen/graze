@@ -22,6 +22,10 @@ ROUTES = {
     "/zip": (200, b"PK\x03\x04" + b"\x00" * 600, []),
     "/picture": (200, PNG, [("Content-Type", "image/png")]),
     "/private": (403, b"no", []),
+    "/empty": (200, b"", [("Content-Type", "audio/mpeg")]),
+    "/text-error": (200, b"Not found, sorry", [("Content-Type", "text/plain")]),
+    "/bare-tags": (200, b"<h1>Not found</h1>", [("Content-Type", "text/html; charset=utf-8")]),
+    "/evil-name": (200, MP3, [("Content-Disposition", "attachment; filename*=UTF-8''..%2F%00a%0A%E2%80%AEpm3.exe")]),
 }
 
 
@@ -125,3 +129,29 @@ def test_every_refusal_is_one_of_the_declared_errors(base):
     for url in (f"{base}/page", f"{base}/zip", f"{base}/private", "http://10.0.0.1/x.mp3"):
         with pytest.raises(FETCH_MEDIA_ERRORS):
             fetch_media(url, **(LOCAL if url.startswith(base) else {}))
+
+
+def test_empty_and_text_answers_are_refused(base):
+    for path in ("/empty", "/text-error", "/bare-tags"):
+        with pytest.raises(ContentKindMismatch):
+            fetch_media(f"{base}{path}", expect_kind="audio", **LOCAL)
+
+
+def test_a_hostile_file_name_is_cleaned(base):
+    assert fetch_media(f"{base}/evil-name", **LOCAL).filename == "apm3.exe"
+
+
+def test_messages_never_carry_the_links_secret(base):
+    with pytest.raises(ShareLinkResolutionError) as caught:
+        fetch_media("https://www.dropbox.com/scl/fo/x9/y?rlkey=SECRET&dl=0")
+    assert "SECRET" not in str(caught.value) and "dropbox.com/scl/" in str(caught.value)
+
+
+def test_a_malformed_link_is_a_declared_error():
+    with pytest.raises(ShareLinkResolutionError):
+        fetch_media("http://[::1")
+
+
+def test_refuse_must_be_families_not_a_string(base):
+    with pytest.raises(TypeError):
+        fetch_media(f"{base}/memo.mp3", refuse="html", **LOCAL)
