@@ -46,6 +46,11 @@ from graze.guarded import (
     default_public_only,
     system_resolver,
 )
+from graze.media import (
+    FetchedMedia,
+    fetch_media,
+    FETCH_MEDIA_ERRORS,
+)
 from graze.graze_exceptional import (
     graze_cache,
     add_exception,
