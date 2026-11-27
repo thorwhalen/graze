@@ -1,0 +1,27 @@
+graze.media
+===========
+
+.. automodule:: graze.media
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      FETCH_MEDIA_ERRORS
+      DFLT_REFUSE
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      fetch_media
+      redact_url
+      clean_filename
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      FetchedMedia
+   

@@ -205,6 +205,7 @@
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/graze.content_kind.html">graze.content_kind</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/graze.graze_exceptional.html">graze.graze_exceptional</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/graze.guarded.html">graze.guarded</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/graze.media.html">graze.media</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/graze.share_links.html">graze.share_links</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/graze.util.html">graze.util</a></li>
 </ul>
@@ -286,9 +287,13 @@
 </li>
         <li><a href="_autosummary/graze.util.html#graze.util.chks_of_url_contents">chks_of_url_contents() (in module graze.util)</a>
 </li>
+        <li><a href="_autosummary/graze.media.html#graze.media.clean_filename">clean_filename() (in module graze.media)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="_autosummary/graze.util.html#graze.util.clog">clog() (in module graze.util)</a>
+</li>
+        <li><a href="_autosummary/graze.media.html#graze.media.FetchedMedia.content_type">content_type (graze.media.FetchedMedia attribute)</a>
 </li>
         <li><a href="_autosummary/graze.content_kind.html#graze.content_kind.ContentKindMismatch">ContentKindMismatch</a>
 </li>
@@ -306,16 +311,18 @@
 </li>
         <li><a href="_autosummary/graze.guarded.html#graze.guarded.DFLT_ALLOWED_PORTS">DFLT_ALLOWED_PORTS (in module graze.guarded)</a>
 </li>
+        <li><a href="_autosummary/graze.media.html#graze.media.DFLT_REFUSE">DFLT_REFUSE (in module graze.media)</a>
+</li>
         <li><a href="_autosummary/graze.guarded.html#graze.guarded.DFLT_TIMEOUT_S">DFLT_TIMEOUT_S (in module graze.guarded)</a>
 </li>
         <li><a href="_autosummary/graze.share_links.html#graze.share_links.direct_download_url">direct_download_url() (in module graze.share_links)</a>
 </li>
         <li><a href="_autosummary/graze.util.html#graze.util.download_from_google_drive">download_from_google_drive() (in module graze.util)</a>
 </li>
-        <li><a href="_autosummary/graze.util.html#graze.util.download_from_share_link">download_from_share_link() (in module graze.util)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="_autosummary/graze.util.html#graze.util.download_from_share_link">download_from_share_link() (in module graze.util)</a>
+</li>
         <li><a href="_autosummary/graze.util.html#graze.util.download_from_special_url">download_from_special_url() (in module graze.util)</a>
 </li>
         <li><a href="_autosummary/graze.base.html#graze.base.Internet.download_to_file">download_to_file() (graze.base.Internet method)</a>
@@ -336,12 +343,20 @@
   <h2>F</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="_autosummary/graze.guarded.html#graze.guarded.FetchFailed">FetchFailed</a>
+        <li><a href="_autosummary/graze.media.html#graze.media.fetch_media">fetch_media() (in module graze.media)</a>
 </li>
-        <li><a href="_autosummary/graze.guarded.html#graze.guarded.FetchLimitExceeded">FetchLimitExceeded</a>
+        <li><a href="_autosummary/graze.media.html#graze.media.FETCH_MEDIA_ERRORS">FETCH_MEDIA_ERRORS (in module graze.media)</a>
+</li>
+        <li><a href="_autosummary/graze.media.html#graze.media.FetchedMedia">FetchedMedia (class in graze.media)</a>
+</li>
+        <li><a href="_autosummary/graze.guarded.html#graze.guarded.FetchFailed">FetchFailed</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="_autosummary/graze.guarded.html#graze.guarded.FetchLimitExceeded">FetchLimitExceeded</a>
+</li>
+        <li><a href="_autosummary/graze.media.html#graze.media.FetchedMedia.filename">filename (graze.media.FetchedMedia attribute)</a>
+</li>
         <li><a href="_autosummary/graze.base.html#graze.base.Graze.filepath_of">filepath_of() (graze.base.Graze method)</a>
 </li>
         <li><a href="_autosummary/graze.base.html#graze.base.Graze.filepath_of_url_downloading_if_necessary">filepath_of_url_downloading_if_necessary() (graze.base.Graze method)</a>
@@ -392,13 +407,20 @@
           <li><a href="_autosummary/graze.graze_exceptional.html#module-graze.graze_exceptional">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     graze.guarded
 
         <ul>
           <li><a href="_autosummary/graze.guarded.html#module-graze.guarded">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    graze.media
+
+        <ul>
+          <li><a href="_autosummary/graze.media.html#module-graze.media">module</a>
 </li>
         </ul></li>
         <li>
@@ -543,6 +565,8 @@
 </li>
           <li><a href="_autosummary/graze.guarded.html#module-graze.guarded">graze.guarded</a>
 </li>
+          <li><a href="_autosummary/graze.media.html#module-graze.media">graze.media</a>
+</li>
           <li><a href="_autosummary/graze.share_links.html#module-graze.share_links">graze.share_links</a>
 </li>
           <li><a href="_autosummary/graze.util.html#module-graze.util">graze.util</a>
@@ -569,6 +593,10 @@
         <li><a href="_autosummary/graze.share_links.html#graze.share_links.PASSTHROUGH_SCHEMES">PASSTHROUGH_SCHEMES (in module graze.share_links)</a>
 </li>
     </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="_autosummary/graze.media.html#graze.media.FetchedMedia.provider">provider (graze.media.FetchedMedia attribute)</a>
+</li>
+    </ul></td>
   </tr></table>
 </section>
 
@@ -578,16 +606,18 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="_autosummary/graze.guarded.html#graze.guarded.GuardedResponse.read">read() (graze.guarded.GuardedResponse method)</a>
 </li>
+        <li><a href="_autosummary/graze.media.html#graze.media.redact_url">redact_url() (in module graze.media)</a>
+</li>
         <li><a href="_autosummary/graze.base.html#graze.base.RequestFailure">RequestFailure</a>
 </li>
         <li><a href="_autosummary/graze.share_links.html#graze.share_links.resolve_dropbox">resolve_dropbox() (in module graze.share_links)</a>
 </li>
         <li><a href="_autosummary/graze.share_links.html#graze.share_links.resolve_google_drive">resolve_google_drive() (in module graze.share_links)</a>
 </li>
-        <li><a href="_autosummary/graze.share_links.html#graze.share_links.resolve_onedrive">resolve_onedrive() (in module graze.share_links)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="_autosummary/graze.share_links.html#graze.share_links.resolve_onedrive">resolve_onedrive() (in module graze.share_links)</a>
+</li>
         <li><a href="_autosummary/graze.share_links.html#graze.share_links.resolve_share_url">resolve_share_url() (in module graze.share_links)</a>
 </li>
         <li><a href="_autosummary/graze.share_links.html#graze.share_links.ResolvedShareLink.resolved">resolved (graze.share_links.ResolvedShareLink property)</a>
@@ -657,11 +687,15 @@
         <li><a href="_autosummary/graze.guarded.html#graze.guarded.UnsafeTarget">UnsafeTarget</a>
 </li>
         <li><a href="_autosummary/graze.guarded.html#graze.guarded.GuardedResponse.url">url (graze.guarded.GuardedResponse attribute)</a>
+
+        <ul>
+          <li><a href="_autosummary/graze.media.html#graze.media.FetchedMedia.url">(graze.media.FetchedMedia attribute)</a>
 </li>
-        <li><a href="_autosummary/graze.base.html#graze.base.url_to_contents">url_to_contents (class in graze.base)</a>
-</li>
+        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="_autosummary/graze.base.html#graze.base.url_to_contents">url_to_contents (class in graze.base)</a>
+</li>
         <li><a href="_autosummary/graze.base.html#graze.base.url_to_file_download">url_to_file_download() (in module graze.base)</a>
 </li>
         <li><a href="_autosummary/graze.base.html#graze.base.url_to_filepath">url_to_filepath() (in module graze.base)</a>
@@ -716,7 +750,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=4fed8de7"></script>
+</div><script src="_static/documentation_options.js?v=e6adf981"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

@@ -1,4 +1,4 @@
-> built 2026-11-26 14:08 UTC from ea356d7 (master) · graze 0.1.52. Details: build_info.json
+> built 2026-11-27 17:22 UTC from 7cff217 (master) · graze 0.1.53. Details: build_info.json
 
 # index.html.md
 
@@ -1749,13 +1749,160 @@ Getting stuff from the internet (and caching locally, automatically)
 
 ### Modules
 
-| [`base`](_autosummary/graze.base.html.md#module-graze.base)                           | Base functionality                                                                 |
-|---------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| [`content_kind`](_autosummary/graze.content_kind.html.md#module-graze.content_kind)           | What the bytes actually turned out to be — magic-byte sniffing and kind assertion. |
-| [`graze_exceptional`](_autosummary/graze.graze_exceptional.html.md#module-graze.graze_exceptional) | Exceptional URLs for Graze                                                         |
-| [`guarded`](_autosummary/graze.guarded.html.md#module-graze.guarded)                     | Guarded fetch with a pinned transport — an SSRF-safe GET for caller-supplied URLs. |
-| [`share_links`](_autosummary/graze.share_links.html.md#module-graze.share_links)             | Pure (network-free) resolution of cloud share links to direct-download URLs.       |
-| [`util`](_autosummary/graze.util.html.md#module-graze.util)                           | Utils                                                                              |
+| [`base`](_autosummary/graze.base.html.md#module-graze.base)                           | Base functionality                                                                                 |
+|---------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
+| [`content_kind`](_autosummary/graze.content_kind.html.md#module-graze.content_kind)           | What the bytes actually turned out to be — magic-byte sniffing and kind assertion.                 |
+| [`graze_exceptional`](_autosummary/graze.graze_exceptional.html.md#module-graze.graze_exceptional) | Exceptional URLs for Graze                                                                         |
+| [`guarded`](_autosummary/graze.guarded.html.md#module-graze.guarded)                     | Guarded fetch with a pinned transport — an SSRF-safe GET for caller-supplied URLs.                 |
+| [`media`](_autosummary/graze.media.html.md#module-graze.media)                         | Fetch one media file from a URL someone pasted: share link resolved, fetch guarded, bytes checked. |
+| [`share_links`](_autosummary/graze.share_links.html.md#module-graze.share_links)             | Pure (network-free) resolution of cloud share links to direct-download URLs.                       |
+| [`util`](_autosummary/graze.util.html.md#module-graze.util)                           | Utils                                                                                              |
+
+
+# _autosummary/graze.media.html.md
+
+# graze.media
+
+Fetch one media file from a URL someone pasted: share link resolved, fetch guarded, bytes checked.
+
+Three graze modules each answer one question about a caller-supplied URL;
+[`fetch_media()`](_autosummary/graze.media.html.md#graze.media.fetch_media) asks them in order, so an app does not keep its own copy of the
+glue (graze#18):
+
+1. [`graze.share_links`](_autosummary/graze.share_links.html.md#module-graze.share_links) – *what does the link denote?* A Dropbox or Google Drive
+   share link becomes its direct-download URL; a folder link, or a link with no known
+   rule (OneDrive, a Google Doc), is refused with the reason, before any network.
+2. [`graze.guarded`](_autosummary/graze.guarded.html.md#module-graze.guarded) – *is it safe to fetch?* Every hop is checked against the
+   address policy (no localhost, private networks or cloud metadata), within a byte
+   and a wall-clock budget.
+3. [`graze.content_kind`](_autosummary/graze.content_kind.html.md#module-graze.content_kind) – *did we get the thing?* The share host’s sign-in or
+   preview page, and a ZIP where one file was meant, are refused instead of being kept
+   as media.
+
+```pycon
+>>> media = fetch_media('https://www.dropbox.com/scl/fi/a1/memo.m4a?rlkey=z&dl=0',
+...                     expect_kind='audio')
+>>> media.filename, media.provider
+('memo.m4a', 'dropbox')
+```
+
+What it raises is one of [`FETCH_MEDIA_ERRORS`](_autosummary/graze.media.html.md#graze.media.FETCH_MEDIA_ERRORS), each with a message meant for the
+person who pasted the link:
+
+```pycon
+>>> fetch_media('https://drive.google.com/drive/folders/1AbC')
+Traceback (most recent call last):
+    ...
+graze.share_links.ShareLinkResolutionError: That google_drive link is a folder; share the single file instead...
+```
+
+Messages from this module name a link by [`redact_url()`](_autosummary/graze.media.html.md#graze.media.redact_url) only (scheme, host, first path
+segment): share links carry bearer secrets in their path and query, and these messages are
+meant to be shown. Errors raised by [`graze.guarded`](_autosummary/graze.guarded.html.md#module-graze.guarded) itself still carry the full URL and
+the resolved address, so a web surface should word those itself rather than echo them.
+
+Every keyword argument of [`graze.guarded.guarded_open()`](_autosummary/graze.guarded.html.md#graze.guarded.guarded_open) passes through (`max_bytes`,
+`timeout`, `is_allowed_address`, `connector`…), so tests and self-hosted setups
+use the same seams.
+
+### Module Attributes
+
+| [`FETCH_MEDIA_ERRORS`](_autosummary/graze.media.html.md#graze.media.FETCH_MEDIA_ERRORS)   | What [`fetch_media()`](_autosummary/graze.media.html.md#graze.media.fetch_media) raises on purpose; catch this tuple at a surface.   |
+|-----------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| [`DFLT_REFUSE`](_autosummary/graze.media.html.md#graze.media.DFLT_REFUSE)          | a web page is the share host's sign-in or preview page, an archive is a folder link's ZIP.                              |
+
+### Functions
+
+| [`fetch_media`](_autosummary/graze.media.html.md#graze.media.fetch_media)(url, \*[, expect_kind, refuse, ...])   | Fetch the one file `url` points at (a share link or a plain URL).                     |
+|-----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+| [`redact_url`](_autosummary/graze.media.html.md#graze.media.redact_url)(url)                                    | The URL with what can carry a secret removed: scheme, host and first path segment.    |
+| [`clean_filename`](_autosummary/graze.media.html.md#graze.media.clean_filename)(name)                               | A file name safe to keep and show: no path, no control or format characters, bounded. |
+
+### Classes
+
+| [`FetchedMedia`](_autosummary/graze.media.html.md#graze.media.FetchedMedia)(data, filename, content_type, ...)   | The bytes of one fetched file, and what is known about them.   |
+|----------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
+
+### graze.media.DFLT_REFUSE *= ('html', 'archive')*
+
+a web page is the share host’s
+sign-in or preview page, an archive is a folder link’s ZIP.
+
+* **Type:**
+  Content families refused whatever `expect_kind` is
+
+### graze.media.FETCH_MEDIA_ERRORS *= (<class 'graze.share_links.ShareLinkResolutionError'>, <class 'graze.content_kind.ContentKindMismatch'>, <class 'graze.guarded.GuardedFetchError'>)*
+
+What [`fetch_media()`](_autosummary/graze.media.html.md#graze.media.fetch_media) raises on purpose; catch this tuple at a surface.
+
+### *class* graze.media.FetchedMedia(data, filename, content_type, url, provider)
+
+Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
+
+The bytes of one fetched file, and what is known about them.
+
+#### content_type *: [str](https://docs.python.org/3/builtins/stdtypes.html#str)*
+
+as the server declared it (’’ if it did not)
+
+#### filename *: [str](https://docs.python.org/3/builtins/stdtypes.html#str)*
+
+from Content-Disposition, else the URL’s last path segment (’’ if none)
+
+#### provider *: [str](https://docs.python.org/3/builtins/stdtypes.html#str)*
+
+the share-link provider (‘dropbox’, ‘google_drive’…) or ‘http’
+
+#### url *: [str](https://docs.python.org/3/builtins/stdtypes.html#str)*
+
+the final URL, after redirects
+
+### graze.media.clean_filename(name)
+
+A file name safe to keep and show: no path, no control or format characters, bounded.
+
+```pycon
+>>> clean_filename('../../etc/passwd'), clean_filename('..'), clean_filename('a\x07b.mp3')
+('passwd', '', 'ab.mp3')
+```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+### graze.media.fetch_media(url, , expect_kind=None, refuse=('html', 'archive'), resolvers=None, \*\*guarded_open_options)
+
+Fetch the one file `url` points at (a share link or a plain URL).
+
+* **Parameters:**
+  * **url** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – What the person pasted. Surrounding whitespace is ignored.
+  * **expect_kind** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – `'audio'`, `'video'`, `'image'`… when given, recognised bytes
+    of another family are refused (audio and video containers pass for each other,
+    see [`graze.content_kind`](_autosummary/graze.content_kind.html.md#module-graze.content_kind)); unrecognised bytes pass.
+  * **refuse** ([`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Content families refused in any case (default [`DFLT_REFUSE`](_autosummary/graze.media.html.md#graze.media.DFLT_REFUSE)).
+  * **resolvers** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`ResolvedShareLink`](_autosummary/graze.share_links.html.md#graze.share_links.ResolvedShareLink)]]]]) – Share-link adapters (default: [`graze.share_links.share_link_resolvers`](_autosummary/graze.share_links.html.md#graze.share_links.share_link_resolvers)).
+  * **\*\*guarded_open_options** – Passed to [`graze.guarded.guarded_open()`](_autosummary/graze.guarded.html.md#graze.guarded.guarded_open).
+* **Return type:**
+  [`FetchedMedia`](_autosummary/graze.media.html.md#graze.media.FetchedMedia)
+
+An HTML page and an empty body are always refused when `expect_kind` is given (that is
+[`graze.content_kind.assert_content_kind()`](_autosummary/graze.content_kind.html.md#graze.content_kind.assert_content_kind)’s rule); `refuse` adds families refused
+in any case.
+
+Raises one of [`FETCH_MEDIA_ERRORS`](_autosummary/graze.media.html.md#graze.media.FETCH_MEDIA_ERRORS).
+
+### graze.media.redact_url(url)
+
+The URL with what can carry a secret removed: scheme, host and first path segment.
+
+```pycon
+>>> redact_url('https://www.dropbox.com/scl/fi/a1b2/clip.mp4?rlkey=SECRET&dl=0')
+'https://www.dropbox.com/scl/…'
+>>> redact_url('not a url')
+'(a link)'
+```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 
 # _autosummary/graze.share_links.html.md
@@ -2534,16 +2681,18 @@ Yield the successive translations of `arg` by `method` through a stack of wrappe
 
 # About this build
 
-This documentation was built on **2026-11-26 14:08 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/ea356d7935872e8ad18cf6d7c0dead88cb3204e9"><code>ea356d7</code></a> on branch <code>master</code>, for **graze 0.1.52** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-27 17:22 UTC** from commit <a href="https://github.com/thorwhalen/graze/commit/7cff21795bbef47b08212afe361153ad9dd95e7c"><code>7cff217</code></a> on branch <code>master</code>, for **graze 0.1.53** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.1.53) is behind the latest release on PyPI (0.1.54): `pip install graze` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/graze/commit/ea356d7935872e8ad18cf6d7c0dead88cb3204e9"><code>ea356d7935872e8ad18cf6d7c0dead88cb3204e9</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/graze/commit/7cff21795bbef47b08212afe361153ad9dd95e7c"><code>7cff21795bbef47b08212afe361153ad9dd95e7c</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -2554,9 +2703,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/graze</code>                                                              |
-| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/45835704360">45835704360</a>     |
+| Run          | <a href="https://github.com/thorwhalen/graze/actions/runs/46041083356">46041083356</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>ea356d7935872e8ad18cf6d7c0dead88cb3204e9</code> (in the history of the built commit) |
+| Event commit | <code>7cff21795bbef47b08212afe361153ad9dd95e7c</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -2581,13 +2730,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/graze/0.1.52/">0.1.52</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/graze/0.1.54/">0.1.54</a>, newer than the documented version (0.1.53).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/thorwhalen/graze && cd graze
-git checkout ea356d7935872e8ad18cf6d7c0dead88cb3204e9
+git checkout 7cff21795bbef47b08212afe361153ad9dd95e7c
 pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

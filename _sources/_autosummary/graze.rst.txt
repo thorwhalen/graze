@@ -14,5 +14,6 @@
    content_kind
    graze_exceptional
    guarded
+   media
    share_links
    util
